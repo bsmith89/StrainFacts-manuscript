@@ -19,10 +19,13 @@ from textwrap import dedent as dd
 from scripts.build_db import DatabaseInput
 import os.path as path
 from warnings import warn
+import snakemake.utils
 
 # {{{1 Configuration
 
 # {{{2 General Configuration
+
+snakemake.utils.min_version("6.7")
 
 
 configfile: "config.yaml"
