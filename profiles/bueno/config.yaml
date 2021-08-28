@@ -6,6 +6,6 @@ use-conda: true
 conda-frontend: 'mamba'
 conda-prefix: '/pollard/home/bsmith/.snakemake/conda'
 use-singularity: true
-singularity-args: "--bind /pollard/shattuck0/ --bind /pollard/data/ --bind /pollard/home/bsmith/"
+singularity-args: "--bind /pollard/"
 singularity-prefix: '/pollard/home/bsmith/.snakemake/singularity'
 config: ['USE_CUDA=0', 'MAX_THREADS=24', 'jupyter_port=8818']
