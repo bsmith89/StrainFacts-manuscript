@@ -17,9 +17,7 @@ class DatabaseInput:
     constant_fields: Mapping[str, str] = field(default_factory=dict)
 
     def _constant_fields_to_args_list(self):
-        return [
-            f"{entry[0]}={entry[1]}" for entry in self.constant_fields.items()
-        ]
+        return [f"{entry[0]}={entry[1]}" for entry in self.constant_fields.items()]
 
     def to_arg(self) -> str:
         return ":".join(
@@ -47,9 +45,7 @@ if __name__ == "__main__":
     for arg in input_args:
         db_input = DatabaseInput.from_arg(arg)
         info(db_input)
-        template = pd.read_sql(
-            f"SELECT * FROM {db_input.table_name} LIMIT 0", con=con
-        )
+        template = pd.read_sql(f"SELECT * FROM {db_input.table_name} LIMIT 0", con=con)
         columns = template.columns.to_list()
 
         d = pd.read_csv(

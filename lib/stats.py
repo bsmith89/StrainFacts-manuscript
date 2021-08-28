@@ -63,7 +63,7 @@ def mannwhitneyu(x, y, data, reference=None, alternative="two-sided"):
     except ValueError as err:
         warn(f"sp.stats.mannwhitneyu raised a ValueError: {err}")
         u, pvalue = (np.nan, np.nan)
-    
+
     # common language effect size
     cles = u / (len(x0) * len(x1))
     return cles, pvalue

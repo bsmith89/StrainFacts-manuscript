@@ -143,12 +143,9 @@ def scatterplot(
     scatter_kws_.update(scatter_kws)
 
     for (
-        feat_color,
-        feat_marker,
-        feat_markersize,
-        feat_edgecolor,
-        feat_edgestyle,
-    ), d in data.groupby([colorby, markerby, markersizeby, edgecolorby, edgestyleby]):
+        (feat_color, feat_marker, feat_markersize, feat_edgecolor, feat_edgestyle,),
+        d,
+    ) in data.groupby([colorby, markerby, markersizeby, edgecolorby, edgestyleby]):
         if (
             (feat_color not in colorby_order)
             or (feat_marker not in markerby_order)

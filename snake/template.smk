@@ -25,7 +25,8 @@ rule initialize_files_from_template:
 rule initialize_git_from_template:
     output:
         touch("build/initialize_git_from_template.flag"),
-    input: ancient("build/initialize_files_from_template.flag"),
+    input:
+        ancient("build/initialize_files_from_template.flag"),
     shell:
         dd(
             """
