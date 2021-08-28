@@ -3,6 +3,7 @@ from warnings import warn
 from numpy import ceil
 
 alias_recipe = "ln -rs {input} {output}"
+alias_recipe_norelative = "ln -sT {input} {output}"
 alias_fmt = lambda input, output: alias_recipe.format(input=input, output=output)
 curl_recipe = "curl '{params.url}' > {output}"
 curl_unzip_recipe = "curl '{params.url}' | zcat > {output}"
