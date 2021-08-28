@@ -95,15 +95,13 @@ else:
 include: "snake/template.smk"
 include: "snake/util.smk"
 include: "snake/general.smk"
+include: "snake/docs.smk"
+include: "snake/mgen_preprocess.smk"
 
 
 if path.exists("snake/local.smk"):
 
     include: "snake/local.smk"
-
-
-include: "snake/docs.smk"
-include: "snake/mgen_preprocess.smk"
 
 
 wildcard_constraints:
