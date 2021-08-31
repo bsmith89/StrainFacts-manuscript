@@ -143,7 +143,13 @@ def scatterplot(
     scatter_kws_.update(scatter_kws)
 
     for (
-        (feat_color, feat_marker, feat_markersize, feat_edgecolor, feat_edgestyle,),
+        (
+            feat_color,
+            feat_marker,
+            feat_markersize,
+            feat_edgecolor,
+            feat_edgestyle,
+        ),
         d,
     ) in data.groupby([colorby, markerby, markersizeby, edgecolorby, edgestyleby]):
         if (
