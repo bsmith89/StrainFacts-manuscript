@@ -47,14 +47,14 @@ if __name__ == "__main__":
         info(db_input)
         template = pd.read_sql(f"SELECT * FROM {db_input.table_name} LIMIT 0", con=con)
         columns = template.columns.to_list()
-
+        columns_in_input = [c for c in columns if c not in db_input.constant_fields]
         d = pd.read_csv(
             db_input.path,
             sep="\t",
             skiprows={True: 1, False: 0}[db_input.has_header],
-            names=columns,
+            names=columns_in_input,
         )
-        d = d.assign(**db_input.constant_fields)
+        d = d.assign(**db_input.constant_fields)[columns]
         info(d.info())
         d.to_sql(db_input.table_name, con=con, if_exists="append", index=False)
     con.execute("PRAGMA foreign_keys = TRUE;")
