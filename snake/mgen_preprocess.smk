@@ -154,8 +154,8 @@ rule deduplicate_reads:
         r1="{stemA}.r1{stemB}fq.gz",
         r2="{stemA}.r2{stemB}fq.gz",
     resources:
-        mem_mb=80000,
-        walltime_hr=4,
+        mem_mb=resource_calculator(r1=5, input_size_exponent=dict(r1=1.1)),
+        walltime_min=resource_calculator(r1=0.01),
     shell:
         "{input.script} {input.r1} {input.r2} {output.r1} {output.r2}"
 
