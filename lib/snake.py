@@ -69,7 +69,10 @@ def resource_calculator(
             #     warn(str(err))
             #     input_sizes[k] = 0
         base_estimate = baseline + sum(
-            [input_sizes[k] * input_size_multipliers[k] for k in input_size_multipliers]
+            [
+                input_size_multipliers[k] * input_sizes[k] ** input_size_exponent[k]
+                for k in input_size_multipliers
+            ]
         )
         outvalue = base_estimate * threads ** threads_exponent * attempt_base ** attempt
         # print(weighted_input_size, threads, threads_exponent, attempt_base, attempt, outvalue)
