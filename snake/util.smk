@@ -87,10 +87,10 @@ rule config_debug:
     output:
         "config_debug.{config_key}",
     params:
-        meta=lambda w: config[w.config_key],
+        meta=lambda w: nested_dictlookup(config, *w.config_key.split('.'))
     shell:
         """
-        echo {wildcards.config_key}
-        echo {params.meta}
+        echo "{wildcards.config_key}"
+        echo "{params.meta}"
         false  # Recipe never succeeds.
         """

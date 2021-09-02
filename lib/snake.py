@@ -35,6 +35,17 @@ single_param_wc = "[^.-]+"
 params_wc = noperiod_wc
 
 
+def nested_defaultdict():
+    return defaultdict(nested_defaultdict)
+
+
+def nested_dictlookup(mapping, *args):
+    value = mapping
+    for key in args:
+        value = value[key]
+    return value
+
+
 def resource_calculator(
     baseline=1,
     threads_exponent=0,

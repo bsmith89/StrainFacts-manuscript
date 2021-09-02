@@ -4,12 +4,16 @@
 
 from lib.snake import (
     alias_recipe,
+    alias_recipe_norelative,
     noperiod_wc,
     integer_wc,
     single_param_wc,
     limit_numpy_procs_to_1,
     curl_recipe,
     limit_numpy_procs,
+    resource_calculator,
+    nested_defaultdict,
+    nested_dictlookup,
 )
 from lib.pandas import idxwhere
 import pandas as pd
@@ -27,6 +31,8 @@ import snakemake.utils
 
 snakemake.utils.min_version("6.7")
 
+
+config = nested_defaultdict()
 
 configfile: "config.yaml"
 
