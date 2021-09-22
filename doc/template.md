@@ -7,9 +7,10 @@ A batteries-included Snakemake project template for computational biology.
 ## Create a new project
 
 1. Clone this repository: `git clone <TEMPLATE-URL> <PROJECT-NAME>`
-2. Check that that `snakemake` is in your path: `which snakemake`
-3. `snakemake -j1 new_project`
-4. Follow the "Configure a project" instructions below.
+2. `cd <PROJECT-NAME>`
+3. Check that that `snakemake` is in your path: `which snakemake`
+4. `snakemake -j1 new_project`
+5. Follow the "Configure a project" instructions below.
 
 ## Clone an existing project
 
