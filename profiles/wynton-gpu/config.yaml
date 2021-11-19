@@ -1,0 +1,19 @@
+notemp: true
+printshellcmds: true
+keep-going: true
+resources: ['network_connections=3', 'mem_mb=750000']
+default-resources:
+  - 'pmem=8192'
+  - 'disk_mb=100000'
+  - 'walltime_hr=0'
+  - 'walltime_min=29'
+  - 'walltime_sec=59'
+  - 'gpu_mem_mb=1000'
+  - 'outdir="log/"'
+use-conda: true
+conda-prefix: '/wynton/home/pollard/bsmith/.snakemake/conda'
+conda-frontend: 'mamba'
+use-singularity: true
+singularity-prefix: "/wynton/home/pollard/bsmith/.snakemake/singularity"
+singularity-args: "--bind /pollard/ --nv --bind /salilab/diva1/home/anaconda/anaconda3 --bind /scratch/bsmith --bind /scratch/bsmith:/tmp --bind /wynton/home/pollard/bsmith"
+config: ['MAX_THREADS=24', 'USE_CUDA=1']
