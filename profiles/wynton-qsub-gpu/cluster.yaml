@@ -1,0 +1,8 @@
+__default__:
+  walltime: '{resources.walltime_hr}:{resources.walltime_min}:{resources.walltime_sec}'
+  pmem: '{resources.pmem}'
+  procs: '{threads}'
+  outdir: 'qsub_log'
+  errdir: 'qsub_log'
+  gpu_qsub_flags: '{resources.gpu_qsub_flags}'
+  extra_qsub_flags: '{resources.extra_qsub_flags}'

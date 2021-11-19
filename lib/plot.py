@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from sklearn.manifold import MDS
+from sklearn.manifold import MDS, TSNE, Isomap
 from scipy.spatial.distance import pdist, squareform
 import numpy as np
 from itertools import cycle
@@ -9,11 +9,19 @@ from sklearn.decomposition import PCA
 from collections import defaultdict
 import seaborn as sns
 import scipy as sp
-from lib.pandas import align_indexes
+from lib.pandas_util import align_indexes
 
 
 DEFAULT_MARKER_LIST = ["o", "v", "s", ">", "D", "X", "h", "^"]
-DEFAULT_COLOR_LIST = ["black", "blue", "green", "orange", "purple", "red", "pink"]
+DEFAULT_COLOR_LIST = [
+    "black",
+    "blue",
+    "green",
+    "orange",
+    "purple",
+    "red",
+    "pink",
+]
 DEFAULT_LINESTYLE_LIST = ["-", "--", "-.", ":"]
 
 
@@ -31,22 +39,68 @@ def demo_pallete(pallete):
     print(df)
 
 
-def pca_ordination(data, **kwargs):
+def pca_ordination(data):
     pca = PCA().fit(data)
     d1 = pca.transform(data)
 
     d1 = pd.DataFrame(
-        d1, index=data.index, columns=[f"PC{i}" for i in np.arange(d1.shape[1]) + 1]
+        d1, index=data.index, columns=[f"PC{i}" for i in np.arange(d1.shape[1]) + 1],
     )
     frac_explained = pd.Series(pca.explained_variance_ratio_, index=d1.columns)
     return d1, frac_explained, {}
 
 
-def nmds_ordination(data, **kwargs):
+def mds_ordination(data, is_dmat=False, mds_kwargs=None, pdist_kwargs=None):
     # PCoA  # TODO: Modularize out?
-    dmat = pd.DataFrame(
-        squareform(pdist(data, **kwargs)), index=data.index, columns=data.index
+    if mds_kwargs is None:
+        mds_kwargs = {}
+    if pdist_kwargs is None:
+        pdist_kwargs = {}
+
+    if is_dmat:
+        dmat = data.loc[:, data.index]  # Ensure symmetric
+    else:
+        dmat = pd.DataFrame(
+            squareform(pdist(data, **pdist_kwargs)),
+            index=data.index,
+            columns=data.index,
+        )
+    d1 = MDS(
+        n_components=2,
+        max_iter=3000,
+        eps=1e-12,
+        random_state=1,
+        dissimilarity="precomputed",
+        n_jobs=1,
+        **mds_kwargs,
+    ).fit_transform(dmat)
+
+    d1 = pd.DataFrame(
+        d1, index=data.index, columns=[f"PC{i}" for i in np.arange(d1.shape[1]) + 1],
     )
+    frac_explained = pd.Series(np.nan, index=d1.columns)
+    return d1, frac_explained, {"dmat": dmat}
+
+
+def nmds_ordination(
+    data, is_dmat=False, mds_kwargs=None, nmds_kwargs=None, pdist_kwargs=None
+):
+    # PCoA  # TODO: Modularize out?
+    if mds_kwargs is None:
+        mds_kwargs = {}
+    if nmds_kwargs is None:
+        nmds_kwargs = {}
+    if pdist_kwargs is None:
+        pdist_kwargs = {}
+
+    if is_dmat:
+        dmat = data.loc[:, data.index]  # Ensure symmetric
+    else:
+        dmat = pd.DataFrame(
+            squareform(pdist(data, **pdist_kwargs)),
+            index=data.index,
+            columns=data.index,
+        )
     init = MDS(
         n_components=2,
         max_iter=3000,
@@ -54,6 +108,7 @@ def nmds_ordination(data, **kwargs):
         random_state=1,
         dissimilarity="precomputed",
         n_jobs=1,
+        **mds_kwargs,
     ).fit_transform(dmat)
     nmds = MDS(
         n_components=2,
@@ -64,11 +119,56 @@ def nmds_ordination(data, **kwargs):
         random_state=1,
         n_jobs=1,
         n_init=1,
+        **nmds_kwargs,
     )
     d1 = nmds.fit_transform(dmat, init=init)
 
     d1 = pd.DataFrame(
-        d1, index=data.index, columns=[f"PC{i}" for i in np.arange(d1.shape[1]) + 1]
+        d1, index=data.index, columns=[f"PC{i}" for i in np.arange(d1.shape[1]) + 1],
+    )
+    frac_explained = pd.Series(np.nan, index=d1.columns)
+    return d1, frac_explained, {"dmat": dmat}
+
+
+def tsne_ordination(data, is_dmat=False, tsne_kwargs=None, pdist_kwargs=None):
+    # PCoA  # TODO: Modularize out?
+    if tsne_kwargs is None:
+        tsne_kwargs = {}
+    if pdist_kwargs is None:
+        pdist_kwargs = {}
+
+    if is_dmat:
+        dmat = data.loc[:, data.index]  # Ensure symmetric
+    else:
+        dmat = pd.DataFrame(
+            squareform(pdist(data, **kwargs)), index=data.index, columns=data.index,
+        )
+    d1 = TSNE(n_components=2, metric="precomputed", **tsne_kwargs).fit_transform(dmat)
+
+    d1 = pd.DataFrame(
+        d1, index=data.index, columns=[f"PC{i}" for i in np.arange(d1.shape[1]) + 1],
+    )
+    frac_explained = pd.Series(np.nan, index=d1.columns)
+    return d1, frac_explained, {"dmat": dmat}
+
+
+def isomap_ordination(data, is_dmat=False, ordin_kwargs=None, pdist_kwargs=None):
+    if ordin_kwargs is None:
+        ordin_kwargs = {}
+    if pdist_kwargs is None:
+        pdist_kwargs = {}
+    if is_dmat:
+        dmat = data.loc[:, data.index]  # Ensure symmetric
+    else:
+        dmat = pd.DataFrame(
+            squareform(pdist(data, **pdist_kwargs)),
+            index=data.index,
+            columns=data.index,
+        )
+
+    d1 = Isomap(metric="precomputed", **ordin_kwargs).fit_transform(dmat)
+    d1 = pd.DataFrame(
+        d1, index=data.index, columns=[f"PC{i}" for i in np.arange(d1.shape[1]) + 1],
     )
     frac_explained = pd.Series(np.nan, index=d1.columns)
     return d1, frac_explained, {"dmat": dmat}
@@ -94,8 +194,10 @@ def scatterplot(
     edgestyleby="__none__",
     edgestyle_palette=None,
     edgestyleby_order=None,
+    zorderby="__none__",
     ax=None,
     scatter_kws={},
+    fill_legend=True,
 ):
 
     data = data.copy()
@@ -149,9 +251,12 @@ def scatterplot(
             feat_markersize,
             feat_edgecolor,
             feat_edgestyle,
+            feat_zorder,
         ),
         d,
-    ) in data.groupby([colorby, markerby, markersizeby, edgecolorby, edgestyleby]):
+    ) in data.groupby(
+        [colorby, markerby, markersizeby, edgecolorby, edgestyleby, zorderby]
+    ):
         if (
             (feat_color not in colorby_order)
             or (feat_marker not in markerby_order)
@@ -160,6 +265,8 @@ def scatterplot(
             or (feat_markersize not in markersizeby_order)
         ):
             continue
+        if feat_zorder == "__none__":
+            feat_zorder = 0
         ax.scatter(
             x,
             y,
@@ -170,58 +277,60 @@ def scatterplot(
             edgecolor=[edgecolor_palette[feat_edgecolor]],
             linestyle=edgestyle_palette[feat_edgestyle],
             s=markersize_palette[feat_markersize],
+            zorder=feat_zorder,
             **scatter_kws_,
         )
 
-    for feat_color in colorby_order:
-        ax.scatter(
-            [],
-            [],
-            marker="o",
-            c=[color_palette[feat_color]],
-            label=feat_color,
-            **scatter_kws_,
-        )
-    for feat_marker in markerby_order:
-        ax.scatter(
-            [],
-            [],
-            marker=marker_palette[feat_marker],
-            c="grey",
-            label=feat_marker,
-            **scatter_kws_,
-        )
-    for feat_markersize in markersizeby_order:
-        ax.scatter(
-            [],
-            [],
-            marker="o",
-            s=markersize_palette[feat_markersize],
-            c="grey",
-            label=feat_markersize,
-            **scatter_kws_,
-        )
-    for feat_edgecolor in edgecolorby_order:
-        ax.scatter(
-            [],
-            [],
-            marker="o",
-            c="lightgrey",
-            edgecolor=edgecolor_palette[feat_edgecolor],
-            label=feat_edgecolor,
-            **scatter_kws_,
-        )
-    for feat_edgestyle in edgestyleby_order:
-        ax.scatter(
-            [],
-            [],
-            marker="o",
-            c="none",
-            edgecolor="black",
-            linestyle=edgestyle_palette[feat_edgestyle],
-            label=feat_edgestyle,
-            **scatter_kws_,
-        )
+    if fill_legend:
+        for feat_color in colorby_order:
+            ax.scatter(
+                [],
+                [],
+                marker="o",
+                c=[color_palette[feat_color]],
+                label=feat_color,
+                **scatter_kws_,
+            )
+        for feat_marker in markerby_order:
+            ax.scatter(
+                [],
+                [],
+                marker=marker_palette[feat_marker],
+                c="grey",
+                label=feat_marker,
+                **scatter_kws_,
+            )
+        for feat_markersize in markersizeby_order:
+            ax.scatter(
+                [],
+                [],
+                marker="o",
+                s=markersize_palette[feat_markersize],
+                c="grey",
+                label=feat_markersize,
+                **scatter_kws_,
+            )
+        for feat_edgecolor in edgecolorby_order:
+            ax.scatter(
+                [],
+                [],
+                marker="o",
+                c="lightgrey",
+                edgecolor=edgecolor_palette[feat_edgecolor],
+                label=feat_edgecolor,
+                **scatter_kws_,
+            )
+        for feat_edgestyle in edgestyleby_order:
+            ax.scatter(
+                [],
+                [],
+                marker="o",
+                c="none",
+                edgecolor="black",
+                linestyle=edgestyle_palette[feat_edgestyle],
+                label=feat_edgestyle,
+                **scatter_kws_,
+            )
 
     return ax
 
@@ -242,6 +351,8 @@ def ordination_plot(
     TODO: Align this function to be similar to Seaborn plotting functions.
     """
     x, y = xy
+    if subset is None:
+        subset = pd.Series(True, index=data.index)
     data, meta, subset = align_indexes(data, meta, subset)
     data = data.loc[subset].copy()
     meta = meta.loc[subset].copy()
@@ -261,14 +372,28 @@ def ordination_plot(
         ax.set_xlabel(f"{x}")
         ax.set_ylabel(f"{y}")
     ax.legend(bbox_to_anchor=(1, 1))
-    return ax, ordin_out
+    return ax, d1, ordin_out
 
 
 def rotate_xticklabels(ax=None, rotation=45, ha="right", **kwargs):
     if ax is None:
         ax = plt.gca()
     ax.set_xticklabels(
-        [x.get_text() for x in ax.get_xticklabels()], rotation=rotation, ha=ha, **kwargs
+        [x.get_text() for x in ax.get_xticklabels()],
+        rotation=rotation,
+        ha=ha,
+        **kwargs,
+    )
+
+
+def rotate_yticklabels(ax=None, rotation=-45, va="bottom", **kwargs):
+    if ax is None:
+        ax = plt.gca()
+    ax.set_yticklabels(
+        [y.get_text() for y in ax.get_yticklabels()],
+        rotation=rotation,
+        va=va,
+        **kwargs,
     )
 
 
@@ -301,14 +426,14 @@ def boxplot_with_points(
 
     data_kwargs = dict(data=data, x=x, y=y, hue=hue, **kwargs)
 
-    distkw = data_kwargs.copy()
-    distkw.update(dict(showfliers=False, ax=ax, saturation=0.35))
+    distkw = dict(showfliers=False, ax=ax, saturation=0.35, whis=0)
+    distkw.update(data_kwargs)
     distkw.update(dist_kwargs)
     dist_plotter(**distkw)
     handles, labels = ax.get_legend_handles_labels()
 
-    pointskw = data_kwargs.copy()
-    pointskw.update(dict(dodge=True, linewidth=1, ax=ax))
+    pointskw = dict(dodge=True, linewidth=1, ax=ax)
+    pointskw.update(data_kwargs)
     pointskw.update(points_kwargs)
     points_plotter(**pointskw)
     if legend:
@@ -340,3 +465,69 @@ def residuals_plot(fit, ax=None, data=None, **kwargs):
     ax.plot(x, spline(x))
     ax.set_ylabel("Standardized Residuals")
     ax.set_xlabel("Fitted Value")
+
+
+def orderplot(
+    y,
+    data,
+    lineby=None,
+    orderby=None,
+    orderby_order=None,
+    colorby=None,
+    colorby_palette=None,
+    colorby_order=None,
+    xjitter=0,
+    yjitter=0,
+    ax=None,
+    plot_kwargs={},
+    legend_kwargs={},
+):
+    d0 = data.copy()
+    if not ax:
+        ax = plt.gca()
+
+    if orderby_order is None:
+        orderby_order = d0[orderby].unique()
+
+    orderby_idx = (
+        pd.Series(orderby_order, name="orderby")
+        .reset_index()
+        .set_index("orderby")
+        .squeeze()
+    )
+    x = "_orderby__idx"
+    d0[x] = d0[orderby].map(orderby_idx)
+
+    if colorby_order is None:
+        colorby_order = d0[colorby].unique()
+
+    for colorby_feat, d1 in d0.groupby(colorby):
+        for lineby_feat, d2 in d1.groupby(lineby):
+            x_jit = np.random.uniform(0, xjitter)
+            y_jit = np.random.uniform(0, yjitter)
+            d3 = (
+                d2.reset_index()
+                .set_index(orderby)
+                .reindex(orderby_order)
+                .dropna(subset=[y])
+                .assign(x=lambda v: v[x] + x_jit, y=lambda v: v[y] + y_jit)
+            )
+            ax.plot(
+                "x",
+                "y",
+                "",
+                data=d3,
+                c=colorby_palette[colorby_feat],
+                label="__nolegend__",
+                **plot_kwargs,
+            )
+
+    for colorby_feat in colorby_order:
+        ax.plot([], [], "", c=colorby_palette[colorby_feat], label=colorby_feat)
+    ax.legend(**legend_kwargs, title=colorby)
+    ax.set_ylabel(y)
+    ax.set_xlabel(orderby)
+    ax.set_xticks(orderby_idx)
+    ax.set_xticklabels(orderby_idx.index)
+    rotate_xticklabels(ax=ax)
+    return ax
