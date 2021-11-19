@@ -101,15 +101,16 @@ rule simulate_from_model_no_missing:
         )
 
 
-rule extract_and_portion_metagenotype_tsv:
+rule extract_and_portion_metagenotype:
     output:
-        "{stem}.metagenotype-n{n}-g{g}.tsv",
+        tsv="{stem}.metagenotype-n{n}-g{g}.tsv",
+        nc="{stem}.metagenotype-n{n}-g{g}.nc",
+    input:
+        script="scripts/extract_metagenotype.py",
+        world="{stem}.world.nc",
     wildcard_constraints:
         n="[0-9]+",
         g="[0-9]+",
-    input:
-        script="scripts/extract_metagenotype_to_tsv.py",
-        world="{stem}.world.nc",
     params:
         num_samples=lambda w: int(w.n),
         num_positions=lambda w: int(w.g),
@@ -118,12 +119,12 @@ rule extract_and_portion_metagenotype_tsv:
     shell:
         """
         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
-        {input.script} {input.world} {params.num_samples} {params.num_positions} > {output}
+        {input.script} {input.world} {params.num_samples} {params.num_positions} {output.tsv} {output.nc}
         """
 
 
 localrules:
-    extract_and_portion_metagenotype_tsv,
+    extract_and_portion_metagenotype,
 
 
 rule fit_sfacts_strategy1:
@@ -580,7 +581,7 @@ rule fit_sfacts_strategy12:
                 --hyperparameters pi_hyper={params.pi_hyper} \
                 --hyperparameters rho_hyper={params.rho_hyper} \
                 --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
-                --refinement-hyperparameters gamma_hyper=1.0 rho_hyper=5.0 pi_hyper=0.1 \
+                --refinement-hyperparameters gamma_hyper=1.0 \
                 --anneal-hyperparameters gamma_hyper pi_hyper rho_hyper \
                 --anneal-steps {params.anneal_steps} --anneal-wait {params.anneal_wait} \
                 --optimizer-learning-rate {params.lr} \
@@ -593,3 +594,30 @@ rule fit_sfacts_strategy12:
                 --history-out {output.history} \
                 {input.data} {output.world}
         """
+
+use rule fit_sfacts_strategy12 as fit_sfacts_strategy13 with:
+    output:
+        world="{stem}.metagenotype{stemB}.fit-sfacts13-s{nstrain}-g{nposition}-seed{seed}.world.nc",
+        history="{stem}.metagenotype{stemB}.fit-sfacts13-s{nstrain}-g{nposition}-seed{seed}.history.list",
+    params:
+        device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
+        nstrain=lambda w: int(w.nstrain),
+        nposition=lambda w: int(w.nposition),
+        precision=64,
+        gamma_hyper=1e-2,
+        rho_hyper=1.0,
+        pi_hyper=0.2,
+        alpha_hyper_scale=0.1,
+        seed=lambda w: int(w.seed),
+        model_name="simple_ssdd2_with_error",
+        lag1=50,
+        lag2=100,
+        anneal_steps=2500,
+        anneal_wait=500,
+        lr=0.001,
+        collapse=0.02,
+        cull=0.001,
+    resources:
+        pmem=5000,
+        gpu_mem_mb=5000,
+        walltime_hr=48,
