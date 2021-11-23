@@ -1,0 +1,31 @@
+name: sfacts
+channels:
+  - nvidia
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - pip
+  - cudatoolkit
+  - pytorch
+  - torchvision
+  - torchaudio
+  - ipython
+  - jupyterlab
+  - xarray
+  - netCDF4
+  - matplotlib
+  - pyro-ppl
+  - torch-optimizer
+  - pandas
+  - seaborn
+  - tqdm
+  - scipy
+  - numpy
+  - scikit-learn
+  - scikit-bio
+  - line_profiler
+  - memory_profiler
+  - pip:
+    - -e /Users/byronsmith/Projects/haplo-benchmark/include/StrainFacts
