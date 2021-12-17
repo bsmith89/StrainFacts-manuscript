@@ -5,6 +5,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+  - time=1.8
   - python=3.9
   - pip
   - cudatoolkit
