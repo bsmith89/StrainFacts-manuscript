@@ -103,9 +103,11 @@ include: "snake/util.smk"
 include: "snake/general.smk"
 include: "snake/docs.smk"
 include: "snake/mgen_preprocess.smk"
+include: "snake/drplt.smk"
 
 
 include: "snake/sfacts.smk"
+include: "snake/sfinder.smk"
 
 
 if path.exists("snake/local.smk"):
