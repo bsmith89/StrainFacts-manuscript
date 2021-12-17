@@ -3,6 +3,7 @@ local-cores: 6
 latency-wait: 180
 max-jobs-per-second: 10
 keep-going: true
+printshellcmds: true
 resources: 'network_connections=3'
 default-resources:
   - 'pmem=8192'
@@ -14,10 +15,10 @@ default-resources:
   - 'outdir="log/"'
 use-conda: true
 conda-frontend: 'mamba'
-conda-prefix: '/pollard/home/bsmith/.snakemake/conda'
+conda-prefix: '/wynton/home/pollard/bsmith/.snakemake/conda'
 use-singularity: true
 singularity-args: "--bind /pollard/ --nv --bind /salilab/diva1/home/anaconda/anaconda3 --bind /wynton/home/pollard/bsmith"
-singularity-prefix: "/pollard/home/bsmith/.snakemake/singularity"
+singularity-prefix: "/wynton/home/pollard/bsmith/.snakemake/singularity"
 config: ['MAX_THREADS=24', 'USE_CUDA=1']
 jobscript: 'profiles/wynton-qsub-gpu/jobscript.sh'
 drmaa: " -cwd \
@@ -25,9 +26,11 @@ drmaa: " -cwd \
         -pe smp {threads} \
         -l h_rt={resources.walltime_hr}:{resources.walltime_min}:{resources.walltime_sec} \
         -l mem_free={resources.pmem}M \
-        -o {resources.outdir} \
-        -q gpu.q -l gpu_mem={resources.gpu_mem_mb}M \
+        -l gpu_mem={resources.gpu_mem_mb}M \
         -j yes \
         -terse \
+        -o {resources.outdir} \
+        -b n \
+        -q gpu.q \
         "
 jobname: '{name}.{jobid}.snkjb'
