@@ -1856,7 +1856,7 @@ rule fit_sfacts_strategy39_genotypes:
     resources:
         # pmem=resource_calculator(data=2, nstrain=2, agg=math.prod),
         # gpu_mem_mb=resource_calculator(data=2, nstrain=2, agg=math.prod),
-        walltime_hr=5,
+        walltime_hr=12,
         pmem=5_000,
         mem_mb=5_000,
         gpu_mem_mb={0: 0, 1: 4_000}[config["USE_CUDA"]]
@@ -1879,7 +1879,7 @@ rule fit_sfacts_strategy39_genotypes:
                 {input.community} {input.metagenotype} {output.genotype_chunk_fit}
         """
 
-rule reassemble_sfacts_genotypes_and_community:
+rule recombine_sfacts_genotypes_and_community:
     output:
         "{stemA}.metagenotype{stemB}.fit-{fit_params}.genotype_{genofit_type}-g{nposition}-seed{seed}.world.nc",
     input:
@@ -2031,6 +2031,8 @@ rule evaluate_simulation_fits_at_fixed_s_to_n_ratio:
             ]
         ]
 
+# RAM profile sfacts40
+# FIXME: Rename timeit to memprof
 rule fit_sfacts_strategy40_timeit:
     output:
         fit="{stem}.metagenotype{stemB}.fit-sfacts40_timeit-s{nstrain}-seed{seed}.world.nc",
