@@ -61,7 +61,6 @@ rule fit_sfinder:
 
 rule fit_sfinder_timeit:
     output:
-        fit="{stem}.fit-sfinder_timeit-s{nstrain}-seed{seed}.em.cpickle",
         time="{stem}.fit-sfinder_timeit-s{nstrain}-seed{seed}.time",
     input:
         "{stem}.sfinder.aln.cpickle",
@@ -70,22 +69,22 @@ rule fit_sfinder_timeit:
     params:
         nstrain=lambda w: int(w.nstrain),
         seed=lambda w: int(w.seed),
-        max_runtime_s=60,
+        out="{stem}.fit-sfinder_timeit-s{nstrain}-seed{seed}.em.cpickle",
     resources:
-        walltime_hr=24
+        walltime_sec=172_800,
     benchmark:
         "{stem}.fit-sfinder_timeit-s{nstrain}-seed{seed}.benchmark"
     shell:
         """
         rm -rf {output}
-        `which time` -o {output.time} -- \
-            /pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFinder/StrainFinder.py \
+        `which time` -o {output} -- /pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFinder/StrainFinder.py \
                 --force_update --merge_out --msg \
                 --aln {input} \
                 --seed {params.seed} \
+                --random \
                 -N {params.nstrain} \
-                --max_reps 1 --dtol 1 --ntol 2 --max_time {params.max_runtime_s} --n_keep 5 --converge \
-                --em_out {output.fit}
+                --max_reps 1 --max_time 1 --n_keep 1 \
+                --em_out {params.out}
         """
 
 

@@ -2109,7 +2109,7 @@ rule fit_sfacts_strategy40_gpumem:
         lr=0.05,
         min_learning_rate=1e-6,
     resources:
-        walltime_hr=1,
+        walltime_min=10,
         pmem=5_000,
         mem_mb=5_000,
         device="cuda",
@@ -2121,6 +2121,7 @@ rule fit_sfacts_strategy40_gpumem:
         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
         rm -rf {output.fit}
         nvidia-smi -i $CUDA_VISIBLE_DEVICES --query-gpu=memory.used --format=csv,noheader,nounits --loop-ms=1000 --filename={output.gpumem} &
+        gpumem_pid=$!
             python3 -m sfacts community_fit0 -m {params.model_name}  \
                 --verbose --device {resources.device} \
                 --hyperparameters gamma_hyper={params.gamma_hyper} \
@@ -2136,5 +2137,7 @@ rule fit_sfacts_strategy40_gpumem:
                 --random-seed {params.seed} \
                 {input.data} \
                 {output.fit}
-        kill %
+        sleep 5
+        kill $gpumem_pid
+        wait -n $gpumem_pid
         """
