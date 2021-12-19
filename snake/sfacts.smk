@@ -1796,7 +1796,7 @@ rule fit_sfacts_strategy39_communities:
         lag2=100,
         anneal_steps=4000,
         anneal_wait=1000,
-        lr=0.001,
+        lr=0.01,
         collapse=0.02,
         cull=0.001,
     resources:
