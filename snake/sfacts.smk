@@ -266,7 +266,7 @@ localrules:
 #         """
 #         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
 #         rm -rf {output.history} {output.world}
-#         python3 -m sfacts simple_fit -m {params.model_name}  \
+#         python3 -m sfacts fit_simple -m {params.model_name}  \
 #                 --verbose --device {params.device} \
 #                 --inpath {input.data} \
 #                 --hyperparameters gamma_hyper={params.gamma_hyper} \
@@ -535,7 +535,7 @@ rule evaluate_fit_against_simulation:
 #         r"""
 #         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
 #         rm -rf {output.history} {output.world}
-#         python3 -m sfacts complex_fit -m {params.model_name}  \
+#         python3 -m sfacts fit_complex -m {params.model_name}  \
 #                 --verbose --device {params.device} \
 #                 --hyperparameters gamma_hyper={params.gamma_hyper} \
 #                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -644,7 +644,7 @@ rule evaluate_fit_against_simulation:
 #         r"""
 #         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
 #         rm -rf {output.history} {output.world}
-#         python3 -m sfacts simple_fit -m {params.model_name}  \
+#         python3 -m sfacts fit_simple -m {params.model_name}  \
 #                 --verbose --device {params.device} \
 #                 --hyperparameters gamma_hyper={params.gamma_hyper} \
 #                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -696,7 +696,7 @@ rule evaluate_fit_against_simulation:
 #         r"""
 #         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
 #         rm -rf {output.history} {output.world}
-#         python3 -m sfacts complex_fit -m {params.model_name}  \
+#         python3 -m sfacts fit_complex -m {params.model_name}  \
 #                 --verbose --device {params.device} \
 #                 --hyperparameters gamma_hyper={params.gamma_hyper} \
 #                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -808,7 +808,7 @@ rule evaluate_fit_against_simulation:
 #         r"""
 #         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
 #         rm -rf {output.history} {output.world}
-#         python3 -m sfacts complex_fit -m {params.model_name}  \
+#         python3 -m sfacts fit_complex -m {params.model_name}  \
 #                 --verbose --device {params.device} \
 #                 --hyperparameters gamma_hyper={params.gamma_hyper} \
 #                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -996,7 +996,7 @@ rule combine_scg_comparisons_for_all_species:
 #         r"""
 #         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
 #         rm -rf {output.history} {output.world}
-#         python3 -m sfacts complex_fit -m {params.model_name}  \
+#         python3 -m sfacts fit_complex -m {params.model_name}  \
 #                 --verbose --device {params.device} \
 #                 --hyperparameters gamma_hyper={params.gamma_hyper} \
 #                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -1153,7 +1153,7 @@ rule combine_scg_comparisons_for_all_species:
 #         r"""
 #         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
 #         rm -rf {output.history} {output.world}
-#         python3 -m sfacts complex_fit -m {params.model_name}  \
+#         python3 -m sfacts fit_complex -m {params.model_name}  \
 #                 --verbose --device {params.device} \
 #                 --hyperparameters gamma_hyper={params.gamma_hyper} \
 #                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -1391,7 +1391,7 @@ rule combine_scg_comparisons_for_all_species:
 #         r"""
 #         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
 #         rm -rf {output.history} {output.world}
-#         python3 -m sfacts complex_fit -m {params.model_name}  \
+#         python3 -m sfacts fit_complex -m {params.model_name}  \
 #                 --verbose --device {params.device} \
 #                 --hyperparameters gamma_hyper={params.gamma_hyper} \
 #                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -1530,7 +1530,7 @@ rule combine_scg_comparisons_for_all_species:
 #         r"""
 #         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
 #         rm -rf {output.history} {output.world}
-#         python3 -m sfacts complex_fit -m {params.model_name}  \
+#         python3 -m sfacts fit_complex -m {params.model_name}  \
 #                 --verbose --device {params.device} \
 #                 --hyperparameters gamma_hyper={params.gamma_hyper} \
 #                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -1627,7 +1627,7 @@ rule fit_sfacts_strategy36:
         r"""
         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
         rm -rf {output.initial_fit} {output.collapsed_fit} {output.full_fit}
-        python3 -m sfacts complex_fit2 -m {params.model_name}  \
+        python3 -m sfacts fit_complex2 -m {params.model_name}  \
                 --verbose --device {resources.device} \
                 --hyperparameters gamma_hyper={params.gamma_hyper} \
                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -1750,7 +1750,7 @@ use rule fit_sfacts_strategy36 as fit_sfacts_strategy36_gpu with:
 #         r"""
 #         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
 #         rm -rf {output.initial_fit} {output.collapsed_fit} {output.full_fit}
-#         python3 -m sfacts complex_fit2 -m {params.model_name}  \
+#         python3 -m sfacts fit_complex2 -m {params.model_name}  \
 #                 --verbose --device {params.device} \
 #                 --hyperparameters gamma_hyper={params.gamma_hyper} \
 #                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -1812,7 +1812,7 @@ rule fit_sfacts_strategy39_communities:
         r"""
         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
         rm -rf {output.initial_fit} {output.collapsed_fit}
-        python3 -m sfacts community_fit -m {params.model_name}  \
+        python3 -m sfacts fit_community -m {params.model_name}  \
                 --verbose --device {params.device} \
                 --hyperparameters gamma_hyper={params.gamma_hyper} \
                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -1866,7 +1866,7 @@ rule fit_sfacts_strategy39_genotypes:
         r"""
         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
         rm -rf {output.genotype_chunk_fit}
-        python3 -m sfacts genotype_fit -m {params.model_name}  \
+        python3 -m sfacts fit_genotype -m {params.model_name}  \
                 --num-positions {params.nposition} --block-number {params.block_number} --num-positionsB {params.npositionB} \
                 --hyperparameters gamma_hyper={params.gamma_hyper} \
                 --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
@@ -1895,7 +1895,7 @@ rule recombine_sfacts_genotypes_and_community:
         """
         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
         rm -rf {output}
-        python3 -m sfacts genotype_concatenate \
+        python3 -m sfacts concatenate_genotype_chunks \
                 --verbose \
                 --community {input.community} --metagenotype {input.metagenotype} \
                 --outpath {output} \
@@ -1946,7 +1946,7 @@ rule fit_sfacts_strategy40:
         r"""
         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
         rm -rf {output.fit}
-        python3 -m sfacts community_fit0 -m {params.model_name}  \
+        python3 -m sfacts fit_community0 -m {params.model_name}  \
                 --verbose --device {resources.device} \
                 --hyperparameters gamma_hyper={params.gamma_hyper} \
                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -2069,7 +2069,7 @@ rule fit_sfacts_strategy40_timeit:
         r"""
         rm -rf {output.fit}
         `which time` -o {output.time} -- \
-            python3 -m sfacts community_fit0 -m {params.model_name}  \
+            python3 -m sfacts fit_community0 -m {params.model_name}  \
                 --verbose --device {resources.device} \
                 --hyperparameters gamma_hyper={params.gamma_hyper} \
                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -2122,7 +2122,7 @@ rule fit_sfacts_strategy40_gpumem:
         rm -rf {output.fit}
         nvidia-smi -i $CUDA_VISIBLE_DEVICES --query-gpu=memory.used --format=csv,noheader,nounits --loop-ms=1000 --filename={output.gpumem} &
         gpumem_pid=$!
-            python3 -m sfacts community_fit0 -m {params.model_name}  \
+            python3 -m sfacts fit_community0 -m {params.model_name}  \
                 --verbose --device {resources.device} \
                 --hyperparameters gamma_hyper={params.gamma_hyper} \
                 --hyperparameters pi_hyper={params.pi_hyper} \
