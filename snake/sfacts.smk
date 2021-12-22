@@ -130,6 +130,11 @@ checkpoint extract_metagenotype_dimensions:
         {input.script} {input.mgen} > {output}
         """
 
+
+localrules:
+    extract_metagenotype_dimensions,
+
+
 def checkpoint_extract_metagenotype_dimensions(wildcards):
     with open(checkpoints.extract_metagenotype_dimensions.get(**wildcards).output[0]) as f:
         sizes = {}
