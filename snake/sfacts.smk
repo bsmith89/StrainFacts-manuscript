@@ -467,11 +467,11 @@ localrules:
 
 rule build_world_from_sfinder_tsv:
     output:
-        "{stem}.fit-{params}.world.nc",
+        "{stem}.fit-sfinder{params}.world.nc",
     input:
         script="scripts/sfacts_world_from_flatfiles.py",
-        gamma="{stem}.fit-{params}.gamma.tsv",
-        pi="{stem}.fit-{params}.pi.tsv",
+        gamma="{stem}.fit-sfinder{params}.gamma.tsv",
+        pi="{stem}.fit-sfinder{params}.pi.tsv",
         mgen="{stem}.tsv",
     # conda:
     #     "conda/sfacts.yaml"
