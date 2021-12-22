@@ -1585,7 +1585,10 @@ rule combine_scg_comparisons_for_all_species:
 #         collapse=0.02,
 #         cull=0.001,
 
+
 # NOTE: This is my current favorite for matching SCGs
+# TODO: Make a new version of this without the collapsing (for simplicity/communication)
+# TODO: After this rule is obsolete, drop the FitComplex app
 rule fit_sfacts_strategy36:
     output:
         initial_fit="{stem}.metagenotype{stemB}.fit-sfacts36-s{nstrain}-g{nposition}-seed{seed}.world_initial.nc",
