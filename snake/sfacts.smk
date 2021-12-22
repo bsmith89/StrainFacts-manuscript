@@ -1755,7 +1755,7 @@ use rule fit_sfacts_strategy36 as fit_sfacts_strategy36_gpu with:
 #         r"""
 #         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
 #         rm -rf {output.initial_fit} {output.collapsed_fit} {output.full_fit}
-#         python3 -m sfacts fit_complex2 -m {params.model_name}  \
+#         python3 -m sfacts fit_complex -m {params.model_name}  \
 #                 --verbose --device {params.device} \
 #                 --hyperparameters gamma_hyper={params.gamma_hyper} \
 #                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -1810,14 +1810,14 @@ rule fit_sfacts_strategy39_communities:
         walltime_hr=168,
         pmem=5_000,
         mem_mb=5_000,
-        gpu_mem_mb={0: 0, 1: 10_000}[config["USE_CUDA"]]
+        gpu_mem_mb={0: 0, 1: 10_000}[config["USE_CUDA"]],
     # conda:
     #     "conda/sfacts.yaml"
     shell:
         r"""
         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
         rm -rf {output.initial_fit} {output.collapsed_fit}
-        python3 -m sfacts fit_community -m {params.model_name}  \
+        python3 -m sfacts fit_and_collapse -m {params.model_name}  \
                 --verbose --device {params.device} \
                 --hyperparameters gamma_hyper={params.gamma_hyper} \
                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -1951,7 +1951,7 @@ rule fit_sfacts_strategy40:
         r"""
         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
         rm -rf {output.fit}
-        python3 -m sfacts fit_community0 -m {params.model_name}  \
+        python3 -m sfacts fit -m {params.model_name}  \
                 --verbose --device {resources.device} \
                 --hyperparameters gamma_hyper={params.gamma_hyper} \
                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -2074,7 +2074,7 @@ rule fit_sfacts_strategy40_timeit:
         r"""
         rm -rf {output.fit}
         `which time` -o {output.time} -- \
-            python3 -m sfacts fit_community0 -m {params.model_name}  \
+            python3 -m sfacts fit -m {params.model_name}  \
                 --verbose --device {resources.device} \
                 --hyperparameters gamma_hyper={params.gamma_hyper} \
                 --hyperparameters pi_hyper={params.pi_hyper} \
@@ -2127,7 +2127,7 @@ rule fit_sfacts_strategy40_gpumem:
         rm -rf {output.fit}
         nvidia-smi -i $CUDA_VISIBLE_DEVICES --query-gpu=memory.used --format=csv,noheader,nounits --loop-ms=1000 --filename={output.gpumem} &
         gpumem_pid=$!
-            python3 -m sfacts fit_community0 -m {params.model_name}  \
+            python3 -m sfacts fit -m {params.model_name}  \
                 --verbose --device {resources.device} \
                 --hyperparameters gamma_hyper={params.gamma_hyper} \
                 --hyperparameters pi_hyper={params.pi_hyper} \
