@@ -21,7 +21,7 @@ singularity-prefix: "/wynton/home/pollard/bsmith/.snakemake/singularity"
 singularity-args: "--bind /pollard/ --bind /salilab/diva1/home/anaconda/anaconda3 --bind /wynton/home/pollard/bsmith"
 config: ['MAX_THREADS=24', 'USE_CUDA=0']
 jobscript: 'profiles/wynton-qsub/jobscript.sh'
-drmaa: " -cwd \
+cluster: "qsub -cwd \
         -v PATH \
         -pe smp {threads} \
         -l h_rt={resources.walltime_hr}:{resources.walltime_min}:{resources.walltime_sec} \
