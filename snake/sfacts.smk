@@ -119,12 +119,15 @@ rule filter_metagenotype_and_subsample:
         python3 -m sfacts filter_mgen --min-minor-allele-freq {params.poly} --min-horizontal-cvrg {params.cvrg} --num-positions {params.npos} --random-seed {params.seed} {input} {output}
         """
 
+
 checkpoint extract_metagenotype_dimensions:
-    output: "{stemA}.metagenotype{stemB}.mgen_dims.tsv"
+    output:
+        "{stemA}.metagenotype{stemB}.mgen_dims.tsv",
     input:
         script="scripts/extract_metagenotype_dimensions.py",
         mgen="{stemA}.metagenotype{stemB}.nc",
-    conda: "conda/sfacts.yaml"
+    conda:
+        "conda/sfacts.yaml"
     shell:
         """
         {input.script} {input.mgen} > {output}
@@ -136,7 +139,9 @@ localrules:
 
 
 def checkpoint_extract_metagenotype_dimensions(wildcards):
-    with open(checkpoints.extract_metagenotype_dimensions.get(**wildcards).output[0]) as f:
+    with open(
+        checkpoints.extract_metagenotype_dimensions.get(**wildcards).output[0]
+    ) as f:
         sizes = {}
         for line in f:
             dim, length = line.split()
@@ -182,6 +187,7 @@ rule simulate_from_model_no_missing:
         """
         )
 
+
 rule simulate_from_simplest_model:
     output:
         "data/sfacts_simulate-model_simplest_simulation-n{n}-g{g}-s{s}-pi{pi_hyper}-mu{mu_hyper_mean}-eps{epsilon_hyper_mode}-seed{seed}.world.nc",
@@ -189,7 +195,7 @@ rule simulate_from_simplest_model:
         seed="[0-9]+",
         epsilon_hyper_mode="[0-9]+",
     params:
-        model_name='simplest_simulation',
+        model_name="simplest_simulation",
         seed=lambda w: int(w.seed),
         n=lambda w: int(w.n),
         g=lambda w: int(w.g),
@@ -503,6 +509,8 @@ rule evaluate_fit_against_simulation:
         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
         {input.script} {input.sim} {input.fit} {input.bench} {output}
         """
+
+
 #
 #
 # rule fit_sfacts_strategy8:
@@ -1596,7 +1604,7 @@ rule fit_sfacts_strategy36:
         full_fit="{stem}.metagenotype{stemB}.fit-sfacts36-s{nstrain}-g{nposition}-seed{seed}.world.nc",
         # history="{stem}.metagenotype{stemB}.fit-sfacts36-s{nstrain}-g{nposition}-seed{seed}.history.list",
     benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts36-s{nstrain}-g{nposition}-seed{seed}.benchmark",
+        "{stem}.metagenotype{stemB}.fit-sfacts36-s{nstrain}-g{nposition}-seed{seed}.benchmark"
     input:
         data="{stem}.metagenotype{stemB}.nc",
     params:
@@ -1607,7 +1615,7 @@ rule fit_sfacts_strategy36:
         gamma_hyper=1e-10,
         rho_hyper=0.5,
         pi_hyper=0.3,
-        alpha_hyper_mean=10.,
+        alpha_hyper_mean=10.0,
         alpha_hyper_scale=1e-6,
         anneal_rho_hyper=5.0,
         anneal_alpha_hyper_mean=1e3,
@@ -1658,6 +1666,7 @@ rule fit_sfacts_strategy36:
                 {input.data}
         """
 
+
 use rule fit_sfacts_strategy36 as fit_sfacts_strategy36_cpu with:
     output:
         initial_fit="{stem}.metagenotype{stemB}.fit-sfacts36_cpu-s{nstrain}-g{nposition}-seed{seed}.world_initial.nc",
@@ -1665,12 +1674,13 @@ use rule fit_sfacts_strategy36 as fit_sfacts_strategy36_cpu with:
         full_fit="{stem}.metagenotype{stemB}.fit-sfacts36_cpu-s{nstrain}-g{nposition}-seed{seed}.world.nc",
         # history="{stem}.metagenotype{stemB}.fit-sfacts36_cpu-s{nstrain}-g{nposition}-seed{seed}.history.list",
     benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts36_cpu-s{nstrain}-g{nposition}-seed{seed}.benchmark",
+        "{stem}.metagenotype{stemB}.fit-sfacts36_cpu-s{nstrain}-g{nposition}-seed{seed}.benchmark"
     resources:
         walltime_hr=36,
         pmem=5_000,
         mem_mb=5_000,
         device="cpu",
+
 
 use rule fit_sfacts_strategy36 as fit_sfacts_strategy36_gpu with:
     output:
@@ -1679,13 +1689,14 @@ use rule fit_sfacts_strategy36 as fit_sfacts_strategy36_gpu with:
         full_fit="{stem}.metagenotype{stemB}.fit-sfacts36_gpu-s{nstrain}-g{nposition}-seed{seed}.world.nc",
         # history="{stem}.metagenotype{stemB}.fit-sfacts36_gpu-s{nstrain}-g{nposition}-seed{seed}.history.list",
     benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts36_gpu-s{nstrain}-g{nposition}-seed{seed}.benchmark",
+        "{stem}.metagenotype{stemB}.fit-sfacts36_gpu-s{nstrain}-g{nposition}-seed{seed}.benchmark"
     resources:
         walltime_hr=36,
         pmem=5_000,
         mem_mb=5_000,
         device="cuda",
         gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
+
 
 # use rule fit_sfacts_strategy36 as fit_sfacts_strategy37 with:
 #     output:
@@ -1779,6 +1790,7 @@ use rule fit_sfacts_strategy36 as fit_sfacts_strategy36_gpu with:
 #                 {input.data}
 #         """
 
+
 # NOTE: This is my current favorite for BIG data.
 rule fit_sfacts_strategy39_communities:
     output:
@@ -1794,7 +1806,7 @@ rule fit_sfacts_strategy39_communities:
         gamma_hyper=1e-10,
         rho_hyper=1.0,
         pi_hyper=0.5,
-        alpha_hyper_mean=10.,
+        alpha_hyper_mean=10.0,
         alpha_hyper_scale=1e-6,
         anneal_alpha_hyper_mean=1e3,
         refine_alpha_hyper_mean=200,
@@ -1841,6 +1853,7 @@ rule fit_sfacts_strategy39_communities:
                 {input.data} {output.collapsed_fit}
         """
 
+
 rule fit_sfacts_strategy39_genotypes:
     output:
         genotype_chunk_fit="{stem}.metagenotype{stemB}.fit-{fit_params}.genotype_refit39-g{nposition}-chunk{chunk_i}-seed{seed}.nc",
@@ -1867,7 +1880,7 @@ rule fit_sfacts_strategy39_genotypes:
         walltime_hr=12,
         pmem=5_000,
         mem_mb=5_000,
-        gpu_mem_mb={0: 0, 1: 4_000}[config["USE_CUDA"]]
+        gpu_mem_mb={0: 0, 1: 4_000}[config["USE_CUDA"]],
     # conda:
     #     "conda/sfacts.yaml"
     shell:
@@ -1887,6 +1900,7 @@ rule fit_sfacts_strategy39_genotypes:
                 {input.community} {input.metagenotype} {output.genotype_chunk_fit}
         """
 
+
 rule recombine_sfacts_genotypes_and_community:
     output:
         "{stemA}.metagenotype{stemB}.fit-{fit_params}.genotype_{genofit_type}-g{nposition}-seed{seed}.world.nc",
@@ -1895,7 +1909,12 @@ rule recombine_sfacts_genotypes_and_community:
         community="{stemA}.metagenotype{stemB}.fit-{fit_params}.world_collapsed.nc",
         genotype_chunks=lambda w: [
             f"{{stemA}}.metagenotype{{stemB}}.fit-{{fit_params}}.genotype_{{genofit_type}}-g{{nposition}}-chunk{chunk_i}-seed{{seed}}.nc"
-            for chunk_i in range(math.ceil(checkpoint_extract_metagenotype_dimensions(w)['position'] / int(w.nposition)))
+            for chunk_i in range(
+                math.ceil(
+                    checkpoint_extract_metagenotype_dimensions(w)["position"]
+                    / int(w.nposition)
+                )
+            )
         ],
     # conda:
     #     "conda/sfacts.yaml"
@@ -1919,7 +1938,7 @@ rule fit_sfacts_strategy40:
         fit="{stem}.metagenotype{stemB}.fit-sfacts40-s{nstrain}-seed{seed}.world.nc",
         # history="{stem}.metagenotype{stemB}.fit-sfacts40-s{nstrain}-seed{seed}.history.list",
     benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts40-s{nstrain}-seed{seed}.benchmark",
+        "{stem}.metagenotype{stemB}.fit-sfacts40-s{nstrain}-seed{seed}.benchmark"
     input:
         data="{stem}.metagenotype{stemB}.nc",
     params:
@@ -1928,7 +1947,7 @@ rule fit_sfacts_strategy40:
         gamma_hyper=1e-10,
         rho_hyper=0.5,
         pi_hyper=0.3,
-        alpha_hyper_mean=10.,
+        alpha_hyper_mean=10.0,
         alpha_hyper_scale=1e-6,
         anneal_rho_hyper=5.0,
         anneal_alpha_hyper_mean=1e3,
@@ -1974,42 +1993,45 @@ rule fit_sfacts_strategy40:
                 {output.fit}
         """
 
+
 use rule fit_sfacts_strategy40 as fit_sfacts_strategy40_cpu with:
     output:
         fit="{stem}.metagenotype{stemB}.fit-sfacts40_cpu-s{nstrain}-seed{seed}.world.nc",
     benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts40_cpu-s{nstrain}-seed{seed}.benchmark",
+        "{stem}.metagenotype{stemB}.fit-sfacts40_cpu-s{nstrain}-seed{seed}.benchmark"
     resources:
         walltime_hr=36,
         pmem=5_000,
         mem_mb=5_000,
         device="cpu",
 
+
 use rule fit_sfacts_strategy40 as fit_sfacts_strategy40_gpu with:
     output:
         fit="{stem}.metagenotype{stemB}.fit-sfacts40_gpu-s{nstrain}-seed{seed}.world.nc",
     benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts40_gpu-s{nstrain}-seed{seed}.benchmark",
+        "{stem}.metagenotype{stemB}.fit-sfacts40_gpu-s{nstrain}-seed{seed}.benchmark"
     resources:
         walltime_hr=36,
         pmem=5_000,
         mem_mb=5_000,
-        device='cuda',
+        device="cuda",
         gpu_mem_mb=5_000,
+
 
 use rule fit_sfacts_strategy40 as fit_sfacts_strategy40_big with:
     output:
         fit="{stem}.metagenotype{stemB}.fit-sfacts40_big-s{nstrain}-seed{seed}.world.nc",
         # history="{stem}.metagenotype{stemB}.fit-sfacts40_big-s{nstrain}-seed{seed}.history.list",
     benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts40_big-s{nstrain}-seed{seed}.benchmark",
+        "{stem}.metagenotype{stemB}.fit-sfacts40_big-s{nstrain}-seed{seed}.benchmark"
     params:
         nstrain=lambda w: int(w.nstrain),
         precision=32,
         gamma_hyper=1e-10,
         rho_hyper=0.5,
         pi_hyper=0.3,
-        alpha_hyper_mean=10.,
+        alpha_hyper_mean=10.0,
         alpha_hyper_scale=1e-6,
         anneal_rho_hyper=5.0,
         anneal_alpha_hyper_mean=1e3,
@@ -2024,9 +2046,12 @@ use rule fit_sfacts_strategy40 as fit_sfacts_strategy40_big with:
 
 
 rule evaluate_simulation_fits_at_fixed_s_to_n_ratio:
-    output: touch("data/evaluate_{fit_type}_at_{n_ratio}x_samples-g{g}-s{s}-{sim_params}-seed{seed}.flag")
+    output:
+        touch(
+            "data/evaluate_{fit_type}_at_{n_ratio}x_samples-g{g}-s{s}-{sim_params}-seed{seed}.flag"
+        ),
     wildcard_constraints:
-        s='[0-9]+'
+        s="[0-9]+",
     input:
         lambda w: [
             "data/sfacts_simulate-model_simplest_simulation-n{n}-g{{g}}-s{{s}}-{{sim_params}}.metagenotype-n{n}-g{{g}}.fit-{{fit_type}}-s{fit_s}-seed{{seed}}.evaluation.tsv".format(
@@ -2037,7 +2062,8 @@ rule evaluate_simulation_fits_at_fixed_s_to_n_ratio:
                 int(w.s),
                 int(w.s) * 2,
             ]
-        ]
+        ],
+
 
 # RAM profile sfacts40
 # FIXME: Rename timeit to memprof
@@ -2046,7 +2072,7 @@ rule fit_sfacts_strategy40_timeit:
         fit="{stem}.metagenotype{stemB}.fit-sfacts40_timeit-s{nstrain}-seed{seed}.world.nc",
         time="{stem}.metagenotype{stemB}.fit-sfacts40_timeit-s{nstrain}-seed{seed}.time",
     benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts40_timeit-s{nstrain}-seed{seed}.benchmark",
+        "{stem}.metagenotype{stemB}.fit-sfacts40_timeit-s{nstrain}-seed{seed}.benchmark"
     input:
         data="{stem}.metagenotype{stemB}.nc",
     params:
@@ -2055,7 +2081,7 @@ rule fit_sfacts_strategy40_timeit:
         gamma_hyper=1e-10,
         rho_hyper=0.5,
         pi_hyper=0.3,
-        alpha_hyper_mean=10.,
+        alpha_hyper_mean=10.0,
         alpha_hyper_scale=1e-6,
         seed=lambda w: int(w.seed),
         model_name="ssdd3_with_error",
@@ -2094,12 +2120,13 @@ rule fit_sfacts_strategy40_timeit:
                 {output.fit}
         """
 
+
 rule fit_sfacts_strategy40_gpumem:
     output:
         fit="{stem}.metagenotype{stemB}.fit-sfacts40_gpumem-s{nstrain}-seed{seed}.world.nc",
         gpumem="{stem}.metagenotype{stemB}.fit-sfacts40_gpumem-s{nstrain}-seed{seed}.gpumem",
     benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts40_gpumem-s{nstrain}-seed{seed}.benchmark",
+        "{stem}.metagenotype{stemB}.fit-sfacts40_gpumem-s{nstrain}-seed{seed}.benchmark"
     input:
         data="{stem}.metagenotype{stemB}.nc",
     params:
@@ -2108,7 +2135,7 @@ rule fit_sfacts_strategy40_gpumem:
         gamma_hyper=1e-10,
         rho_hyper=0.5,
         pi_hyper=0.3,
-        alpha_hyper_mean=10.,
+        alpha_hyper_mean=10.0,
         alpha_hyper_scale=1e-6,
         seed=lambda w: int(w.seed),
         model_name="ssdd3_with_error",
@@ -2282,6 +2309,7 @@ rule fit_sfacts_strategy42:
                 {output.fit}
         """
 
+
 rule fit_sfacts_strategy42_v:
     output:
         fit="{stem}.metagenotype{stemB}.fit-sfacts42-pi{pi_hyper}-s{rstrain}-g{nposition}-seed{seed}.world.nc",
@@ -2346,6 +2374,7 @@ rule fit_sfacts_strategy42_v:
                 {input.data} \
                 {output.fit}
         """
+
 
 rule fit_sfacts_strategy43:
     output:
@@ -2412,6 +2441,7 @@ rule fit_sfacts_strategy43:
                 {output.fit}
         """
 
+
 rule fit_sfacts_strategy42_big:
     output:
         fit="{stem}.metagenotype{stemB}.fit-sfacts42_big-s{nstrain}-g{nposition}-seed{seed}.world.nc",
@@ -2475,6 +2505,7 @@ rule fit_sfacts_strategy42_big:
                 {input.data} \
                 {output.fit}
         """
+
 
 rule fit_sfacts_strategy41_genotypes:
     output:

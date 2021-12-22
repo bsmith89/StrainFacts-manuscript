@@ -77,5 +77,6 @@ def checkpoint_extract_scg_coverage_table(wildcards, threshold):
         )[lambda x: x > threshold]
         .reset_index()
         .species_id.value_counts()
-        .index.astype(str).to_list()
+        .index.astype(str)
+        .to_list()
     )

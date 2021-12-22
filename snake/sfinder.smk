@@ -59,6 +59,7 @@ rule fit_sfinder:
                 --em_out {output}
         """
 
+
 rule fit_sfinder_timeit:
     output:
         time="{stem}.fit-sfinder_timeit-s{nstrain}-seed{seed}.time",
