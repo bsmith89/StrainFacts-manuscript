@@ -880,13 +880,12 @@ rule compare_inferences_to_scgs:
         library_to_sample="data/ucfmt.barcode_to_sample.tsv",
         fit="data/ucfmt.sp-{species_id}.metagenotype.filt-{filt_stem}.fit-{fit_stem}.world.nc",
     params:
-        threshold=0.01,
-        pseudo=1e-10,
+        rabund_threshold=0.01,
     conda:
         "conda/sfacts.yaml"
     shell:
         """
-        {input.script} {input.mgen} {input.scg} {input.fit} {input.scg_to_sample} {input.library_to_sample} {params.threshold} {params.pseudo} {output}
+        {input.script} {input.mgen} {input.scg} {input.fit} {input.scg_to_sample} {input.library_to_sample} {params.rabund_threshold} {output}
         """
 
 
@@ -908,18 +907,21 @@ rule combine_scg_comparisons_for_all_species:
             [
                 "species_id",
                 "scg",
-                "focal_sample",
-                "smallest_fdist_all_strains",
-                "smallest_ddist_all_strains",
-                "smallest_fdist_all_mgen",
-                "smallest_ddist_all_mgen",
-                "smallest_fdist_focal_strains",
-                "smallest_ddist_focal_strains",
-                "smallest_fdist_focal_mgen",
-                "smallest_ddist_focal_mgen",
+                "sample",
+                "mgen",
+                "mgen_entropy",
+                "mgen_horizontal_coverage",
+                "scg_entropy",
                 "scg_horizontal_coverage",
-                "horizontal_coverage_focal_mgen",
-                "community_entropy_focal_sample",
+                "comm_entropy",
+                "fdist_any_strain",
+                "ddist_any_strain",
+                "fdist_any_mgen",
+                "ddist_any_mgen",
+                "fdist_focal_strain",
+                "ddist_focal_strain",
+                "fdist_focal_mgen",
+                "ddist_focal_mgen",
             ]
         ),
         prefix="data/ucfmt.sp-",
