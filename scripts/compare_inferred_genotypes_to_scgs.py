@@ -51,10 +51,12 @@ if __name__ == "__main__":
     smallest_ddist_all_mgen = sf.match_genotypes(
         scg.to_world(), mgen_consensus.discretized().to_world()
     )[1]
+    each_mgen_entropy = mgen.entropy("sample")
 
     scg_horizontal_coverage = (drplt.total_counts() > 0).mean("position")
 
     focal_samples = []
+    mgen_entropy = []
     smallest_fdist_focal_strains = []
     smallest_ddist_focal_strains = []
     smallest_fdist_focal_mgen = []
@@ -76,7 +78,16 @@ if __name__ == "__main__":
             .to_series()
         )
 
-        focal_samples.append(pd.Series([focal_sample]*len(d), index=focal_sample_scg_list))
+        focal_samples.append(
+            pd.Series([focal_sample] * len(d), index=focal_sample_scg_list)
+        )
+        mgen_entropy.append(
+            pd.Series(
+                [each_mgen_entropy.sel(sample=focal_sample_library_list).values.max()]
+                * len(d),
+                index=focal_sample_scg_list,
+            )
+        )
         smallest_fdist_focal_strains.append(
             sf.match_genotypes(
                 scg.mlift("sel", strain=focal_sample_scg_list).to_world(),
@@ -141,6 +152,11 @@ if __name__ == "__main__":
     else:
         focal_sample = np.nan
 
+    if mgen_entropy:
+        mgen_entropy = pd.concat(mgen_entropy)
+    else:
+        mgen_entropy = np.nan
+
     if smallest_fdist_focal_strains:
         smallest_fdist_focal_strains = pd.concat(smallest_fdist_focal_strains)
     else:
@@ -175,6 +191,7 @@ if __name__ == "__main__":
     out = pd.DataFrame(
         dict(
             focal_sample=focal_sample,
+            mgen_entropy=mgen_entropy,
             smallest_fdist_all_strains=smallest_fdist_all_strains,
             smallest_ddist_all_strains=smallest_ddist_all_strains,
             smallest_fdist_all_mgen=smallest_fdist_all_mgen,
