@@ -15,7 +15,7 @@ from lib.snake import (
     nested_defaultdict,
     nested_dictlookup,
 )
-from lib.pandas import idxwhere
+from lib.pandas_util import idxwhere
 import pandas as pd
 import math
 from itertools import product
@@ -29,7 +29,7 @@ import snakemake.utils
 
 # {{{2 General Configuration
 
-snakemake.utils.min_version("6.7")
+# snakemake.utils.min_version("6.7")
 
 
 config = nested_defaultdict()
@@ -118,9 +118,11 @@ include: "snake/util.smk"
 include: "snake/general.smk"
 include: "snake/docs.smk"
 include: "snake/mgen_preprocess.smk"
+include: "snake/drplt.smk"
 
 
 include: "snake/sfacts.smk"
+include: "snake/sfinder.smk"
 
 
 if path.exists("snake/local.smk"):
