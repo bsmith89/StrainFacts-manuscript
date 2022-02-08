@@ -18,26 +18,34 @@ tblPrefix: [table, tables]
 
 
 <!--
-TODO: Subset bibliography
+Things to do for v0.2:
+
 TODO: Re-construct vector figures: Use vector export from Jupyter; drop
 background colors, borders around legends, etc.
 TODO: Use hats on estimated parameters?
 TODO: Rasterize pcolormesh
 TODO: Add strain assembly citations to: [@Vicedomini2021; @Quince2021]
 TODO: Add [@Olekhnovich2021]
-
+TODO: Consider linking Zenodo for both sfacts and manuscript repos.
+TODO: Re-analyze SCG data where the sparsity of the consensus genotypes is also
+considered in the scg-inferred comparison (so that low-coverage metagenotypes
+don't get an advantage due to the masking)
+TODO: Homogeneous, private use hardware for benchmarking runtimes.
+TODO: CPU/GPU written out on first use? OR GPU _not_ written out in abstract?
+TODO: "Conflicts" vs. "Competing Interests"
+TODO: Upload SCG dataset to SRA
 
 
 
 Rendering checklist:
 
+TODO: Rename supplementary figures (e.g. from 8, 9, 10 to S1-3) in both
+captions and inlined citations. (Find/Replace works well. Be sure catch both Figure and Fig)
 TODO: Split out supplementary, by save-as a new DOCX and then remove the other parts.
 TODO: Upgrade "Supplementary Materials" to Title style.
 TODO: Split References into Supp. and non-supp parts (manually, since not numbered)
 TODO: Replace title/authors with cover-page from static DOCX
 TODO: Add page-break afer abstract
-TODO: Rename supplementary figures (e.g. from 8, 9, 10 to S1-3) in both
-captions and inlined citations.
 TODO: Figure placement (one of): Move figures up or down to minimize
 whitespace, OR move all figure legends to after the references and remove the
 images themselves.
@@ -46,6 +54,7 @@ TODO: Resize figures that are too large.
 TODO: Move Author Contributions to after the references TODO??
 TODO: Add page breaks as appropriate.
 TODO: Bold Figure N, Table N in captions
+TODO: Table caption (or just footnotes?) to below tables.
 TODO: Add line numbers
 TODO: If figures included, save a reload any DOCX files with figures
 included. Re-insert full quality PNG figures (as the PDF insertions will lose
