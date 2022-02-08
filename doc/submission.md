@@ -489,19 +489,18 @@ $[\lfloor10^{(i-1)/c}\rfloor, \lfloor10^{i/c}\rfloor)$ where $c=30$ so that
 ### Software and code availability
 
 StrainFacts is implemented in Python3 and is available at
-<https://github.com/bsmith89/StrainFacts>.
-For software reproducibility, all analyses were performed using a
-Singularity container [@Kurtzer2017] defined as described at
-<https://github.com/bsmith89/compbio-container/blob/master/compbio/Dockerfile>.
+<https://github.com/bsmith89/StrainFacts> and v0.1 was used for all results
+reported here.
 A forked version of Strain Finder—modified for ease of installation and to
 specify a random seed for reproducibility—can be found at
 <https://github.com/bsmith89/StrainFinder>.
 All other code and metadata needed to re-run these analyses is available at
-<https://github.com/bsmith89/haplo-manuscript>.
+<https://github.com/bsmith89/StrainFacts-manuscript>.
+For software reproducibility, all analyses were performed using a
+Singularity container [@Kurtzer2017].
 
 <!--
-TODO: SFacts Version 0.1 was used for the results reported in this
-manuscript. 
+TODO: Dockerfile in *-manuscript repo.
 -->
 
 # Results
@@ -1041,7 +1040,7 @@ Biohub.
 
 Barbara Engelhardt provided valuable feedback on this project.
 
-## Conflicts
+## Competing Interests
 
 KSP is on the scientific advisory board of Phylagen.
 
@@ -1062,9 +1061,9 @@ Metagenomic and single-cell sequencing data from the FMT study will be uploaded
 to the SRA under BioProject PRJNA737472. Publicly available metagenomes are
 available under various other accessions described in [@Shi2021]. Strain
 genotypes from the GT-Pro reference database are publicly available at
-<[https://fileshare.czbiohub.org/s/waXQzQ9PRZPwTdk](https://fileshare.czbiohub.org/s/waXQzQ9PRZPwTdk)>.
+<https://fileshare.czbiohub.org/s/waXQzQ9PRZPwTdk>.
 All other code and metadata needed to reproduce these results are available at
-<https://github.com/bsmith89/haplo-manuscript>.
+<https://github.com/bsmith89/StrainFacts-manuscript>.
 
 # Supplementary Materials
 
