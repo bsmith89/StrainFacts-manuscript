@@ -29,4 +29,4 @@ dependencies:
   - line_profiler
   - memory_profiler
   - pip:
-    - -e /Users/byronsmith/Projects/haplo-benchmark/include/StrainFacts
+    - git+https://github.com/bsmith89/StrainFacts.git#egg=sfacts
