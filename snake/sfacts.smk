@@ -138,6 +138,8 @@ localrules:
     extract_metagenotype_dimensions,
 
 
+# NOTE: This amended function only works if extract_metagenotype_dimensions has already been run.
+# This can be setup automatically by making extract_metagenotype_dimensions a checkpoint rule.
 def checkpoint_extract_metagenotype_dimensions(wildcards):
     with open(
         checkpoints.extract_metagenotype_dimensions.get(**wildcards).output[0]
@@ -499,15 +501,14 @@ rule evaluate_fit_against_simulation:
         script="scripts/evaluate_haplotyping_against_simulation.py",
         sim="data/sfacts_simulate-{sim_stem}.world.nc",
         fit="data/sfacts_simulate-{sim_stem}.metagenotype-{portion_stem}.fit-{params}.world.nc",
-        bench="data/sfacts_simulate-{sim_stem}.metagenotype-{portion_stem}.fit-{params}.benchmark",
-    # conda:
-    #     "conda/sfacts.yaml"
+        # bench="data/sfacts_simulate-{sim_stem}.metagenotype-{portion_stem}.fit-{params}.benchmark",
+    conda:
+        "conda/sfacts.yaml"
     resources:
         walltime_hr=12,
     shell:
         """
-        export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
-        {input.script} {input.sim} {input.fit} {input.bench} {output}
+        {input.script} {input.sim} {input.fit} {output}
         """
 
 
@@ -923,7 +924,6 @@ rule combine_scg_comparisons_for_all_species:
                 "fdist_focal_strain",
                 "ddist_focal_strain",
                 "mdist_focal_strain",
-                "ndist_focal_strain",
                 "fdist_focal_mgen",
                 "ddist_focal_mgen",
                 "mdist_focal_mgen",
@@ -2072,23 +2072,862 @@ rule evaluate_simulation_fits_at_fixed_s_to_n_ratio:
         ],
 
 
-# RAM profile sfacts40
-# FIXME: Rename timeit to memprof
-rule fit_sfacts_strategy40_timeit:
+# # RAM profile sfacts40
+# # FIXME: Rename timeit to memprof
+# rule fit_sfacts_strategy40_timeit:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts40_timeit-s{nstrain}-seed{seed}.world.nc",
+#         time="{stem}.metagenotype{stemB}.fit-sfacts40_timeit-s{nstrain}-seed{seed}.time",
+#     benchmark:
+#         "{stem}.metagenotype{stemB}.fit-sfacts40_timeit-s{nstrain}-seed{seed}.benchmark"
+#     input:
+#         data="{stem}.metagenotype{stemB}.nc",
+#     params:
+#         nstrain=lambda w: int(w.nstrain),
+#         precision=32,
+#         gamma_hyper=1e-10,
+#         rho_hyper=0.5,
+#         pi_hyper=0.3,
+#         alpha_hyper_mean=10.0,
+#         alpha_hyper_scale=1e-6,
+#         seed=lambda w: int(w.seed),
+#         model_name="ssdd3_with_error",
+#         lag1=50,
+#         lag2=100,
+#         lr=0.05,
+#         min_learning_rate=1e-6,
+#     resources:
+#         # pmem=resource_calculator(data=2, nstrain=2, agg=math.prod),
+#         # gpu_mem_mb=resource_calculator(data=2, nstrain=2, agg=math.prod),
+#         walltime_hr=1,
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device="cpu",
+#         gpu_mem_mb=0,
+#     conda:
+#         "conda/sfacts.yaml"
+#     shell:
+#         r"""
+#         rm -rf {output.fit}
+#         `which time` -o {output.time} -- \
+#             python3 -m sfacts fit -m {params.model_name}  \
+#                 --verbose --device {resources.device} \
+#                 --hyperparameters gamma_hyper={params.gamma_hyper} \
+#                 --hyperparameters pi_hyper={params.pi_hyper} \
+#                 --hyperparameters rho_hyper={params.rho_hyper} \
+#                 --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+#                 --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+#                 --optimizer-learning-rate {params.lr} \
+#                 --min-optimizer-learning-rate {params.min_learning_rate} \
+#                 --max-iter 1_000 --lag1 {params.lag1} --lag2 {params.lag2} \
+#                 --num-strains {params.nstrain} \
+#                 --precision {params.precision} \
+#                 --random-seed {params.seed} \
+#                 {input.data} \
+#                 {output.fit}
+#         """
+
+
+# rule fit_sfacts_strategy40_gpumem:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts40_gpumem-s{nstrain}-seed{seed}.world.nc",
+#         gpumem="{stem}.metagenotype{stemB}.fit-sfacts40_gpumem-s{nstrain}-seed{seed}.gpumem",
+#     benchmark:
+#         "{stem}.metagenotype{stemB}.fit-sfacts40_gpumem-s{nstrain}-seed{seed}.benchmark"
+#     input:
+#         data="{stem}.metagenotype{stemB}.nc",
+#     params:
+#         nstrain=lambda w: int(w.nstrain),
+#         precision=32,
+#         gamma_hyper=1e-10,
+#         rho_hyper=0.5,
+#         pi_hyper=0.3,
+#         alpha_hyper_mean=10.0,
+#         alpha_hyper_scale=1e-6,
+#         seed=lambda w: int(w.seed),
+#         model_name="ssdd3_with_error",
+#         lag1=50,
+#         lag2=100,
+#         lr=0.05,
+#         min_learning_rate=1e-6,
+#     resources:
+#         walltime_min=10,
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device="cuda",
+#         gpu_mem_mb=10_000,
+#     # conda:
+#     #     "conda/sfacts.yaml"
+#     shell:
+#         r"""
+#         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
+#         rm -rf {output.fit}
+#         nvidia-smi -i $CUDA_VISIBLE_DEVICES --query-gpu=memory.used --format=csv,noheader,nounits --loop-ms=1000 --filename={output.gpumem} &
+#         gpumem_pid=$!
+#             python3 -m sfacts fit -m {params.model_name}  \
+#                 --verbose --device {resources.device} \
+#                 --hyperparameters gamma_hyper={params.gamma_hyper} \
+#                 --hyperparameters pi_hyper={params.pi_hyper} \
+#                 --hyperparameters rho_hyper={params.rho_hyper} \
+#                 --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+#                 --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+#                 --optimizer-learning-rate {params.lr} \
+#                 --min-optimizer-learning-rate {params.min_learning_rate} \
+#                 --max-iter 1_000 --lag1 {params.lag1} --lag2 {params.lag2} \
+#                 --num-strains {params.nstrain} \
+#                 --precision {params.precision} \
+#                 --random-seed {params.seed} \
+#                 {input.data} \
+#                 {output.fit}
+#         sleep 5
+#         kill $gpumem_pid
+#         wait -n $gpumem_pid
+#         """
+
+
+# rule fit_sfacts_strategy41:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts41-s{nstrain}-g{nposition}-seed{seed}.world.nc",
+#     benchmark:
+#         "{stem}.metagenotype{stemB}.fit-sfacts41-s{nstrain}-g{nposition}-seed{seed}.benchmark"
+#     wildcard_constraints:
+#         nstrain="[0-9]+",
+#         nposition="[0-9]+",
+#         seed="[0-9]+",
+#     input:
+#         data="{stem}.metagenotype{stemB}.nc",
+#     params:
+#         nstrain=lambda w: int(w.nstrain),
+#         nposition=lambda w: int(w.nposition),
+#         precision=32,
+#         gamma_hyper=1e-5,
+#         rho_hyper=0.5,
+#         pi_hyper=0.3,
+#         alpha_hyper_mean=1e1,
+#         alpha_hyper_scale=1e-6,
+#         anneal_gamma_hyper=1e0,
+#         anneal_rho_hyper=5.0,
+#         anneal_alpha_hyper_mean=1e1,
+#         seed=lambda w: int(w.seed),
+#         model_name="ssdd3_with_error",
+#         lag1=50,
+#         lag2=100,
+#         anneal_steps=5000,
+#         anneal_wait=1000,
+#         lr=0.05,
+#         min_learning_rate=1e-6,
+#     resources:
+#         # pmem=resource_calculator(data=2, nstrain=2, agg=math.prod),
+#         # gpu_mem_mb=resource_calculator(data=2, nstrain=2, agg=math.prod),
+#         walltime_hr=36,
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
+#         gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
+#     # conda:
+#     #     "conda/sfacts.yaml"
+#     shell:
+#         r"""
+#         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
+#         rm -rf {output.fit}
+#         python3 -m sfacts fit -m {params.model_name}  \
+#                 --verbose --device {resources.device} \
+#                 --precision {params.precision} \
+#                 --random-seed {params.seed} \
+#                 --num-strains {params.nstrain} --num-positions {params.nposition} \
+#                 --nmf-init \
+#                 --hyperparameters gamma_hyper={params.gamma_hyper} \
+#                 --hyperparameters pi_hyper={params.pi_hyper} \
+#                 --hyperparameters rho_hyper={params.rho_hyper} \
+#                 --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+#                 --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+#                 --anneal-hyperparameters gamma_hyper={params.anneal_gamma_hyper} rho_hyper={params.anneal_rho_hyper} pi_hyper=1.0 alpha_hyper_mean={params.anneal_alpha_hyper_mean} \
+#                 --anneal-steps {params.anneal_steps} --anneal-wait {params.anneal_wait} \
+#                 --optimizer-learning-rate {params.lr} \
+#                 --min-optimizer-learning-rate {params.min_learning_rate} \
+#                 --max-iter 1_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
+#                 {input.data} \
+#                 {output.fit}
+#         """
+
+
+# rule fit_sfacts_strategy41_fixed_g:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts41-s{nstrain}-seed{seed}.world.nc",
+#     benchmark:
+#         "{stem}.metagenotype{stemB}.fit-sfacts41-s{nstrain}-seed{seed}.benchmark"
+#     wildcard_constraints:
+#         nstrain="[0-9]+",
+#         seed="[0-9]+",
+#     input:
+#         data="{stem}.metagenotype{stemB}.nc",
+#     params:
+#         nstrain=lambda w: int(w.nstrain),
+#         nposition=1_000_000_000,  # More than is reasonable.
+#         precision=32,
+#         gamma_hyper=1e-5,
+#         rho_hyper=0.5,
+#         pi_hyper=0.3,
+#         alpha_hyper_mean=1e1,
+#         alpha_hyper_scale=1e-6,
+#         anneal_gamma_hyper=1e0,
+#         anneal_rho_hyper=5.0,
+#         anneal_alpha_hyper_mean=1e1,
+#         seed=lambda w: int(w.seed),
+#         model_name="ssdd3_with_error",
+#         lag1=50,
+#         lag2=100,
+#         anneal_steps=5000,
+#         anneal_wait=1000,
+#         lr=0.05,
+#         min_learning_rate=1e-6,
+#     resources:
+#         # pmem=resource_calculator(data=2, nstrain=2, agg=math.prod),
+#         # gpu_mem_mb=resource_calculator(data=2, nstrain=2, agg=math.prod),
+#         walltime_hr=36,
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
+#         gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
+#     # conda:
+#     #     "conda/sfacts.yaml"
+#     shell:
+#         r"""
+#         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
+#         rm -rf {output.fit}
+#         python3 -m sfacts fit -m {params.model_name}  \
+#                 --verbose --device {resources.device} \
+#                 --precision {params.precision} \
+#                 --random-seed {params.seed} \
+#                 --num-strains {params.nstrain} --num-positions {params.nposition} \
+#                 --nmf-init \
+#                 --hyperparameters gamma_hyper={params.gamma_hyper} \
+#                 --hyperparameters pi_hyper={params.pi_hyper} \
+#                 --hyperparameters rho_hyper={params.rho_hyper} \
+#                 --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+#                 --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+#                 --anneal-hyperparameters gamma_hyper={params.anneal_gamma_hyper} rho_hyper={params.anneal_rho_hyper} pi_hyper=1.0 alpha_hyper_mean={params.anneal_alpha_hyper_mean} \
+#                 --anneal-steps {params.anneal_steps} --anneal-wait {params.anneal_wait} \
+#                 --optimizer-learning-rate {params.lr} \
+#                 --min-optimizer-learning-rate {params.min_learning_rate} \
+#                 --max-iter 1_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
+#                 {input.data} \
+#                 {output.fit}
+#         """
+
+# rule fit_sfacts_strategy41_timeit:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts41_timeit-s{nstrain}-seed{seed}.world.nc",
+#         time="{stem}.metagenotype{stemB}.fit-sfacts41_timeit-s{nstrain}-seed{seed}.time",
+#     wildcard_constraints:
+#         nstrain="[0-9]+",
+#         seed="[0-9]+",
+#     input:
+#         data="{stem}.metagenotype{stemB}.nc",
+#     params:
+#         nstrain=lambda w: int(w.nstrain),
+#         nposition=1_000_000_000,  # More than is reasonable.
+#         precision=32,
+#         gamma_hyper=1e-5,
+#         rho_hyper=0.5,
+#         pi_hyper=0.3,
+#         alpha_hyper_mean=1e1,
+#         alpha_hyper_scale=1e-6,
+#         seed=lambda w: int(w.seed),
+#         model_name="ssdd3_with_error",
+#         lag1=50,
+#         lag2=100,
+#         lr=0.05,
+#         min_learning_rate=1e-2,
+#     resources:
+#         walltime_hr=1,
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device="cpu",
+#         gpu_mem_mb=0,
+#     conda:
+#         "conda/sfacts.yaml"
+#     shell:
+#         r"""
+#         rm -rf {output.fit}
+#         `which time` -o {output.time} -- \
+#             python3 -m sfacts fit -m {params.model_name}  \
+#                 --verbose --device {resources.device} \
+#                 --precision {params.precision} \
+#                 --random-seed {params.seed} \
+#                 --num-strains {params.nstrain} --num-positions {params.nposition} \
+#                 --nmf-init \
+#                 --hyperparameters gamma_hyper={params.gamma_hyper} \
+#                 --hyperparameters pi_hyper={params.pi_hyper} \
+#                 --hyperparameters rho_hyper={params.rho_hyper} \
+#                 --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+#                 --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+#                 --optimizer-learning-rate {params.lr} \
+#                 --min-optimizer-learning-rate {params.min_learning_rate} \
+#                 --max-iter 1_000 --lag1 {params.lag1} --lag2 {params.lag2} \
+#                 {input.data} \
+#                 {output.fit}
+#         """
+
+# rule fit_sfacts_strategy41_gpumem:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts41_gpumem-s{nstrain}-seed{seed}.world.nc",
+#         gpumem="{stem}.metagenotype{stemB}.fit-sfacts41_gpumem-s{nstrain}-seed{seed}.gpumem",
+#     wildcard_constraints:
+#         nstrain="[0-9]+",
+#         seed="[0-9]+",
+#     input:
+#         data="{stem}.metagenotype{stemB}.nc",
+#     params:
+#         nstrain=lambda w: int(w.nstrain),
+#         nposition=1_000_000_000,  # More than is reasonable.
+#         precision=32,
+#         gamma_hyper=1e-5,
+#         rho_hyper=0.5,
+#         pi_hyper=0.3,
+#         alpha_hyper_mean=1e1,
+#         alpha_hyper_scale=1e-6,
+#         seed=lambda w: int(w.seed),
+#         model_name="ssdd3_with_error",
+#         lag1=50,
+#         lag2=100,
+#         lr=0.05,
+#         min_learning_rate=1e-2,
+#     resources:
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device="cuda",
+#         gpu_mem_mb=3_000,
+#     # conda:
+#     #     "conda/sfacts.yaml"
+#     shell:
+#         r"""
+#         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
+#         rm -rf {output.fit}
+#         nvidia-smi -i $CUDA_VISIBLE_DEVICES --query-gpu=memory.used --format=csv,noheader,nounits --loop-ms=1000 --filename={output.gpumem} &
+#         gpumem_pid=$!
+#             python3 -m sfacts fit -m {params.model_name}  \
+#                 --verbose --device {resources.device} \
+#                 --precision {params.precision} \
+#                 --random-seed {params.seed} \
+#                 --num-strains {params.nstrain} --num-positions {params.nposition} \
+#                 --nmf-init \
+#                 --hyperparameters gamma_hyper={params.gamma_hyper} \
+#                 --hyperparameters pi_hyper={params.pi_hyper} \
+#                 --hyperparameters rho_hyper={params.rho_hyper} \
+#                 --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+#                 --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+#                 --optimizer-learning-rate {params.lr} \
+#                 --min-optimizer-learning-rate {params.min_learning_rate} \
+#                 --max-iter 1_000 --lag1 {params.lag1} --lag2 {params.lag2} \
+#                 {input.data} \
+#                 {output.fit}
+#         sleep 5
+#         kill $gpumem_pid
+#         wait -n $gpumem_pid
+#         """
+
+# use rule fit_sfacts_strategy41_fixed_g as fit_sfacts_strategy41_cpu with:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts41_cpu-s{nstrain}-seed{seed}.world.nc",
+#     benchmark:
+#         "{stem}.metagenotype{stemB}.fit-sfacts41_cpu-s{nstrain}-seed{seed}.benchmark"
+#     resources:
+#         walltime_hr=36,
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device='cpu',
+#         gpu_mem_mb=0,
+
+
+# use rule fit_sfacts_strategy41_fixed_g as fit_sfacts_strategy41_gpu with:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts41_gpu-s{nstrain}-seed{seed}.world.nc",
+#     benchmark:
+#         "{stem}.metagenotype{stemB}.fit-sfacts41_gpu-s{nstrain}-seed{seed}.benchmark"
+#     resources:
+#         walltime_hr=36,
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device='cuda',
+#         gpu_mem_mb=5_000,
+
+# use rule fit_sfacts_strategy41_fixed_g as fit_sfacts_strategy41_big with:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts41_big-s{nstrain}-seed{seed}.world.nc",
+#     benchmark:
+#         "{stem}.metagenotype{stemB}.fit-sfacts41_big-s{nstrain}-seed{seed}.benchmark"
+#     params:
+#         nstrain=lambda w: int(w.nstrain),
+#         nposition=1_000_000_000,  # More than is reasonable.
+#         precision=64,
+#         gamma_hyper=1e-5,
+#         rho_hyper=0.5,
+#         pi_hyper=0.3,
+#         alpha_hyper_mean=1e1,
+#         alpha_hyper_scale=1e-6,
+#         anneal_gamma_hyper=1e0,
+#         anneal_rho_hyper=5.0,
+#         anneal_alpha_hyper_mean=1e1,
+#         seed=lambda w: int(w.seed),
+#         model_name="ssdd3_with_error",
+#         lag1=50,
+#         lag2=100,
+#         anneal_steps=10_000,
+#         anneal_wait=2000,
+#         lr=0.01,
+#         min_learning_rate=1e-8,
+#     resources:
+#         walltime_hr=36,
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device='cuda',
+#         gpu_mem_mb=5_000,
+
+# use rule fit_sfacts_strategy41_fixed_g as fit_sfacts_strategy45_big with:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts45_big-s{nstrain}-seed{seed}.world.nc",
+#     benchmark:
+#         "{stem}.metagenotype{stemB}.fit-sfacts45_big-s{nstrain}-seed{seed}.benchmark"
+#     params:
+#         nstrain=lambda w: int(w.nstrain),
+#         nposition=1_000_000_000,  # More than is reasonable.
+#         precision=32,
+#         gamma_hyper=1e-5,
+#         rho_hyper=5.0,
+#         pi_hyper=0.3,
+#         alpha_hyper_mean=1e1,
+#         alpha_hyper_scale=1e-6,
+#         anneal_gamma_hyper=1e0,
+#         anneal_rho_hyper=5.0,
+#         anneal_alpha_hyper_mean=1e1,
+#         seed=lambda w: int(w.seed),
+#         model_name="ssdd3_with_error",
+#         lag1=50,
+#         lag2=100,
+#         anneal_steps=10_000,
+#         anneal_wait=2000,
+#         lr=0.05,
+#         min_learning_rate=1e-6,
+#     resources:
+#         walltime_hr=36,
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device='cuda',
+#         gpu_mem_mb=5_000,
+
+# use rule fit_sfacts_strategy41_fixed_g as fit_sfacts_strategy44_big with:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts44_big-s{nstrain}-seed{seed}.world.nc",
+#     benchmark:
+#         "{stem}.metagenotype{stemB}.fit-sfacts44_big-s{nstrain}-seed{seed}.benchmark"
+#     params:
+#         nstrain=lambda w: int(w.nstrain),
+#         nposition=1_000_000_000,  # More than is reasonable.
+#         precision=32,
+#         gamma_hyper=1e-10,
+#         rho_hyper=0.5,
+#         pi_hyper=0.3,
+#         alpha_hyper_mean=1e1,
+#         alpha_hyper_scale=1e-6,
+#         anneal_gamma_hyper=1e0,
+#         anneal_rho_hyper=5.0,
+#         anneal_alpha_hyper_mean=1e1,
+#         seed=lambda w: int(w.seed),
+#         model_name="ssdd3_with_error",
+#         lag1=50,
+#         lag2=100,
+#         anneal_steps=10_000,
+#         anneal_wait=2000,
+#         lr=0.05,
+#         min_learning_rate=1e-6,
+#     resources:
+#         walltime_hr=36,
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device='cuda',
+#         gpu_mem_mb=5_000,
+
+rule fit_sfacts_strategyN:
     output:
-        fit="{stem}.metagenotype{stemB}.fit-sfacts40_timeit-s{nstrain}-seed{seed}.world.nc",
-        time="{stem}.metagenotype{stemB}.fit-sfacts40_timeit-s{nstrain}-seed{seed}.time",
+        fit="{stem}.metagenotype{stemB}.fit-sfactsN-s{nstrain}-g{nposition}-seed{seed}.world.nc",
     benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts40_timeit-s{nstrain}-seed{seed}.benchmark"
+        "{stem}.metagenotype{stemB}.fit-sfactsN-s{nstrain}-g{nposition}-seed{seed}.benchmark"
+    wildcard_constraints:
+        nstrain="[0-9]+",
+        seed="[0-9]+",
+        nposition="[0-9]+",
     input:
         data="{stem}.metagenotype{stemB}.nc",
     params:
         nstrain=lambda w: int(w.nstrain),
+        nposition=lambda w: int(w.nposition),
+        precision=32,
+        gamma_hyper=1e-20,
+        rho_hyper=0.1,
+        pi_hyper=0.3,
+        alpha_hyper_mean=1e5,
+        alpha_hyper_scale=1e-6,
+        seed=lambda w: int(w.seed),
+        model_name="ssdd3_with_error",
+        anneal_steps=1,
+        lag1=50,
+        lag2=100,
+        optimizer="RMSprop",
+        lr=5e-2,
+        clip_norm=1e5,
+        min_learning_rate=1e-6,
+    resources:
+        walltime_hr=36,
+        pmem=5_000,
+        mem_mb=5_000,
+        device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
+        gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
+    shell:
+        r"""
+        export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
+        rm -rf {output.fit}
+        python3 -m sfacts fit -m {params.model_name}  \
+                --verbose --device {resources.device} \
+                --precision {params.precision} \
+                --random-seed {params.seed} \
+                --num-strains {params.nstrain} --num-positions {params.nposition} \
+                --nmf-init \
+                --hyperparameters gamma_hyper={params.gamma_hyper} \
+                --hyperparameters pi_hyper={params.pi_hyper} \
+                --hyperparameters rho_hyper={params.rho_hyper} \
+                --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+                --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+                --anneal-hyperparameters pi_hyper=1.0 rho_hyper=1.0 \
+                --anneal-steps {params.anneal_steps} \
+                --optimizer-learning-rate {params.lr} \
+                --optimizer {params.optimizer} \
+                --optimizer-clip-norm {params.clip_norm} \
+                --min-optimizer-learning-rate {params.min_learning_rate} \
+                --max-iter 1_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
+                {input.data} \
+                {output.fit}
+        """
+
+
+rule fit_sfacts_strategy44:
+    output:
+        fit="{stem}.metagenotype{stemB}.fit-sfacts44-s{nstrain}-g{nposition}-seed{seed}.world.nc",
+    benchmark:
+        "{stem}.metagenotype{stemB}.fit-sfacts44-s{nstrain}-g{nposition}-seed{seed}.benchmark"
+    wildcard_constraints:
+        nstrain="[0-9]+",
+        seed="[0-9]+",
+        nposition="[0-9]+",
+    input:
+        data="{stem}.metagenotype{stemB}.nc",
+    params:
+        nstrain=lambda w: int(w.nstrain),
+        nposition=lambda w: int(w.nposition),
         precision=32,
         gamma_hyper=1e-10,
         rho_hyper=0.5,
         pi_hyper=0.3,
-        alpha_hyper_mean=10.0,
+        alpha_hyper_mean=1e1,
+        alpha_hyper_scale=1e-6,
+        anneal_gamma_hyper=1e0,
+        anneal_rho_hyper=5.0,
+        anneal_alpha_hyper_mean=1e1,
+        seed=lambda w: int(w.seed),
+        model_name="ssdd3_with_error",
+        lag1=50,
+        lag2=100,
+        anneal_steps=10_000,
+        anneal_wait=2000,
+        lr=0.05,
+        min_learning_rate=1e-6,
+    resources:
+        walltime_hr=36,
+        pmem=5_000,
+        mem_mb=5_000,
+        device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
+        gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
+    shell:
+        r"""
+        export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
+        rm -rf {output.fit}
+        python3 -m sfacts fit -m {params.model_name}  \
+                --verbose --device {resources.device} \
+                --precision {params.precision} \
+                --random-seed {params.seed} \
+                --num-strains {params.nstrain} --num-positions {params.nposition} \
+                --nmf-init \
+                --hyperparameters gamma_hyper={params.gamma_hyper} \
+                --hyperparameters pi_hyper={params.pi_hyper} \
+                --hyperparameters rho_hyper={params.rho_hyper} \
+                --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+                --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+                --anneal-hyperparameters gamma_hyper={params.anneal_gamma_hyper} rho_hyper={params.anneal_rho_hyper} pi_hyper=1.0 alpha_hyper_mean={params.anneal_alpha_hyper_mean} \
+                --anneal-steps {params.anneal_steps} --anneal-wait {params.anneal_wait} \
+                --optimizer-learning-rate {params.lr} \
+                --min-optimizer-learning-rate {params.min_learning_rate} \
+                --max-iter 1_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
+                {input.data} \
+                {output.fit}
+        """
+
+rule fit_sfacts_strategy44_ratio_strains:
+    output:
+        fit="{stem}.metagenotype{stemB}.fit-sfacts44_v-s{rstrain}-g{nposition}-seed{seed}.world.nc",
+    benchmark:
+        "{stem}.metagenotype{stemB}.fit-sfacts44_v-s{rstrain}-g{nposition}-seed{seed}.benchmark"
+    wildcard_constraints:
+        rstrain="[0-9]+",
+        seed="[0-9]+",
+        nposition="[0-9]+",
+    input:
+        data="{stem}.metagenotype{stemB}.nc",
+    params:
+        rstrain=lambda w: float(w.rstrain) / 100,
+        nposition=lambda w: int(w.nposition),
+        precision=32,
+        gamma_hyper=1e-10,
+        rho_hyper=0.5,
+        pi_hyper=0.3,
+        alpha_hyper_mean=1e1,
+        alpha_hyper_scale=1e-6,
+        anneal_gamma_hyper=1e0,
+        anneal_rho_hyper=5.0,
+        anneal_alpha_hyper_mean=1e1,
+        seed=lambda w: int(w.seed),
+        model_name="ssdd3_with_error",
+        lag1=50,
+        lag2=100,
+        anneal_steps=10_000,
+        anneal_wait=2000,
+        lr=0.05,
+        min_learning_rate=1e-6,
+    resources:
+        walltime_hr=36,
+        pmem=5_000,
+        mem_mb=5_000,
+        device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
+        gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
+    shell:
+        r"""
+        export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
+        rm -rf {output.fit}
+        python3 -m sfacts fit -m {params.model_name}  \
+                --verbose --device {resources.device} \
+                --precision {params.precision} \
+                --random-seed {params.seed} \
+                --strains-per-sample {params.rstrain} --num-positions {params.nposition} \
+                --nmf-init \
+                --hyperparameters gamma_hyper={params.gamma_hyper} \
+                --hyperparameters pi_hyper={params.pi_hyper} \
+                --hyperparameters rho_hyper={params.rho_hyper} \
+                --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+                --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+                --anneal-hyperparameters gamma_hyper={params.anneal_gamma_hyper} rho_hyper={params.anneal_rho_hyper} pi_hyper=1.0 alpha_hyper_mean={params.anneal_alpha_hyper_mean} \
+                --anneal-steps {params.anneal_steps} --anneal-wait {params.anneal_wait} \
+                --optimizer-learning-rate {params.lr} \
+                --min-optimizer-learning-rate {params.min_learning_rate} \
+                --max-iter 1_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
+                {input.data} \
+                {output.fit}
+        """
+
+rule fit_sfacts_strategy47_clip_experiment:
+    output:
+        fit="{stem}.metagenotype{stemB}.fit-sfacts47_c{clip_norm}-s{rstrain}-g{nposition}-seed{seed}.world.nc",
+    benchmark:
+        "{stem}.metagenotype{stemB}.fit-sfacts47_c{clip_norm}-s{rstrain}-g{nposition}-seed{seed}.benchmark"
+    wildcard_constraints:
+        rstrain="[0-9]+",
+        seed="[0-9]+",
+        nposition="[0-9]+",
+    input:
+        data="{stem}.metagenotype{stemB}.nc",
+    params:
+        rstrain=lambda w: float(w.rstrain) / 100,
+        nposition=lambda w: int(w.nposition),
+        precision=32,
+        gamma_hyper=1e-20,
+        rho_hyper=0.1,
+        pi_hyper=0.2,
+        alpha_hyper_mean=1e1,
+        alpha_hyper_scale=1e-6,
+        seed=lambda w: int(w.seed),
+        model_name="ssdd3_with_error",
+        lag1=50,
+        lag2=100,
+        lr=0.05,
+        clip_norm=lambda w: float(w.clip_norm)/100,
+        min_learning_rate=1e-6,
+    resources:
+        walltime_hr=36,
+        pmem=5_000,
+        mem_mb=5_000,
+        device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
+        gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
+    shell:
+        r"""
+        export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
+        rm -rf {output.fit}
+        python3 -m sfacts fit -m {params.model_name}  \
+                --verbose --device {resources.device} \
+                --precision {params.precision} \
+                --random-seed {params.seed} \
+                --strains-per-sample {params.rstrain} --num-positions {params.nposition} \
+                --nmf-init \
+                --hyperparameters gamma_hyper={params.gamma_hyper} \
+                --hyperparameters pi_hyper={params.pi_hyper} \
+                --hyperparameters rho_hyper={params.rho_hyper} \
+                --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+                --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+                --optimizer-learning-rate {params.lr} \
+                --optimizer-clip-norm {params.clip_norm} \
+                --min-optimizer-learning-rate {params.min_learning_rate} \
+                --max-iter 1_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
+                {input.data} \
+                {output.fit}
+        """
+
+use rule fit_sfacts_strategy44 as fit_sfacts_strategy44_gpu with:
+    output:
+        fit="{stem}.metagenotype{stemB}.fit-sfacts44_gpu-s{nstrain}-g{nposition}-seed{seed}.world.nc",
+    benchmark:
+        "{stem}.metagenotype{stemB}.fit-sfacts44_gpu-s{nstrain}-g{nposition}-seed{seed}.benchmark"
+    params:
+        nstrain=lambda w: int(w.nstrain),
+        nposition=lambda w: int(w.nposition),
+        precision=32,
+        gamma_hyper=1e-10,
+        rho_hyper=0.5,
+        pi_hyper=0.3,
+        alpha_hyper_mean=1e1,
+        alpha_hyper_scale=1e-6,
+        anneal_gamma_hyper=1e0,
+        anneal_rho_hyper=5.0,
+        anneal_alpha_hyper_mean=1e1,
+        seed=lambda w: int(w.seed),
+        model_name="ssdd3_with_error",
+        lag1=50,
+        lag2=100,
+        anneal_steps=10_000,
+        anneal_wait=2000,
+        lr=0.05,
+        min_learning_rate=1e-6,
+    resources:
+        walltime_hr=36,
+        pmem=5_000,
+        mem_mb=5_000,
+        device='cuda',
+        gpu_mem_mb=5_000,
+
+use rule fit_sfacts_strategy44 as fit_sfacts_strategy44_cpu with:
+    output:
+        fit="{stem}.metagenotype{stemB}.fit-sfacts44_cpu-s{nstrain}-g{nposition}-seed{seed}.world.nc",
+    benchmark:
+        "{stem}.metagenotype{stemB}.fit-sfacts44_cpu-s{nstrain}-g{nposition}-seed{seed}.benchmark"
+    params:
+        nstrain=lambda w: int(w.nstrain),
+        nposition=lambda w: int(w.nposition),
+        precision=32,
+        gamma_hyper=1e-10,
+        rho_hyper=0.5,
+        pi_hyper=0.3,
+        alpha_hyper_mean=1e1,
+        alpha_hyper_scale=1e-6,
+        anneal_gamma_hyper=1e0,
+        anneal_rho_hyper=5.0,
+        anneal_alpha_hyper_mean=1e1,
+        seed=lambda w: int(w.seed),
+        model_name="ssdd3_with_error",
+        lag1=50,
+        lag2=100,
+        anneal_steps=10_000,
+        anneal_wait=2000,
+        lr=0.05,
+        min_learning_rate=1e-6,
+    resources:
+        walltime_hr=72,
+        pmem=5_000,
+        mem_mb=5_000,
+        device='cpu',
+
+rule fit_sfacts_strategy48_big:
+    output:
+        fit="{stem}.metagenotype{stemB}.fit-sfacts48_big-s{nstrain}-g{nposition}-seed{seed}.world.nc",
+    benchmark:
+        "{stem}.metagenotype{stemB}.fit-sfacts48_big-s{nstrain}-g{nposition}-seed{seed}.benchmark"
+    wildcard_constraints:
+        nstrain="[0-9]+",
+        seed="[0-9]+",
+        nposition="[0-9]+",
+    input:
+        data="{stem}.metagenotype{stemB}.nc",
+    params:
+        nstrain=lambda w: int(w.nstrain),
+        nposition=lambda w: int(w.nposition),
+        precision=64,
+        gamma_hyper=1e-10,
+        rho_hyper=5.0,
+        pi_hyper=0.3,
+        alpha_hyper_mean=1e1,
+        alpha_hyper_scale=1e-6,
+        anneal_gamma_hyper=1e0,
+        anneal_rho_hyper=5.0,
+        anneal_alpha_hyper_mean=1e1,
+        seed=lambda w: int(w.seed),
+        model_name="ssdd3_with_error",
+        lag1=50,
+        lag2=100,
+        anneal_steps=10_000,
+        anneal_wait=2000,
+        lr=0.05,
+        min_learning_rate=1e-6,
+    resources:
+        walltime_hr=168,
+        pmem=10_000,
+        mem_mb=10_000,
+        device='cuda',
+        gpu_mem_mb=10_000,
+    shell:
+        r"""
+        export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
+        rm -rf {output.fit}
+        python3 -m sfacts fit -m {params.model_name}  \
+                --verbose --device {resources.device} \
+                --precision {params.precision} \
+                --random-seed {params.seed} \
+                --num-strains {params.nstrain} --num-positions {params.nposition} \
+                --hyperparameters gamma_hyper={params.gamma_hyper} \
+                --hyperparameters pi_hyper={params.pi_hyper} \
+                --hyperparameters rho_hyper={params.rho_hyper} \
+                --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+                --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+                --anneal-hyperparameters gamma_hyper={params.anneal_gamma_hyper} rho_hyper={params.anneal_rho_hyper} pi_hyper=1.0 alpha_hyper_mean={params.anneal_alpha_hyper_mean} \
+                --anneal-steps {params.anneal_steps} --anneal-wait {params.anneal_wait} \
+                --optimizer-learning-rate {params.lr} \
+                --min-optimizer-learning-rate {params.min_learning_rate} \
+                --max-iter 5_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
+                {input.data} \
+                {output.fit}
+        """
+
+rule fit_sfacts_strategy44_timeit:
+    output:
+        fit="{stem}.metagenotype{stemB}.fit-sfacts44_timeit-s{nstrain}-g{nposition}-seed{seed}.world.nc",
+        time="{stem}.metagenotype{stemB}.fit-sfacts44_timeit-s{nstrain}-g{nposition}-seed{seed}.time",
+    wildcard_constraints:
+        nstrain="[0-9]+",
+        seed="[0-9]+",
+    input:
+        data="{stem}.metagenotype{stemB}.nc",
+    params:
+        nstrain=lambda w: int(w.nstrain),
+        nposition=lambda w: int(w.nposition),
+        precision=32,
+        gamma_hyper=1e-10,
+        rho_hyper=0.5,
+        pi_hyper=0.3,
+        alpha_hyper_mean=1e1,
         alpha_hyper_scale=1e-6,
         seed=lambda w: int(w.seed),
         model_name="ssdd3_with_error",
@@ -2097,8 +2936,6 @@ rule fit_sfacts_strategy40_timeit:
         lr=0.05,
         min_learning_rate=1e-6,
     resources:
-        # pmem=resource_calculator(data=2, nstrain=2, agg=math.prod),
-        # gpu_mem_mb=resource_calculator(data=2, nstrain=2, agg=math.prod),
         walltime_hr=1,
         pmem=5_000,
         mem_mb=5_000,
@@ -2112,6 +2949,10 @@ rule fit_sfacts_strategy40_timeit:
         `which time` -o {output.time} -- \
             python3 -m sfacts fit -m {params.model_name}  \
                 --verbose --device {resources.device} \
+                --precision {params.precision} \
+                --random-seed {params.seed} \
+                --num-strains {params.nstrain} --num-positions {params.nposition} \
+                --nmf-init \
                 --hyperparameters gamma_hyper={params.gamma_hyper} \
                 --hyperparameters pi_hyper={params.pi_hyper} \
                 --hyperparameters rho_hyper={params.rho_hyper} \
@@ -2119,30 +2960,82 @@ rule fit_sfacts_strategy40_timeit:
                 --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
                 --optimizer-learning-rate {params.lr} \
                 --min-optimizer-learning-rate {params.min_learning_rate} \
-                --max-iter 1_000 --lag1 {params.lag1} --lag2 {params.lag2} \
-                --num-strains {params.nstrain} \
-                --precision {params.precision} \
-                --random-seed {params.seed} \
+                --max-iter 10 --lag1 {params.lag1} --lag2 {params.lag2} \
                 {input.data} \
                 {output.fit}
         """
 
-
-rule fit_sfacts_strategy40_gpumem:
+rule fit_sfacts_strategy44_timeit_lowmem:
     output:
-        fit="{stem}.metagenotype{stemB}.fit-sfacts40_gpumem-s{nstrain}-seed{seed}.world.nc",
-        gpumem="{stem}.metagenotype{stemB}.fit-sfacts40_gpumem-s{nstrain}-seed{seed}.gpumem",
-    benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts40_gpumem-s{nstrain}-seed{seed}.benchmark"
+        fit="{stem}.metagenotype{stemB}.fit-sfacts44_lowmem-s{nstrain}-g{nposition}-seed{seed}.world.nc",
+        time="{stem}.metagenotype{stemB}.fit-sfacts44_lowmem-s{nstrain}-g{nposition}-seed{seed}.time",
+    wildcard_constraints:
+        nstrain="[0-9]+",
+        seed="[0-9]+",
     input:
         data="{stem}.metagenotype{stemB}.nc",
     params:
         nstrain=lambda w: int(w.nstrain),
+        nposition=lambda w: int(w.nposition),
         precision=32,
         gamma_hyper=1e-10,
         rho_hyper=0.5,
         pi_hyper=0.3,
-        alpha_hyper_mean=10.0,
+        alpha_hyper_mean=1e1,
+        alpha_hyper_scale=1e-6,
+        seed=lambda w: int(w.seed),
+        model_name="ssdd3_with_error_lowmem",
+        lag1=50,
+        lag2=100,
+        lr=0.05,
+        min_learning_rate=1e-6,
+    resources:
+        walltime_hr=1,
+        pmem=5_000,
+        mem_mb=5_000,
+        device="cpu",
+        gpu_mem_mb=0,
+    conda:
+        "conda/sfacts.yaml"
+    shell:
+        r"""
+        rm -rf {output.fit}
+        `which time` -o {output.time} -- \
+            python3 -m sfacts fit -m {params.model_name}  \
+                --verbose --device {resources.device} \
+                --precision {params.precision} \
+                --random-seed {params.seed} \
+                --num-strains {params.nstrain} --num-positions {params.nposition} \
+                --hyperparameters gamma_hyper={params.gamma_hyper} \
+                --hyperparameters pi_hyper={params.pi_hyper} \
+                --hyperparameters rho_hyper={params.rho_hyper} \
+                --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+                --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+                --optimizer-learning-rate {params.lr} \
+                --min-optimizer-learning-rate {params.min_learning_rate} \
+                --max-iter 10 --lag1 {params.lag1} --lag2 {params.lag2} \
+                --nojit \
+                {input.data} \
+                {output.fit}
+        """
+
+rule fit_sfacts_strategy44_timeit_himem:
+    output:
+        fit="{stem}.metagenotype{stemB}.fit-sfacts44_himem-s{nstrain}-g{nposition}-seed{seed}.world.nc",
+        time="{stem}.metagenotype{stemB}.fit-sfacts44_himem-s{nstrain}-g{nposition}-seed{seed}.time",
+    wildcard_constraints:
+        nstrain="[0-9]+",
+        seed="[0-9]+",
+    input:
+        data="{stem}.metagenotype{stemB}.nc",
+    params:
+        nstrain=lambda w: int(w.nstrain),
+        nposition=lambda w: int(w.nposition),
+        precision=32,
+        gamma_hyper=1e-10,
+        rho_hyper=0.5,
+        pi_hyper=0.3,
+        alpha_hyper_mean=1e1,
         alpha_hyper_scale=1e-6,
         seed=lambda w: int(w.seed),
         model_name="ssdd3_with_error",
@@ -2151,21 +3044,78 @@ rule fit_sfacts_strategy40_gpumem:
         lr=0.05,
         min_learning_rate=1e-6,
     resources:
-        walltime_min=10,
+        walltime_hr=1,
+        pmem=5_000,
+        mem_mb=5_000,
+        device="cpu",
+        gpu_mem_mb=0,
+    conda:
+        "conda/sfacts.yaml"
+    shell:
+        r"""
+        rm -rf {output.fit}
+        `which time` -o {output.time} -- \
+            python3 -m sfacts fit -m {params.model_name}  \
+                --verbose --device {resources.device} \
+                --precision {params.precision} \
+                --random-seed {params.seed} \
+                --num-strains {params.nstrain} --num-positions {params.nposition} \
+                --hyperparameters gamma_hyper={params.gamma_hyper} \
+                --hyperparameters pi_hyper={params.pi_hyper} \
+                --hyperparameters rho_hyper={params.rho_hyper} \
+                --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+                --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+                --optimizer-learning-rate {params.lr} \
+                --min-optimizer-learning-rate {params.min_learning_rate} \
+                --max-iter 10 --lag1 {params.lag1} --lag2 {params.lag2} \
+                --nojit \
+                {input.data} \
+                {output.fit}
+        """
+
+rule fit_sfacts_strategy44_gpumem:
+    output:
+        fit="{stem}.metagenotype{stemB}.fit-sfacts44_gpumem-s{nstrain}-g{nposition}-seed{seed}.world.nc",
+        gpumem="{stem}.metagenotype{stemB}.fit-sfacts44_gpumem-s{nstrain}-g{nposition}-seed{seed}.gpumem",
+    wildcard_constraints:
+        nstrain="[0-9]+",
+        seed="[0-9]+",
+    input:
+        data="{stem}.metagenotype{stemB}.nc",
+    params:
+        nstrain=lambda w: int(w.nstrain),
+        nposition=lambda w: int(w.nposition),
+        precision=32,
+        gamma_hyper=1e-10,
+        rho_hyper=0.5,
+        pi_hyper=0.3,
+        alpha_hyper_mean=1e1,
+        alpha_hyper_scale=1e-6,
+        seed=lambda w: int(w.seed),
+        model_name="ssdd3_with_error",
+        lag1=50,
+        lag2=100,
+        lr=0.05,
+        min_learning_rate=1e-2,
+    resources:
         pmem=5_000,
         mem_mb=5_000,
         device="cuda",
-        gpu_mem_mb=10_000,
+        gpu_mem_mb=3_000,
     # conda:
     #     "conda/sfacts.yaml"
     shell:
         r"""
         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
         rm -rf {output.fit}
-        nvidia-smi -i $CUDA_VISIBLE_DEVICES --query-gpu=memory.used --format=csv,noheader,nounits --loop-ms=1000 --filename={output.gpumem} &
+        nvidia-smi -i $CUDA_VISIBLE_DEVICES --query-gpu=memory.used --format=csv,noheader,nounits --loop-ms=100 --filename={output.gpumem} &
         gpumem_pid=$!
             python3 -m sfacts fit -m {params.model_name}  \
                 --verbose --device {resources.device} \
+                --precision {params.precision} \
+                --random-seed {params.seed} \
+                --num-strains {params.nstrain} --num-positions {params.nposition} \
+                --nmf-init \
                 --hyperparameters gamma_hyper={params.gamma_hyper} \
                 --hyperparameters pi_hyper={params.pi_hyper} \
                 --hyperparameters rho_hyper={params.rho_hyper} \
@@ -2174,9 +3124,6 @@ rule fit_sfacts_strategy40_gpumem:
                 --optimizer-learning-rate {params.lr} \
                 --min-optimizer-learning-rate {params.min_learning_rate} \
                 --max-iter 1_000 --lag1 {params.lag1} --lag2 {params.lag2} \
-                --num-strains {params.nstrain} \
-                --precision {params.precision} \
-                --random-seed {params.seed} \
                 {input.data} \
                 {output.fit}
         sleep 5
@@ -2185,333 +3132,365 @@ rule fit_sfacts_strategy40_gpumem:
         """
 
 
-rule fit_sfacts_strategy41:
-    output:
-        fit="{stem}.metagenotype{stemB}.fit-sfacts41-s{nstrain}-g{nposition}-seed{seed}.world.nc",
-    benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts41-s{nstrain}-g{nposition}-seed{seed}.benchmark"
+# NOTE: The below 'drop_*' rules are included to bring sfacts fits into
+# alignment with sfinder fit file naming, while keeping the
+# npositions-filename-parameterization which is needed for other workflows.
+rule drop_g1000000_from_world_suffix:
+    output: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-seed{seed}.world.nc'
+    input: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-g1000000-seed{seed}.world.nc'
     wildcard_constraints:
-        nstrain="[0-9]+",
-        nposition="[0-9]+",
-        seed="[0-9]+",
-    input:
-        data="{stem}.metagenotype{stemB}.nc",
-    params:
-        nstrain=lambda w: int(w.nstrain),
-        nposition=lambda w: int(w.nposition),
-        precision=32,
-        gamma_hyper=1e-5,
-        rho_hyper=0.5,
-        pi_hyper=0.3,
-        alpha_hyper_mean=1e1,
-        alpha_hyper_scale=1e-6,
-        anneal_gamma_hyper=1e0,
-        anneal_rho_hyper=5.0,
-        anneal_alpha_hyper_mean=1e1,
-        seed=lambda w: int(w.seed),
-        model_name="ssdd3_with_error",
-        lag1=50,
-        lag2=100,
-        anneal_steps=5000,
-        anneal_wait=1000,
-        lr=0.05,
-        min_learning_rate=1e-6,
-    resources:
-        # pmem=resource_calculator(data=2, nstrain=2, agg=math.prod),
-        # gpu_mem_mb=resource_calculator(data=2, nstrain=2, agg=math.prod),
-        walltime_hr=36,
-        pmem=5_000,
-        mem_mb=5_000,
-        device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
-        gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
-    # conda:
-    #     "conda/sfacts.yaml"
-    shell:
-        r"""
-        export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
-        rm -rf {output.fit}
-        python3 -m sfacts fit -m {params.model_name}  \
-                --verbose --device {resources.device} \
-                --precision {params.precision} \
-                --random-seed {params.seed} \
-                --num-strains {params.nstrain} --num-positions {params.nposition} \
-                --nmf-init \
-                --hyperparameters gamma_hyper={params.gamma_hyper} \
-                --hyperparameters pi_hyper={params.pi_hyper} \
-                --hyperparameters rho_hyper={params.rho_hyper} \
-                --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
-                --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
-                --anneal-hyperparameters gamma_hyper={params.anneal_gamma_hyper} rho_hyper={params.anneal_rho_hyper} pi_hyper=1.0 alpha_hyper_mean={params.anneal_alpha_hyper_mean} \
-                --anneal-steps {params.anneal_steps} --anneal-wait {params.anneal_wait} \
-                --optimizer-learning-rate {params.lr} \
-                --min-optimizer-learning-rate {params.min_learning_rate} \
-                --max-iter 1_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
-                {input.data} \
-                {output.fit}
-        """
+        nstrain='[0-9]+',
+        seed='[0-9]+',
+    shell: alias_recipe
 
 
-rule fit_sfacts_strategy42:
-    output:
-        fit="{stem}.metagenotype{stemB}.fit-sfacts42-s{rstrain}-g{nposition}-seed{seed}.world.nc",
-    benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts42-s{rstrain}-g{nposition}-seed{seed}.benchmark"
+localrules: drop_g1000000_from_world_suffix
+
+
+rule drop_g1000000_from_benchmark_suffix:
+    output: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-seed{seed}.benchmark'
+    input: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-g1000000-seed{seed}.benchmark'
+    shell: alias_recipe
+
+
+localrules: drop_g1000000_from_benchmark_suffix
+
+
+rule drop_g1000000_from_time_suffix:
+    output: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-seed{seed}.time'
+    input: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-g1000000-seed{seed}.time'
     wildcard_constraints:
-        rstrain="[0-9]+",
-        nposition="[0-9]+",
-        seed="[0-9]+",
-    input:
-        data="{stem}.metagenotype{stemB}.nc",
-    params:
-        rstrain=lambda w: float(w.rstrain) / 100,
-        nposition=lambda w: int(w.nposition),
-        precision=32,
-        gamma_hyper=1e-5,
-        rho_hyper=0.5,
-        pi_hyper=0.3,
-        alpha_hyper_mean=1e1,
-        alpha_hyper_scale=1e-6,
-        anneal_gamma_hyper=0.5,
-        anneal_rho_hyper=1.0,
-        anneal_alpha_hyper_mean=1e1,
-        seed=lambda w: int(w.seed),
-        model_name="ssdd3_with_error",
-        lag1=50,
-        lag2=100,
-        anneal_steps=5000,
-        anneal_wait=1000,
-        lr=0.05,
-        min_learning_rate=1e-6,
-    resources:
-        # pmem=resource_calculator(data=2, nstrain=2, agg=math.prod),
-        # gpu_mem_mb=resource_calculator(data=2, nstrain=2, agg=math.prod),
-        walltime_hr=36,
-        pmem=5_000,
-        mem_mb=5_000,
-        device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
-        gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
-    # conda:
-    #     "conda/sfacts.yaml"
-    shell:
-        r"""
-        export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
-        rm -rf {output.fit}
-        python3 -m sfacts fit -m {params.model_name}  \
-                --verbose --device {resources.device} \
-                --precision {params.precision} \
-                --random-seed {params.seed} \
-                --strains-per-sample {params.rstrain} --num-positions {params.nposition} \
-                --nmf-init \
-                --hyperparameters gamma_hyper={params.gamma_hyper} \
-                --hyperparameters pi_hyper={params.pi_hyper} \
-                --hyperparameters rho_hyper={params.rho_hyper} \
-                --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
-                --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
-                --anneal-hyperparameters gamma_hyper={params.anneal_gamma_hyper} rho_hyper={params.anneal_rho_hyper} pi_hyper=1.0 alpha_hyper_mean={params.anneal_alpha_hyper_mean} \
-                --anneal-steps {params.anneal_steps} --anneal-wait {params.anneal_wait} \
-                --optimizer-learning-rate {params.lr} \
-                --min-optimizer-learning-rate {params.min_learning_rate} \
-                --max-iter 1_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
-                {input.data} \
-                {output.fit}
-        """
+        nstrain='[0-9]+',
+        seed='[0-9]+',
+    shell: alias_recipe
 
 
-rule fit_sfacts_strategy42_v:
-    output:
-        fit="{stem}.metagenotype{stemB}.fit-sfacts42-pi{pi_hyper}-s{rstrain}-g{nposition}-seed{seed}.world.nc",
-    benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts42-pi{pi_hyper}-s{rstrain}-g{nposition}-seed{seed}.benchmark"
+localrules: drop_g1000000_from_time_suffix
+
+
+rule drop_g1000000_from_gpumem_suffix:
+    output: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-seed{seed}.gpumem'
+    input: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-g1000000-seed{seed}.gpumem'
     wildcard_constraints:
-        rstrain="[0-9]+",
-        nposition="[0-9]+",
-        seed="[0-9]+",
-    input:
-        data="{stem}.metagenotype{stemB}.nc",
-    params:
-        rstrain=lambda w: float(w.rstrain) / 100,
-        nposition=lambda w: int(w.nposition),
-        precision=32,
-        gamma_hyper=1e-5,
-        rho_hyper=0.5,
-        pi_hyper=lambda w: float(w.pi_hyper) / 100,
-        alpha_hyper_mean=1e1,
-        alpha_hyper_scale=1e-6,
-        anneal_gamma_hyper=0.5,
-        anneal_rho_hyper=1.0,
-        anneal_alpha_hyper_mean=1e1,
-        seed=lambda w: int(w.seed),
-        model_name="ssdd3_with_error",
-        lag1=50,
-        lag2=100,
-        anneal_steps=5000,
-        anneal_wait=1000,
-        lr=0.05,
-        min_learning_rate=1e-6,
-    resources:
-        # pmem=resource_calculator(data=2, nstrain=2, agg=math.prod),
-        # gpu_mem_mb=resource_calculator(data=2, nstrain=2, agg=math.prod),
-        walltime_hr=36,
-        pmem=5_000,
-        mem_mb=5_000,
-        device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
-        gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
-    # conda:
-    #     "conda/sfacts.yaml"
-    shell:
-        r"""
-        export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
-        rm -rf {output.fit}
-        python3 -m sfacts fit -m {params.model_name}  \
-                --verbose --device {resources.device} \
-                --precision {params.precision} \
-                --random-seed {params.seed} \
-                --strains-per-sample {params.rstrain} --num-positions {params.nposition} \
-                --nmf-init \
-                --hyperparameters gamma_hyper={params.gamma_hyper} \
-                --hyperparameters pi_hyper={params.pi_hyper} \
-                --hyperparameters rho_hyper={params.rho_hyper} \
-                --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
-                --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
-                --anneal-hyperparameters gamma_hyper={params.anneal_gamma_hyper} rho_hyper={params.anneal_rho_hyper} pi_hyper=1.0 alpha_hyper_mean={params.anneal_alpha_hyper_mean} \
-                --anneal-steps {params.anneal_steps} --anneal-wait {params.anneal_wait} \
-                --optimizer-learning-rate {params.lr} \
-                --min-optimizer-learning-rate {params.min_learning_rate} \
-                --max-iter 1_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
-                {input.data} \
-                {output.fit}
-        """
+        nstrain='[0-9]+',
+        seed='[0-9]+',
+    shell: alias_recipe
 
 
-rule fit_sfacts_strategy43:
-    output:
-        fit="{stem}.metagenotype{stemB}.fit-sfacts43-s{rstrain}-g{nposition}-seed{seed}.world.nc",
-    benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts43-s{rstrain}-g{nposition}-seed{seed}.benchmark"
-    wildcard_constraints:
-        rstrain="[0-9]+",
-        nposition="[0-9]+",
-        seed="[0-9]+",
-    input:
-        data="{stem}.metagenotype{stemB}.nc",
-    params:
-        rstrain=lambda w: float(w.rstrain) / 100,
-        nposition=lambda w: int(w.nposition),
-        precision=32,
-        gamma_hyper=1e-5,
-        rho_hyper=0.5,
-        pi_hyper=0.7,
-        alpha_hyper_mean=1e1,
-        alpha_hyper_scale=1e-6,
-        anneal_gamma_hyper=0.5,
-        anneal_rho_hyper=1.0,
-        anneal_alpha_hyper_mean=1e1,
-        seed=lambda w: int(w.seed),
-        model_name="ssdd3_with_error",
-        lag1=50,
-        lag2=100,
-        anneal_steps=5000,
-        anneal_wait=1000,
-        lr=0.05,
-        min_learning_rate=1e-6,
-    resources:
-        # pmem=resource_calculator(data=2, nstrain=2, agg=math.prod),
-        # gpu_mem_mb=resource_calculator(data=2, nstrain=2, agg=math.prod),
-        walltime_hr=36,
-        pmem=5_000,
-        mem_mb=5_000,
-        device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
-        gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
-    # conda:
-    #     "conda/sfacts.yaml"
-    shell:
-        r"""
-        export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
-        rm -rf {output.fit}
-        python3 -m sfacts fit -m {params.model_name}  \
-                --verbose --device {resources.device} \
-                --precision {params.precision} \
-                --random-seed {params.seed} \
-                --strains-per-sample {params.rstrain} --num-positions {params.nposition} \
-                --nmf-init \
-                --hyperparameters gamma_hyper={params.gamma_hyper} \
-                --hyperparameters pi_hyper={params.pi_hyper} \
-                --hyperparameters rho_hyper={params.rho_hyper} \
-                --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
-                --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
-                --anneal-hyperparameters gamma_hyper={params.anneal_gamma_hyper} rho_hyper={params.anneal_rho_hyper} pi_hyper=1.0 alpha_hyper_mean={params.anneal_alpha_hyper_mean} \
-                --anneal-steps {params.anneal_steps} --anneal-wait {params.anneal_wait} \
-                --optimizer-learning-rate {params.lr} \
-                --min-optimizer-learning-rate {params.min_learning_rate} \
-                --max-iter 1_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
-                {input.data} \
-                {output.fit}
-        """
+localrules: drop_g1000000_from_gpumem_suffix
 
 
-rule fit_sfacts_strategy42_big:
-    output:
-        fit="{stem}.metagenotype{stemB}.fit-sfacts42_big-s{nstrain}-g{nposition}-seed{seed}.world.nc",
-    benchmark:
-        "{stem}.metagenotype{stemB}.fit-sfacts42_big-s{nstrain}-g{nposition}-seed{seed}.benchmark"
-    wildcard_constraints:
-        nstrain="[0-9]+",
-        nposition="[0-9]+",
-        seed="[0-9]+",
-    input:
-        data="{stem}.metagenotype{stemB}.nc",
-    params:
-        nstrain=lambda w: int(w.nstrain),
-        nposition=lambda w: int(w.nposition),
-        precision=64,
-        gamma_hyper=1e-5,
-        rho_hyper=0.5,
-        pi_hyper=0.3,
-        alpha_hyper_mean=1e1,
-        alpha_hyper_scale=1e-6,
-        anneal_gamma_hyper=0.5,
-        anneal_rho_hyper=1.0,
-        anneal_alpha_hyper_mean=1e1,
-        seed=lambda w: int(w.seed),
-        model_name="ssdd3_with_error",
-        lag1=50,
-        lag2=100,
-        anneal_steps=10000,
-        anneal_wait=2000,
-        lr=0.05,
-        min_learning_rate=1e-6,
-    resources:
-        # pmem=resource_calculator(data=2, nstrain=2, agg=math.prod),
-        # gpu_mem_mb=resource_calculator(data=2, nstrain=2, agg=math.prod),
-        walltime_hr=96,
-        pmem=5_000,
-        mem_mb=5_000,
-        device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
-        gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
-    # conda:
-    #     "conda/sfacts.yaml"
-    shell:
-        r"""
-        export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
-        rm -rf {output.fit}
-        python3 -m sfacts fit -m {params.model_name}  \
-                --verbose --device {resources.device} \
-                --precision {params.precision} \
-                --random-seed {params.seed} \
-                --num-strains {params.nstrain} --num-positions {params.nposition} \
-                --hyperparameters gamma_hyper={params.gamma_hyper} \
-                --hyperparameters pi_hyper={params.pi_hyper} \
-                --hyperparameters rho_hyper={params.rho_hyper} \
-                --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
-                --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
-                --anneal-hyperparameters gamma_hyper={params.anneal_gamma_hyper} rho_hyper={params.anneal_rho_hyper} pi_hyper=1.0 alpha_hyper_mean={params.anneal_alpha_hyper_mean} \
-                --anneal-steps {params.anneal_steps} --anneal-wait {params.anneal_wait} \
-                --optimizer-learning-rate {params.lr} \
-                --min-optimizer-learning-rate {params.min_learning_rate} \
-                --max-iter 1_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
-                {input.data} \
-                {output.fit}
-        """
+# # FIXME: Drop this rule; Shouldn't be important after we've switched over to
+# # the previous rules.
+# rule _drop_g1000000_from_evaluation_suffix:
+#     output: '{stem}.fit-{fit_type}-s{nstrain}-seed{seed}.evaluation.tsv'
+#     input: '{stem}.fit-{fit_type}-s{nstrain}-g1000000-seed{seed}.evaluation.tsv'
+#     wildcard_constraints:
+#         nstrain='[0-9]+',
+#         seed='[0-9]+',
+#     shell: 'ln {input} {output}'
+#
+#
+# ruleorder: _drop_g1000000_from_evaluation_suffix > evaluate_fit_against_simulation
+#
+#
+# localrules: _drop_g1000000_from_evaluation_suffix
+
+
+# use rule fit_sfacts_strategy41_fixed_g as fit_sfacts_strategy46_big with:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts46_big-s{nstrain}-seed{seed}.world.nc",
+#     benchmark:
+#         "{stem}.metagenotype{stemB}.fit-sfacts46_big-s{nstrain}-seed{seed}.benchmark"
+#     params:
+#         nstrain=lambda w: int(w.nstrain),
+#         nposition=1_000_000_000,  # More than is reasonable.
+#         precision=32,
+#         gamma_hyper=1e-5,
+#         rho_hyper=0.5,
+#         pi_hyper=0.3,
+#         alpha_hyper_mean=1e1,
+#         alpha_hyper_scale=1e-6,
+#         anneal_gamma_hyper=1e0,
+#         anneal_rho_hyper=5.0,
+#         anneal_alpha_hyper_mean=1e1,
+#         seed=lambda w: int(w.seed),
+#         model_name="ssdd3_with_error",
+#         lag1=50,
+#         lag2=100,
+#         anneal_steps=10000,
+#         anneal_wait=2000,
+#         lr=0.05,
+#         min_learning_rate=1e-6,
+#     resources:
+#         walltime_hr=36,
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device='cuda',
+#         gpu_mem_mb=5_000,
+
+
+# rule fit_sfacts_strategy42:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts42-s{rstrain}-g{nposition}-seed{seed}.world.nc",
+#     benchmark:
+#         "{stem}.metagenotype{stemB}.fit-sfacts42-s{rstrain}-g{nposition}-seed{seed}.benchmark"
+#     wildcard_constraints:
+#         rstrain="[0-9]+",
+#         nposition="[0-9]+",
+#         seed="[0-9]+",
+#     input:
+#         data="{stem}.metagenotype{stemB}.nc",
+#     params:
+#         rstrain=lambda w: float(w.rstrain) / 100,
+#         nposition=lambda w: int(w.nposition),
+#         precision=32,
+#         gamma_hyper=1e-5,
+#         rho_hyper=0.5,
+#         pi_hyper=0.3,
+#         alpha_hyper_mean=1e1,
+#         alpha_hyper_scale=1e-6,
+#         anneal_gamma_hyper=0.5,
+#         anneal_rho_hyper=1.0,
+#         anneal_alpha_hyper_mean=1e1,
+#         seed=lambda w: int(w.seed),
+#         model_name="ssdd3_with_error",
+#         lag1=50,
+#         lag2=100,
+#         anneal_steps=5000,
+#         anneal_wait=1000,
+#         lr=0.05,
+#         min_learning_rate=1e-6,
+#     resources:
+#         # pmem=resource_calculator(data=2, nstrain=2, agg=math.prod),
+#         # gpu_mem_mb=resource_calculator(data=2, nstrain=2, agg=math.prod),
+#         walltime_hr=36,
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
+#         gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
+#     # conda:
+#     #     "conda/sfacts.yaml"
+#     shell:
+#         r"""
+#         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
+#         rm -rf {output.fit}
+#         python3 -m sfacts fit -m {params.model_name}  \
+#                 --verbose --device {resources.device} \
+#                 --precision {params.precision} \
+#                 --random-seed {params.seed} \
+#                 --strains-per-sample {params.rstrain} --num-positions {params.nposition} \
+#                 --nmf-init \
+#                 --hyperparameters gamma_hyper={params.gamma_hyper} \
+#                 --hyperparameters pi_hyper={params.pi_hyper} \
+#                 --hyperparameters rho_hyper={params.rho_hyper} \
+#                 --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+#                 --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+#                 --anneal-hyperparameters gamma_hyper={params.anneal_gamma_hyper} rho_hyper={params.anneal_rho_hyper} pi_hyper=1.0 alpha_hyper_mean={params.anneal_alpha_hyper_mean} \
+#                 --anneal-steps {params.anneal_steps} --anneal-wait {params.anneal_wait} \
+#                 --optimizer-learning-rate {params.lr} \
+#                 --min-optimizer-learning-rate {params.min_learning_rate} \
+#                 --max-iter 1_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
+#                 {input.data} \
+#                 {output.fit}
+#         """
+
+
+# rule fit_sfacts_strategy42_v:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts42-pi{pi_hyper}-s{rstrain}-g{nposition}-seed{seed}.world.nc",
+#     benchmark:
+#         "{stem}.metagenotype{stemB}.fit-sfacts42-pi{pi_hyper}-s{rstrain}-g{nposition}-seed{seed}.benchmark"
+#     wildcard_constraints:
+#         rstrain="[0-9]+",
+#         nposition="[0-9]+",
+#         seed="[0-9]+",
+#     input:
+#         data="{stem}.metagenotype{stemB}.nc",
+#     params:
+#         rstrain=lambda w: float(w.rstrain) / 100,
+#         nposition=lambda w: int(w.nposition),
+#         precision=32,
+#         gamma_hyper=1e-5,
+#         rho_hyper=0.5,
+#         pi_hyper=lambda w: float(w.pi_hyper) / 100,
+#         alpha_hyper_mean=1e1,
+#         alpha_hyper_scale=1e-6,
+#         anneal_gamma_hyper=0.5,
+#         anneal_rho_hyper=1.0,
+#         anneal_alpha_hyper_mean=1e1,
+#         seed=lambda w: int(w.seed),
+#         model_name="ssdd3_with_error",
+#         lag1=50,
+#         lag2=100,
+#         anneal_steps=5000,
+#         anneal_wait=1000,
+#         lr=0.05,
+#         min_learning_rate=1e-6,
+#     resources:
+#         # pmem=resource_calculator(data=2, nstrain=2, agg=math.prod),
+#         # gpu_mem_mb=resource_calculator(data=2, nstrain=2, agg=math.prod),
+#         walltime_hr=36,
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
+#         gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
+#     # conda:
+#     #     "conda/sfacts.yaml"
+#     shell:
+#         r"""
+#         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
+#         rm -rf {output.fit}
+#         python3 -m sfacts fit -m {params.model_name}  \
+#                 --verbose --device {resources.device} \
+#                 --precision {params.precision} \
+#                 --random-seed {params.seed} \
+#                 --strains-per-sample {params.rstrain} --num-positions {params.nposition} \
+#                 --nmf-init \
+#                 --hyperparameters gamma_hyper={params.gamma_hyper} \
+#                 --hyperparameters pi_hyper={params.pi_hyper} \
+#                 --hyperparameters rho_hyper={params.rho_hyper} \
+#                 --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+#                 --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+#                 --anneal-hyperparameters gamma_hyper={params.anneal_gamma_hyper} rho_hyper={params.anneal_rho_hyper} pi_hyper=1.0 alpha_hyper_mean={params.anneal_alpha_hyper_mean} \
+#                 --anneal-steps {params.anneal_steps} --anneal-wait {params.anneal_wait} \
+#                 --optimizer-learning-rate {params.lr} \
+#                 --min-optimizer-learning-rate {params.min_learning_rate} \
+#                 --max-iter 1_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
+#                 {input.data} \
+#                 {output.fit}
+#         """
+
+
+# rule fit_sfacts_strategy43:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts43-s{rstrain}-g{nposition}-seed{seed}.world.nc",
+#     benchmark:
+#         "{stem}.metagenotype{stemB}.fit-sfacts43-s{rstrain}-g{nposition}-seed{seed}.benchmark"
+#     wildcard_constraints:
+#         rstrain="[0-9]+",
+#         nposition="[0-9]+",
+#         seed="[0-9]+",
+#     input:
+#         data="{stem}.metagenotype{stemB}.nc",
+#     params:
+#         rstrain=lambda w: float(w.rstrain) / 100,
+#         nposition=lambda w: int(w.nposition),
+#         precision=32,
+#         gamma_hyper=1e-5,
+#         rho_hyper=0.5,
+#         pi_hyper=0.7,
+#         alpha_hyper_mean=1e1,
+#         alpha_hyper_scale=1e-6,
+#         anneal_gamma_hyper=0.5,
+#         anneal_rho_hyper=1.0,
+#         anneal_alpha_hyper_mean=1e1,
+#         seed=lambda w: int(w.seed),
+#         model_name="ssdd3_with_error",
+#         lag1=50,
+#         lag2=100,
+#         anneal_steps=5000,
+#         anneal_wait=1000,
+#         lr=0.05,
+#         min_learning_rate=1e-6,
+#     resources:
+#         # pmem=resource_calculator(data=2, nstrain=2, agg=math.prod),
+#         # gpu_mem_mb=resource_calculator(data=2, nstrain=2, agg=math.prod),
+#         walltime_hr=36,
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
+#         gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
+#     # conda:
+#     #     "conda/sfacts.yaml"
+#     shell:
+#         r"""
+#         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
+#         rm -rf {output.fit}
+#         python3 -m sfacts fit -m {params.model_name}  \
+#                 --verbose --device {resources.device} \
+#                 --precision {params.precision} \
+#                 --random-seed {params.seed} \
+#                 --strains-per-sample {params.rstrain} --num-positions {params.nposition} \
+#                 --nmf-init \
+#                 --hyperparameters gamma_hyper={params.gamma_hyper} \
+#                 --hyperparameters pi_hyper={params.pi_hyper} \
+#                 --hyperparameters rho_hyper={params.rho_hyper} \
+#                 --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+#                 --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+#                 --anneal-hyperparameters gamma_hyper={params.anneal_gamma_hyper} rho_hyper={params.anneal_rho_hyper} pi_hyper=1.0 alpha_hyper_mean={params.anneal_alpha_hyper_mean} \
+#                 --anneal-steps {params.anneal_steps} --anneal-wait {params.anneal_wait} \
+#                 --optimizer-learning-rate {params.lr} \
+#                 --min-optimizer-learning-rate {params.min_learning_rate} \
+#                 --max-iter 1_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
+#                 {input.data} \
+#                 {output.fit}
+#         """
+
+
+# rule fit_sfacts_strategy42_big:
+#     output:
+#         fit="{stem}.metagenotype{stemB}.fit-sfacts42_big-s{nstrain}-g{nposition}-seed{seed}.world.nc",
+#     benchmark:
+#         "{stem}.metagenotype{stemB}.fit-sfacts42_big-s{nstrain}-g{nposition}-seed{seed}.benchmark"
+#     wildcard_constraints:
+#         nstrain="[0-9]+",
+#         nposition="[0-9]+",
+#         seed="[0-9]+",
+#     input:
+#         data="{stem}.metagenotype{stemB}.nc",
+#     params:
+#         nstrain=lambda w: int(w.nstrain),
+#         nposition=lambda w: int(w.nposition),
+#         precision=64,
+#         gamma_hyper=1e-5,
+#         rho_hyper=0.5,
+#         pi_hyper=0.3,
+#         alpha_hyper_mean=1e1,
+#         alpha_hyper_scale=1e-6,
+#         anneal_gamma_hyper=0.5,
+#         anneal_rho_hyper=1.0,
+#         anneal_alpha_hyper_mean=1e1,
+#         seed=lambda w: int(w.seed),
+#         model_name="ssdd3_with_error",
+#         lag1=50,
+#         lag2=100,
+#         anneal_steps=10000,
+#         anneal_wait=2000,
+#         lr=0.05,
+#         min_learning_rate=1e-6,
+#     resources:
+#         # pmem=resource_calculator(data=2, nstrain=2, agg=math.prod),
+#         # gpu_mem_mb=resource_calculator(data=2, nstrain=2, agg=math.prod),
+#         walltime_hr=96,
+#         pmem=5_000,
+#         mem_mb=5_000,
+#         device={0: "cpu", 1: "cuda"}[config["USE_CUDA"]],
+#         gpu_mem_mb={0: 0, 1: 5_000}[config["USE_CUDA"]],
+#     # conda:
+#     #     "conda/sfacts.yaml"
+#     shell:
+#         r"""
+#         export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
+#         rm -rf {output.fit}
+#         python3 -m sfacts fit -m {params.model_name}  \
+#                 --verbose --device {resources.device} \
+#                 --precision {params.precision} \
+#                 --random-seed {params.seed} \
+#                 --num-strains {params.nstrain} --num-positions {params.nposition} \
+#                 --hyperparameters gamma_hyper={params.gamma_hyper} \
+#                 --hyperparameters pi_hyper={params.pi_hyper} \
+#                 --hyperparameters rho_hyper={params.rho_hyper} \
+#                 --hyperparameters alpha_hyper_mean={params.alpha_hyper_mean} \
+#                 --hyperparameters alpha_hyper_scale={params.alpha_hyper_scale} \
+#                 --anneal-hyperparameters gamma_hyper={params.anneal_gamma_hyper} rho_hyper={params.anneal_rho_hyper} pi_hyper=1.0 alpha_hyper_mean={params.anneal_alpha_hyper_mean} \
+#                 --anneal-steps {params.anneal_steps} --anneal-wait {params.anneal_wait} \
+#                 --optimizer-learning-rate {params.lr} \
+#                 --min-optimizer-learning-rate {params.min_learning_rate} \
+#                 --max-iter 1_000_000 --lag1 {params.lag1} --lag2 {params.lag2} \
+#                 {input.data} \
+#                 {output.fit}
+#         """
 
 
 rule fit_sfacts_strategy41_genotypes:
