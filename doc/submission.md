@@ -27,9 +27,11 @@ TODO: Rasterize pcolormesh
 TODO: Add strain assembly citations to: [@Vicedomini2021; @Quince2021]
 TODO: Add [@Olekhnovich2021]
 TODO: Consider linking Zenodo for both sfacts and manuscript repos.
-TODO: Re-analyze SCG data where the sparsity of the consensus genotypes is also
+TODO: Add re-analysis of SCG data where the sparsity of the consensus genotypes is also
 considered in the scg-inferred comparison (so that low-coverage metagenotypes
 don't get an advantage due to the masking)
+(See "ndist_focal_strain" in data/ucfmt.filt-poly05-cvrg05.fit-sfacts44_v-s30-g5000-seed0.refit-sfacts41-g10000-seed0.all_scg_comparison.tsv)
+TODO: Add re-analysis of SCG data where the second sample is also included.
 TODO: Homogeneous, private use hardware for benchmarking runtimes.
 TODO: CPU/GPU written out on first use? OR GPU _not_ written out in abstract?
 TODO: "Conflicts" vs. "Competing Interests"
