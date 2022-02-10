@@ -123,6 +123,7 @@ include: "snake/drplt.smk"
 
 include: "snake/sfacts.smk"
 include: "snake/sfinder.smk"
+include: "snake/benchmark.smk"
 
 
 if path.exists("snake/local.smk"):
