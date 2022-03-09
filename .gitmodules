@@ -1,0 +1,3 @@
+[submodule "include/MixtureS"]
+	path = include/MixtureS
+	url = git@github.com:bsmith89/MixtureS.git
