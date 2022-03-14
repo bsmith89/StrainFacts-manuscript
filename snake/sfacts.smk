@@ -205,12 +205,11 @@ rule simulate_from_simplest_model:
         pi_hyper=lambda w: float(w.pi_hyper) / 100,
         epsilon_hyper_mode=lambda w: float(w.epsilon_hyper_mode) / 1000,
         mu_hyper_mean=lambda w: float(w.mu_hyper_mean) / 10,
-    # conda:
-    #     "conda/sfacts.yaml"
+    conda:
+        "conda/sfacts.yaml"
     shell:
         dd(
             r"""
-        export PYTHONPATH="/pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFacts"
         rm -rf {output}
         python3 -m sfacts simulate \
                 --model-structure {params.model_name} \
