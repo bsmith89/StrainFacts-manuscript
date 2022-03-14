@@ -36,6 +36,8 @@ TODO: Homogeneous, private use hardware for benchmarking runtimes.
 TODO: CPU/GPU written out on first use? OR GPU _not_ written out in abstract?
 TODO: "Conflicts" vs. "Competing Interests"
 TODO: Upload SCG dataset to SRA
+TODO: Add LICENSE to StrainFacts repository
+TODO: Explain that the memory scaling analysis excluded (x.n == 10000) & (x.g==1000)
 
 
 
@@ -266,6 +268,12 @@ family of probability distributions, the shifted-scaled Dirichlet distribution
 (SSD) [@Monti2011a], for all three goals. We briefly describe our rationale and
 parameterization of the SSD distribution in the Supplementary Methods.
 
+<!--
+TODO: Consider notating the first element of an SSD distribution
+on the 1 simplex by including a second element in the random variable
+determined by this prior
+(i.e. $(\gamma, 1 - \gamma) ~ \mathrm{SSD}(\mathbf{1}, \mathbf{1}, \frac{1}{\gamma^*})$)
+-->
 For each element of $\mathbf{\Gamma}$ we set the prior as
 $\gamma \sim \mathrm{SSD}_0(\mathbf{1}, \mathbf{1}, \frac{1}{\gamma^*})$.
 Note that we trivially transform the $\tilde{\gamma} \in \mathcal{S}^1$
@@ -312,9 +320,10 @@ hyperparameters. Symbols include observed data (blue box), deterministic terms
 (circles), key parameters being estimated (red boxes), and key hyperparameters
 (unenclosed). Plates behind terms indicate the dimensionality and indexing of
 the variables and arrows connect the terms that directly depend on one another.
-The distribution family and relationships between terms are indicated on the
-right.
 ](fig/strainfacts_model_diagram_figure.dpi200.png){#fig:model-diagram}
+<!--
+TODO: Reference the random variable notation.
+-->
 
 ## Model fitting
 
@@ -522,6 +531,10 @@ deconvolution [e.g. Lineage @OBrien2014; and DESMAN @Quince2017], Strain
 Finder's model and approach to inference are the most similar to StrainFacts.
 We therefore selected it for comparison in order to directly assess the value
 of fuzzy genotypes.
+
+<!--
+TODO: Did we actually run our model on simulated data with 120 strains, or was it 80 strains?
+-->
 
 We simulated five replicate metagenotypes for 120 underlying strains in 400
 samples, and 250 SNPs, and then applied both StrainFacts and Strain Finder to
