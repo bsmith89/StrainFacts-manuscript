@@ -20,12 +20,14 @@ if __name__ == "__main__":
 
     mgen_consensus = mgen.to_estimated_genotypes()
     scg = drplt.to_estimated_genotypes()
+    mgen_consensus_masked = mgen.to_estimated_genotypes(pseudo=0, fillna=False)
+    scg_masked = drplt.to_estimated_genotypes(pseudo=0, fillna=False)
     inferred_geno = inference.genotypes
     inferred_comm = inference.communities
 
     position = list(set(scg.position.values) & set(inferred_geno.position.values))
-    mgen_consensus, scg, inferred_geno = [
-        x.mlift("sel", position=position) for x in [mgen_consensus, scg, inferred_geno]
+    mgen_consensus, mgen_consensus_masked, scg, scg_masked, inferred_geno = [
+        x.mlift("sel", position=position) for x in [mgen_consensus, mgen_consensus_masked, scg, scg_masked, inferred_geno]
     ]
 
     mgen_entropy = mgen.entropy("sample")
@@ -50,28 +52,54 @@ if __name__ == "__main__":
     ddist_any_strain = sf.match_genotypes(
         scg.to_world(), inferred_geno.discretized().to_world()
     )[1]
+    mdist_any_strain = sf.match_genotypes(
+        scg_masked.to_world(),
+        inferred_geno.discretized().to_world(),
+        cdist=sf.math.genotype_masked_hamming_cdist
+    )[1]
     fdist_any_mgen = sf.match_genotypes(
         scg.to_world(), mgen_consensus.to_world()
     )[1]
     ddist_any_mgen = sf.match_genotypes(
         scg.to_world(), mgen_consensus.discretized().to_world()
     )[1]
+    mdist_any_mgen = sf.match_genotypes(
+        scg_masked.to_world(),
+        mgen_consensus_masked.discretized().to_world(),
+        cdist=sf.math.genotype_masked_hamming_cdist
+    )[1]
 
     out = []
     for focal_mgen in idxwhere(mgen_to_sample.isin(scg_to_sample.unique())):
         focal_sample = mgen_to_sample[focal_mgen]
         focal_strains = idxwhere((inferred_comm.sel(sample=focal_mgen) > rabund_threshold).to_series())
+        focal_mgen_position_not_na = idxwhere(mgen_consensus_masked.mlift('sel', strain=[focal_mgen]).to_series().unstack().squeeze().notna())
         fdist_focal_strain = sf.match_genotypes(
             scg.to_world(), inferred_geno.mlift('sel', strain=focal_strains).to_world()
         )[1]
         ddist_focal_strain = sf.match_genotypes(
             scg.to_world(), inferred_geno.mlift('sel', strain=focal_strains).discretized().to_world()
         )[1]
+        mdist_focal_strain = sf.match_genotypes(
+            scg_masked.to_world(),
+            inferred_geno.mlift('sel', strain=focal_strains).discretized().to_world(),
+            cdist=sf.math.genotype_masked_hamming_cdist
+        )[1]
+        ndist_focal_strain = sf.match_genotypes(
+            scg_masked.to_world().sel(position=focal_mgen_position_not_na),
+            inferred_geno.mlift('sel', strain=focal_strains).discretized().to_world().sel(position=focal_mgen_position_not_na),
+            cdist=sf.math.genotype_masked_hamming_cdist
+        )[1]
         fdist_focal_mgen = sf.match_genotypes(
             scg.to_world(), mgen_consensus.mlift('sel', strain=[focal_mgen]).to_world()
         )[1]
         ddist_focal_mgen = sf.match_genotypes(
             scg.to_world(), mgen_consensus.mlift('sel', strain=[focal_mgen]).discretized().to_world()
+        )[1]
+        mdist_focal_mgen = sf.match_genotypes(
+            scg_masked.to_world(),
+            mgen_consensus_masked.mlift('sel', strain=[focal_mgen]).discretized().to_world(),
+            cdist=sf.math.genotype_masked_hamming_cdist
         )[1]
         for focal_scg in idxwhere(scg_to_sample == focal_sample):
             out.append(dict(
@@ -85,12 +113,17 @@ if __name__ == "__main__":
                 comm_entropy=comm_entropy.sel(sample=focal_mgen).values,
                 fdist_any_strain=fdist_any_strain[focal_scg],
                 ddist_any_strain=ddist_any_strain[focal_scg],
+                mdist_any_strain=mdist_any_strain[focal_scg],
                 fdist_any_mgen=fdist_any_mgen[focal_scg],
                 ddist_any_mgen=ddist_any_mgen[focal_scg],
+                mdist_any_mgen=mdist_any_mgen[focal_scg],
                 fdist_focal_strain=fdist_focal_strain[focal_scg],
                 ddist_focal_strain=ddist_focal_strain[focal_scg],
+                mdist_focal_strain=mdist_focal_strain[focal_scg],
+                ndist_focal_strain=ndist_focal_strain[focal_scg],
                 fdist_focal_mgen=fdist_focal_mgen[focal_scg],
                 ddist_focal_mgen=ddist_focal_mgen[focal_scg],
+                mdist_focal_mgen=mdist_focal_mgen[focal_scg],
         ))
     out = pd.DataFrame(out)
 

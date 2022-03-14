@@ -18,26 +18,38 @@ tblPrefix: [table, tables]
 
 
 <!--
-TODO: Subset bibliography
+Things to do for v0.2:
+
 TODO: Re-construct vector figures: Use vector export from Jupyter; drop
 background colors, borders around legends, etc.
 TODO: Use hats on estimated parameters?
 TODO: Rasterize pcolormesh
 TODO: Add strain assembly citations to: [@Vicedomini2021; @Quince2021]
 TODO: Add [@Olekhnovich2021]
-
+TODO: Consider linking Zenodo for both sfacts and manuscript repos.
+TODO: Add re-analysis of SCG data where the sparsity of the consensus genotypes is also
+considered in the scg-inferred comparison (so that low-coverage metagenotypes
+don't get an advantage due to the masking)
+(See "ndist_focal_strain" in data/ucfmt.filt-poly05-cvrg05.fit-sfacts44_v-s30-g5000-seed0.refit-sfacts41-g10000-seed0.all_scg_comparison.tsv)
+TODO: Add re-analysis of SCG data where the second sample is also included.
+TODO: Homogeneous, private use hardware for benchmarking runtimes.
+TODO: CPU/GPU written out on first use? OR GPU _not_ written out in abstract?
+TODO: "Conflicts" vs. "Competing Interests"
+TODO: Upload SCG dataset to SRA
+TODO: Add LICENSE to StrainFacts repository
+TODO: Explain that the memory scaling analysis excluded (x.n == 10000) & (x.g==1000)
 
 
 
 Rendering checklist:
 
+TODO: Rename supplementary figures (e.g. from 8, 9, 10 to S1-3) in both
+captions and inlined citations. (Find/Replace works well. Be sure catch both Figure and Fig)
 TODO: Split out supplementary, by save-as a new DOCX and then remove the other parts.
 TODO: Upgrade "Supplementary Materials" to Title style.
 TODO: Split References into Supp. and non-supp parts (manually, since not numbered)
 TODO: Replace title/authors with cover-page from static DOCX
 TODO: Add page-break afer abstract
-TODO: Rename supplementary figures (e.g. from 8, 9, 10 to S1-3) in both
-captions and inlined citations.
 TODO: Figure placement (one of): Move figures up or down to minimize
 whitespace, OR move all figure legends to after the references and remove the
 images themselves.
@@ -46,6 +58,7 @@ TODO: Resize figures that are too large.
 TODO: Move Author Contributions to after the references TODO??
 TODO: Add page breaks as appropriate.
 TODO: Bold Figure N, Table N in captions
+TODO: Table caption (or just footnotes?) to below tables.
 TODO: Add line numbers
 TODO: If figures included, save a reload any DOCX files with figures
 included. Re-insert full quality PNG figures (as the PDF insertions will lose
@@ -255,6 +268,12 @@ family of probability distributions, the shifted-scaled Dirichlet distribution
 (SSD) [@Monti2011a], for all three goals. We briefly describe our rationale and
 parameterization of the SSD distribution in the Supplementary Methods.
 
+<!--
+TODO: Consider notating the first element of an SSD distribution
+on the 1 simplex by including a second element in the random variable
+determined by this prior
+(i.e. $(\gamma, 1 - \gamma) ~ \mathrm{SSD}(\mathbf{1}, \mathbf{1}, \frac{1}{\gamma^*})$)
+-->
 For each element of $\mathbf{\Gamma}$ we set the prior as
 $\gamma \sim \mathrm{SSD}_0(\mathbf{1}, \mathbf{1}, \frac{1}{\gamma^*})$.
 Note that we trivially transform the $\tilde{\gamma} \in \mathcal{S}^1$
@@ -301,9 +320,10 @@ hyperparameters. Symbols include observed data (blue box), deterministic terms
 (circles), key parameters being estimated (red boxes), and key hyperparameters
 (unenclosed). Plates behind terms indicate the dimensionality and indexing of
 the variables and arrows connect the terms that directly depend on one another.
-The distribution family and relationships between terms are indicated on the
-right.
 ](fig/strainfacts_model_diagram_figure.dpi200.png){#fig:model-diagram}
+<!--
+TODO: Reference the random variable notation.
+-->
 
 ## Model fitting
 
@@ -480,19 +500,18 @@ $[\lfloor10^{(i-1)/c}\rfloor, \lfloor10^{i/c}\rfloor)$ where $c=30$ so that
 ### Software and code availability
 
 StrainFacts is implemented in Python3 and is available at
-<https://github.com/bsmith89/StrainFacts>.
-For software reproducibility, all analyses were performed using a
-Singularity container [@Kurtzer2017] defined as described at
-<https://github.com/bsmith89/compbio-container/blob/master/compbio/Dockerfile>.
+<https://github.com/bsmith89/StrainFacts> and v0.1 was used for all results
+reported here.
 A forked version of Strain Finder—modified for ease of installation and to
 specify a random seed for reproducibility—can be found at
 <https://github.com/bsmith89/StrainFinder>.
 All other code and metadata needed to re-run these analyses is available at
-<https://github.com/bsmith89/haplo-manuscript>.
+<https://github.com/bsmith89/StrainFacts-manuscript>.
+For software reproducibility, all analyses were performed using a
+Singularity container [@Kurtzer2017].
 
 <!--
-TODO: SFacts Version 0.1 was used for the results reported in this
-manuscript. 
+TODO: Dockerfile in *-manuscript repo.
 -->
 
 # Results
@@ -512,6 +531,10 @@ deconvolution [e.g. Lineage @OBrien2014; and DESMAN @Quince2017], Strain
 Finder's model and approach to inference are the most similar to StrainFacts.
 We therefore selected it for comparison in order to directly assess the value
 of fuzzy genotypes.
+
+<!--
+TODO: Did we actually run our model on simulated data with 120 strains, or was it 80 strains?
+-->
 
 We simulated five replicate metagenotypes for 120 underlying strains in 400
 samples, and 250 SNPs, and then applied both StrainFacts and Strain Finder to
@@ -1032,7 +1055,7 @@ Biohub.
 
 Barbara Engelhardt provided valuable feedback on this project.
 
-## Conflicts
+## Competing Interests
 
 KSP is on the scientific advisory board of Phylagen.
 
@@ -1053,9 +1076,9 @@ Metagenomic and single-cell sequencing data from the FMT study will be uploaded
 to the SRA under BioProject PRJNA737472. Publicly available metagenomes are
 available under various other accessions described in [@Shi2021]. Strain
 genotypes from the GT-Pro reference database are publicly available at
-<[https://fileshare.czbiohub.org/s/waXQzQ9PRZPwTdk](https://fileshare.czbiohub.org/s/waXQzQ9PRZPwTdk)>.
+<https://fileshare.czbiohub.org/s/waXQzQ9PRZPwTdk>.
 All other code and metadata needed to reproduce these results are available at
-<https://github.com/bsmith89/haplo-manuscript>.
+<https://github.com/bsmith89/StrainFacts-manuscript>.
 
 # Supplementary Materials
 
