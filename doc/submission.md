@@ -411,8 +411,13 @@ UHGG representative genome.
 ## Single-cell genome sequencing
 
 A full description of the single-cell genomics pipeline is included in the
-Supplementary Methods, and will be briefly summarized here. For one of the 159
-samples with metagenomes described in the FMT study, microbial cells were
+Supplementary Methods, and will be briefly summarized here.
+Of the 159 samples with metagenomes described in the FMT study,
+we selected two focal samples for single-cell genomics.
+These samples were obtained from two different study subjects;
+one is a baseline sample and the other was collected after several weeks of
+FMT doses as described in [@Smith2022].
+For each of these focal samples, microbial cells were
 isolated from whole feces by homogenization in phosphate buffered saline, 50 μm
 filter-based removal of large fecal particles, and density gradient separation.
 After isolating and thoroughly washing the density layer corresponding to the
@@ -710,12 +715,13 @@ Beyond simulations, we sought to confirm the accuracy of strain inferences in a
 real biological dataset subject to forms of noise and bias not reflected in the
 generative model we used for simulations. To accomplish this, we applied a
 recently developed, single-cell, genomic sequencing workflow to obtain
-ground-truth, strain genotypes from a human fecal sample collected in a
+ground-truth, strain genotypes from two human fecal samples collected in a
 previously described, clinical FMT experiment [@Smith2022]. We ran StrainFacts
-on metagenotypes derived from this and other samples in the same study.
+on metagenotypes derived from these two focal samples as well as the other 157
+samples in the same study.
 
-Genotypes that StrainFacts inferred to be present in the metagenome matched
-those observed SCGs, with a mean, best-match normalized Hamming distance of
+Genotypes that StrainFacts inferred to be present in each of these metagenomes matched
+the observed SCGs, with a mean, best-match normalized Hamming distance of
 0.049 ([@Fig:scg]A). Furthermore, the median distance was just 0.015, reflecting
 the outsized influence of a small number of SCGs with more extreme deviations.
 For many species, SCGs also match a consensus genotype—the majority allele at
@@ -738,19 +744,20 @@ inferences (X-axis) versus consensus genotypes (Y-axis). Points below and to
 the right of the red dotted line reflecting an improvement of our method over
 the consensus, based on the normalized, best-match Hamming distance. Each dot
 represents an individual SCG reflecting a putative genotype found in the
-analysed sample. SCGs from all species found in one sample are represented, and
-marker colors reflect the metagenotype entropy of that species, a proxy for the
+analysed sample. SCGs from all species found in either of the focal samples are
+represented, and marker colors reflect the metagenotype entropy of that
+species in the relevant focal sample, a proxy for the
 potential strain diversity represented. Axes are on a "symmetric" log scale,
-with linear placement of values below 10-2. A version of this panel colored by
+with linear placement of values below 10^-2^. A version of this panel colored by
 metagenotype horizontal coverage is in Supplementary [@Fig:scg-supp].
 **(B)** A non-metric multidimensional scaling ordination of 68 SCGs and
 inferred genotypes for one species, _S. thermophilus_, with notably high strain
-diversity in the focal sample. Circles represent SCGs, are colored by their
+diversity in one focal sample. Circles represent SCGs, are colored by their
 assignment to one of four identified clusters, and larger markers indicate
 greater horizontal coverage. Triangles represent StrainFacts genotypes inferred
 to be at greater than 1% relative abundance, and larger markers reflect a
 higher inferred relative abundance. The red cross represents the consensus
-metagenotype of the analysed sample.
+metagenotype of that focal sample.
 ](fig/scg_comparison_figure.dpi200.png){#fig:scg}
 
 Of the 75 species represented in our SCG dataset, one stood out for having
