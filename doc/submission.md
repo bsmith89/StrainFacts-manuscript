@@ -494,11 +494,16 @@ necessitating minor modifications to the code.
 ### Genotype comparisons
 
 Inferred fuzzy genotypes were discretized to zero or one for downstream
-analyses. Similarly, when comparing genotypes to the metagenotype consensus or
-SCGs, observed allele frequencies were discretized to the majority allele. SNP
-sites without coverage were treated as unobserved. Distances between genotypes
+analyses.
+SNP sites without coverage were treated as unobserved.
+Distances between genotypes
 were calculated as the masked, normalized Hamming distance, the fraction of
-alleles that do not agree, ignoring unobserved SNP.
+alleles that do not agree, ignoring unobserved SNPs.
+Similarly, SCG genotypes and the metagenotype consensus were discretized to the
+majority allele.
+In comparing the distance between SCGs and these inferred genotypes
+sites missing from either the SCG or the metagenotype
+were treated as unobserved.
 Metagenotype entropy, a proxy for strain heterogeneity, was calculated for each
 sample as the depth weighted mean allele frequency entropy:
 $\frac{1}{\sum_g{m_{ig}}} \sum_g -m_{ig} [(\hat{p}_{ig} \log_2(\hat{p}_{ig}) + (1 - \hat{p}_{ig}) \log_2(1 - \hat{p}_{ig})]$
