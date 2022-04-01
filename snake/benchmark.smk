@@ -22,7 +22,7 @@ rule run_sfinder_fit_benchmark_matrix:
                 [0.5, 0.8, 1.0, 1.5],
                 range(5),
                 range(5),
-                ['evaluation.tsv', 'benchmark'],
+                ["evaluation.tsv", "benchmark"],
             )
         ],
 
@@ -51,7 +51,7 @@ rule run_sfacts_cpu_fit_benchmark_matrix:
                 [0.5, 0.8, 1.0, 1.5],
                 range(5),
                 range(5),
-                ['evaluation.tsv', 'benchmark'],
+                ["evaluation.tsv", "benchmark"],
             )
         ],
 
@@ -80,7 +80,7 @@ rule run_sfacts_gpu_fit_benchmark_matrix:
                 [0.5, 0.8, 1.0, 1.5],
                 range(5),
                 range(5),
-                ['evaluation.tsv', 'benchmark'],
+                ["evaluation.tsv", "benchmark"],
             )
         ],
 

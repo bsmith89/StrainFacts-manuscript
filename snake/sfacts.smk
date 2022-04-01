@@ -468,6 +468,7 @@ rule fit_sfacts_strategy44:
                 {output.fit}
         """
 
+
 rule fit_sfacts_strategy44_ratio_strains:
     output:
         fit="{stem}.metagenotype{stemB}.fit-sfacts44_v-s{rstrain}-g{nposition}-seed{seed}.world.nc",
@@ -529,6 +530,7 @@ rule fit_sfacts_strategy44_ratio_strains:
                 {output.fit}
         """
 
+
 use rule fit_sfacts_strategy44 as fit_sfacts_strategy44_gpu with:
     output:
         fit="{stem}.metagenotype{stemB}.fit-sfacts44_gpu-s{nstrain}-g{nposition}-seed{seed}.world.nc",
@@ -558,8 +560,9 @@ use rule fit_sfacts_strategy44 as fit_sfacts_strategy44_gpu with:
         walltime_hr=36,
         pmem=5_000,
         mem_mb=5_000,
-        device='cuda',
+        device="cuda",
         gpu_mem_mb=5_000,
+
 
 use rule fit_sfacts_strategy44 as fit_sfacts_strategy44_cpu with:
     output:
@@ -590,7 +593,8 @@ use rule fit_sfacts_strategy44 as fit_sfacts_strategy44_cpu with:
         walltime_hr=72,
         pmem=5_000,
         mem_mb=5_000,
-        device='cpu',
+        device="cpu",
+
 
 rule fit_sfacts_strategy44_timeit:
     output:
@@ -715,45 +719,59 @@ rule drop_g1000000_from_world_suffix:
     input:
         "{stem}.fit-sfacts{_fit_type}-s{nstrain}-g1000000-seed{seed}.world.nc",
     wildcard_constraints:
-        nstrain='[0-9]+',
-        seed='[0-9]+',
-    shell: alias_recipe
+        nstrain="[0-9]+",
+        seed="[0-9]+",
+    shell:
+        alias_recipe
 
 
-localrules: drop_g1000000_from_world_suffix
+localrules:
+    drop_g1000000_from_world_suffix,
 
 
 rule drop_g1000000_from_benchmark_suffix:
-    output: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-seed{seed}.benchmark'
-    input: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-g1000000-seed{seed}.benchmark'
-    shell: alias_recipe
+    output:
+        "{stem}.fit-sfacts{_fit_type}-s{nstrain}-seed{seed}.benchmark",
+    input:
+        "{stem}.fit-sfacts{_fit_type}-s{nstrain}-g1000000-seed{seed}.benchmark",
+    shell:
+        alias_recipe
 
 
-localrules: drop_g1000000_from_benchmark_suffix
+localrules:
+    drop_g1000000_from_benchmark_suffix,
 
 
 rule drop_g1000000_from_time_suffix:
-    output: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-seed{seed}.time'
-    input: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-g1000000-seed{seed}.time'
+    output:
+        "{stem}.fit-sfacts{_fit_type}-s{nstrain}-seed{seed}.time",
+    input:
+        "{stem}.fit-sfacts{_fit_type}-s{nstrain}-g1000000-seed{seed}.time",
     wildcard_constraints:
-        nstrain='[0-9]+',
-        seed='[0-9]+',
-    shell: alias_recipe
+        nstrain="[0-9]+",
+        seed="[0-9]+",
+    shell:
+        alias_recipe
 
 
-localrules: drop_g1000000_from_time_suffix
+localrules:
+    drop_g1000000_from_time_suffix,
 
 
 rule drop_g1000000_from_gpumem_suffix:
-    output: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-seed{seed}.gpumem'
-    input: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-g1000000-seed{seed}.gpumem'
+    output:
+        "{stem}.fit-sfacts{_fit_type}-s{nstrain}-seed{seed}.gpumem",
+    input:
+        "{stem}.fit-sfacts{_fit_type}-s{nstrain}-g1000000-seed{seed}.gpumem",
     wildcard_constraints:
-        nstrain='[0-9]+',
-        seed='[0-9]+',
-    shell: alias_recipe
+        nstrain="[0-9]+",
+        seed="[0-9]+",
+    shell:
+        alias_recipe
 
 
-localrules: drop_g1000000_from_gpumem_suffix
+localrules:
+    drop_g1000000_from_gpumem_suffix,
 
 
 rule fit_sfacts_strategy41_genotypes:

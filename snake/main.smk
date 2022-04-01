@@ -34,6 +34,7 @@ import snakemake.utils
 
 config = nested_defaultdict()
 
+
 configfile: "config.yaml"
 
 
@@ -95,7 +96,7 @@ else:
     )
     config["mgen_group"] = {}
 
-config['figures']['submission'] = [
+config["figures"]["submission"] = [
     "fig/strainfacts_model_diagram_figure.dpi200.png",
     "fig/strainfacts_model_diagram_figure.dpi200.png",
     "fig/compute_profiling_figure.dpi200.png",
