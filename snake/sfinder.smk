@@ -59,6 +59,34 @@ rule fit_sfinder:
                 --em_out {output}
         """
 
+rule fit_sfinder_exhaustive:
+    output:
+        "{stem}.fit-sfinder_ex-s{nstrain}-seed{seed}.em.cpickle",
+    input:
+        "{stem}.sfinder.aln.cpickle",
+    conda:
+        "conda/sfinder.yaml"
+    params:
+        nstrain=lambda w: int(w.nstrain),
+        seed=lambda w: int(w.seed),
+        max_runtime_s=72000,
+    benchmark:
+        "{stem}.fit-sfinder_ex-s{nstrain}-seed{seed}.benchmark"
+    resources:
+        walltime_sec=72000,
+    shell:
+        """
+        rm -rf {output}
+        /pollard/home/bsmith/Projects/haplo-benchmark/include/StrainFinder/StrainFinder.py \
+                --force_update --merge_out --msg \
+                --aln {input} \
+                --exhaustive \
+                --seed {params.seed} \
+                -N {params.nstrain} \
+                --max_reps 1 --dtol 1 --ntol 2 --max_time {resources.walltime_sec} --n_keep 5 --converge \
+                --em_out {output}
+        """
+
 
 rule fit_sfinder_timeit:
     output:

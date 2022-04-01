@@ -249,13 +249,13 @@ localrules:
     extract_and_portion_metagenotype,
 
 
-rule build_world_from_sfinder_tsv:
+rule build_world_from_flatfiles:
     output:
-        "{stem}.fit-sfinder{params}.world.nc",
+        "{stem}.fit-{params}.world.nc",
     input:
         script="scripts/sfacts_world_from_flatfiles.py",
-        gamma="{stem}.fit-sfinder{params}.gamma.tsv",
-        pi="{stem}.fit-sfinder{params}.pi.tsv",
+        gamma="{stem}.fit-{params}.gamma.tsv",
+        pi="{stem}.fit-{params}.pi.tsv",
         mgen="{stem}.tsv",
     # conda:
     #     "conda/sfacts.yaml"
@@ -267,7 +267,7 @@ rule build_world_from_sfinder_tsv:
 
 
 localrules:
-    build_world_from_tsv,
+    build_world_from_flatfiles,
 
 
 rule evaluate_fit_against_simulation:
@@ -710,8 +710,10 @@ rule fit_sfacts_strategy44_gpumem:
 # alignment with sfinder fit file naming, while keeping the
 # npositions-filename-parameterization which is needed for other workflows.
 rule drop_g1000000_from_world_suffix:
-    output: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-seed{seed}.world.nc'
-    input: '{stem}.fit-sfacts{_fit_type}-s{nstrain}-g1000000-seed{seed}.world.nc'
+    output:
+        "{stem}.fit-sfacts{_fit_type}-s{nstrain}-seed{seed}.world.nc",
+    input:
+        "{stem}.fit-sfacts{_fit_type}-s{nstrain}-g1000000-seed{seed}.world.nc",
     wildcard_constraints:
         nstrain='[0-9]+',
         seed='[0-9]+',
