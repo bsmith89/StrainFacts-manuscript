@@ -20,6 +20,10 @@ tblPrefix: [table, tables]
 <!--
 Things to do for v0.2:
 
+TODO: Communicate masking policy in SCG analysis.
+TODO: Hamming distance / ANI relationship
+TODO: Calculate genome-wide LD using a sample of ~2e4 positions, and _not_
+only positions in the same (reference genome) contig.
 TODO: Re-construct vector figures: Use vector export from Jupyter; drop
 background colors, borders around legends, etc.
 TODO: Use hats on estimated parameters?
@@ -27,9 +31,6 @@ TODO: Rasterize pcolormesh
 TODO: Add strain assembly citations to: [@Vicedomini2021; @Quince2021]
 TODO: Add [@Olekhnovich2021]
 TODO: Consider linking Zenodo for both sfacts and manuscript repos.
-TODO: Add re-analysis of SCG data where the sparsity of the consensus genotypes is also
-considered in the scg-inferred comparison (so that low-coverage metagenotypes
-don't get an advantage due to the masking)
 (See "ndist_focal_strain" in data/ucfmt.filt-poly05-cvrg05.fit-sfacts44_v-s30-g5000-seed0.refit-sfacts41-g10000-seed0.all_scg_comparison.tsv)
 TODO: Add re-analysis of SCG data where the second sample is also included.
 TODO: Homogeneous, private use hardware for benchmarking runtimes.
@@ -38,7 +39,32 @@ TODO: "Conflicts" vs. "Competing Interests"
 TODO: Upload SCG dataset to SRA
 TODO: Add LICENSE to StrainFacts repository
 TODO: Explain that the memory scaling analysis excluded (x.n == 10000) & (x.g==1000)
+TODO: Add re-analysis of SCG data where the sparsity of the consensus genotypes is also
+considered in the scg-inferred comparison (so that low-coverage metagenotypes
+don't get an advantage due to the masking)
+TODO: Drop fig:scg-supp
 
+Things that I told reviewers I'd do:
+
+TODO: Main-text mention and a short-ish supplement looking at genotype accuracy of MixtureS
+TODO: Clarify the difference between Strain Finder's and StrainFacts' fuzzy genotypes
+TODO: Clarify that we do not use the full enumeration in Strain Finder
+TODO: Add a sentence on how algorithm hyper-parameters were chosen and point
+out that our final choices seem to work across a number of scenario
+TODO: Clarify that all of the species selected for this study were relatively
+arbitrary, but that "applying StrainFacts systematically to a much larger
+collection of species is an exciting prospect for future work."
+TODO: Clarify in the text that the two fecal samples with SCGs came from two
+distinct subjects.
+TODO: Share a patch for Strain Finder and MixtureS code as a supplement
+TODO: Be more explicit in the introduction about the fuzzy haplotypes allowing
+us to harness PyTorch gradient descent
+TODO: Add definitions to math symbols on first use in methods
+TODO: Select better colors for countries in Figure 6
+TODO: Add quick discussion of "normalized hamming distance" vs. ANI
+TODO: Add supplement with distance-to-ANI comparison plots
+TODO: Move Figure 1 into the supplementary materials. Renumber other figures.
+TODO: Refine figures in Inkscape
 
 
 Rendering checklist:
