@@ -20,7 +20,6 @@ tblPrefix: [table, tables]
 <!--
 Things to do for v0.2:
 
-TODO: Communicate masking policy in SCG analysis.
 TODO: Calculate genome-wide LD using a sample of ~2e4 positions, and _not_
 only positions in the same (reference genome) contig.
 TODO: Re-construct vector figures: Use vector export from Jupyter; drop
@@ -746,19 +745,25 @@ well as the other 157 samples in the same study.
 
 Genotypes that StrainFacts inferred to be present in each of these metagenomes matched
 the observed SCGs, with a mean, best-match normalized Hamming distance of
-0.049 ([@Fig:scg]A). Furthermore, the median distance was just 0.015, reflecting
+0.039. Furthermore, the median distance was just 0.013, reflecting
 the outsized influence of a small number of SCGs with more extreme deviations.
 For many species, SCGs also match a consensus genotype—the majority allele at
-each SNP site in the metagenotype, although this comparison is made more
-challenging by the sparsity of consensus genotypes (Supplementary [@Fig:scg-supp]).
-Overall, we found a mean distance to the consensus of 0.056 and a median of
-0.013, not significantly different from inferred genotypes (p=0.3 by Wilcoxon
-signed-rank test). However, the consensus approach fails for species with a
+each SNP site in each metagenotype.
+<!--
+TODO: Include ref to [@Fig:scg]A
+-->
+We found a mean distance to the consensus of 0.037 and a median of 0.009.
+Because this distance excludes sites without observed counts
+in the metagenotype, we masked these same sites in our inferred genotypes
+to uniformly contrast the consensus approach to StrainFacts genotypes.
+Overall, inferred genotypes were similar to the consensus, with
+a mean distance of 0.031 (median of 0.009).
+However, the consensus approach fails for species with a
 mixture of multiple, co-existing strains. When we select only species with a
-metagenotype entropy of greater than 0.25, an indication of strain
+metagenotype entropy of greater than 0.05, an indication of strain
 heterogeneity, we see that StrainFacts inferences have a distinct advantage,
-with a mean distance of 0.115 versus 0.163 for the consensus approach (median
-of 0.093 versus 0.151, p=0.005). These results validate inferred genotypes in a
+with a mean distance of 0.055 versus 0.069 for the consensus approach (median
+of 0.018 versus 0.022, p<0.001). These results validate inferred genotypes in a
 stool microbiome using single-cell genomics and demonstrate that StrainFacts
 accounts for strain-mixtures better than consensus genotypes do.
 
