@@ -303,7 +303,7 @@ given a "metacommunity" hyperprior
 $\vec{\rho} \sim \mathrm{SSD}(\mathbf{1}, \mathbf{1}, \frac{1}{\rho^*})$,
 reflecting the abundance of strains across all
 samples. Decreasing the values of $\gamma^*$, $\rho^*$, and $\pi^*$
-increases the strength of regularization imposed by each of these priors.
+increases the strength of regularization imposed by the respective priors.
 
 ### Model specification
 
@@ -455,7 +455,8 @@ $\rho^*=0.5$, $\pi^*=0.3$, $\gamma^*=10^{-10}$, $\alpha^*=10$,
 $\epsilon^*_a=1.5$, $\epsilon^*_b=0.01$. The learning rate was initially
 set to 0.05. Prior annealing was applied to both $\mathbf{\Gamma}$ and
 $\vec{\rho}$ by setting $\gamma^*$ and $\rho^*$ to $1.0$ and $5$,
-respectively, for the first 2,000 steps, before exponentially relaxing these
+respectively, for the first 2,000 steps of gradient descent,
+before exponentially relaxing these
 hyperparameters to their final values over the next 8,000 steps. After this
 annealing period, when parameters had not improved for 100 steps, the learning
 rate was halved until it had fallen below 10-6, at which point we considered
