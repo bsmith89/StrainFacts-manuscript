@@ -373,32 +373,38 @@ metagenomic datasets: stool samples from a fecal microbiota transplantation
 (FMT) study described in [@Smith2022] and 20,550 metagenomes from a
 meta-analysis of publicly available data in [@Shi2021]. As described in that
 publication, metagenotypes for gut prokaryotic species were tallied using
-GT-Pro version 1.0.1 with the default database, which includes up to 1000 of
+GT-Pro version 1.0.1 with the default database, which includes up to 1,000 of
 the highest quality genomes for each species from the Unified Human
 Gastrointestinal Genome (UHGG) V1.0 [@Almeida2021]. This includes both cultured
 isolates and high-quality metagenomic assemblies. This same database was used
-as a reference set to which we compared our inferred genotypes. The five
-species for which we describe detailed results are:
-_Streptococcus thermophilus_ (GT-Pro species id: 104345, representative UHGG genome:
-MGYG-HGUT-04345),
-_Escherichia coli_D_ (id: 102506, MGYG-HGUT-02506),
-_Agathobacter rectalis_ (id: 102492, MGYG-HGUT-02492),
-_Methanobrevibacter_A smithii_ (id: 102163, MGYG-HGUT-02163),
-and CAG-279 sp1 (id: 102556, MGYG-HGUT-02556).
+as a reference set to which we compared our inferred genotypes.
 Estimated genomic distances
 between SNPs were based on the
 UHGG representative genome.
 
+We describe detailed results for
+_Escherichia coli_D_ (id: 102506, MGYG-HGUT-02506),
+_Agathobacter rectalis_ (id: 102492, MGYG-HGUT-02492),
+_Methanobrevibacter_A smithii_ (id: 102163, MGYG-HGUT-02163),
+and CAG-279 sp1 (id: 102556, MGYG-HGUT-02556).
+These were selected to demonstrate application of StrainFacts to prevalent
+gram-positive and gram-negative bacteria in the human gut, the most prevalent
+archaeon,
+as well as an unnamed, uncultured, and largely unstudied species.
+We also describe detailed results for
+_Streptococcus thermophilus_ (GT-Pro species id: 104345, representative UHGG genome:
+MGYG-HGUT-04345), selected for its high diversity in one sample of interest.
+
 ## Single-cell genome sequencing
 
-A full description of the single-cell genomics pipeline is included in the
-Supplementary Methods, and will be briefly summarized here.
 Of the 159 samples with metagenomes described in the FMT study,
 we selected two focal samples for single-cell genomics.
 These samples were obtained from two different study subjects;
 one is a baseline sample and the other was collected after several weeks of
 FMT doses as described in [@Smith2022].
-For each of these focal samples, microbial cells were
+A full description of the single-cell genomics pipeline is included in the
+Supplementary Methods, and will be briefly summarized here.
+For each of the focal samples, microbial cells were
 isolated from whole feces by homogenization in phosphate buffered saline, 50 μm
 filter-based removal of large fecal particles, and density gradient separation.
 After isolating and thoroughly washing the density layer corresponding to the
@@ -751,7 +757,7 @@ inferences (X-axis) versus consensus genotypes (Y-axis). Points below and to
 the right of the red dotted line reflecting an improvement of our method over
 the consensus, based on the normalized, best-match Hamming distance. Each dot
 represents an individual SCG reflecting a putative genotype found in the
-analysed sample. SCGs from all species found in either of the focal samples are
+analysed samples. SCGs from all species found in either of the focal samples are
 represented, and marker colors reflect the metagenotype entropy of that
 species in the relevant focal sample, a proxy for the
 potential strain diversity represented. Axes are on a "symmetric" log scale,
@@ -759,12 +765,12 @@ with linear placement of values below 10^-2^. A version of this panel colored by
 metagenotype horizontal coverage is in Supplementary [@Fig:scg-supp].
 **(B)** A non-metric multidimensional scaling ordination of 68 SCGs and
 inferred genotypes for one species, _S. thermophilus_, with notably high strain
-diversity in one focal sample. Circles represent SCGs, are colored by their
+diversity in one of the two focal samples. Circles represent SCGs, are colored by their
 assignment to one of four identified clusters, and larger markers indicate
 greater horizontal coverage. Triangles represent StrainFacts genotypes inferred
 to be at greater than 1% relative abundance, and larger markers reflect a
 higher inferred relative abundance. The red cross represents the consensus
-metagenotype of that focal sample.
+metagenotype of the focal sample.
 ](fig/scg_comparison_figure.dpi200.png){#fig:scg}
 
 Of the 75 species represented in our SCG dataset, one stood out for having
