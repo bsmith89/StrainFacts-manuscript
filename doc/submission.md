@@ -685,7 +685,9 @@ accurate estimation of strain heterogeneity.
 Finally, we assessed the quality of genotypes reconstructed by StrainFacts
 compared to Strain Finder using the abundance weighted mean Hamming distance.
 For each ground-truth genotype, normalized Hamming distance is computed based
-on the best matching inferred genotype ([@Fig:accuracy]D). We assessed the reverse as
+on the best matching inferred genotype ([@Fig:accuracy]D), then summarized
+as the mean weighted by the true strain abundance across all samples.
+We assessed the reverse as
 well: the abundance weighted mean, best-match Hamming distance for each
 inferred genotype among the ground-truth genotypes ([@Fig:accuracy]E). These two
 scores can be interpreted as answers to the distinct questions "how well were
