@@ -27,18 +27,16 @@ TODO: Re-construct vector figures: Use vector export from Jupyter; drop
 background colors, borders around legends, etc.
 XTODO: Use hats on estimated parameters?
 TODO: Rasterize pcolormesh
-TODO: Add strain assembly citations to: [@Vicedomini2021; @Quince2021]
-TODO: Add [@Olekhnovich2021]
-TODO: Consider linking Zenodo for both sfacts and manuscript repos.
-(See "ndist_focal_strain" in data/ucfmt.filt-poly05-cvrg05.fit-sfacts44_v-s30-g5000-seed0.refit-sfacts41-g10000-seed0.all_scg_comparison.tsv)
+XTODO: Add strain assembly citations to: [@Vicedomini2021; @Quince2021]
+XTODO: Add [@Olekhnovich2021]
 TODO: Add re-analysis of SCG data where the second sample is also included.
 XTODO: Homogeneous, private use hardware for benchmarking runtimes.
-TODO: "Conflicts" vs. "Competing Interests"
+XTODO: "Conflicts" vs. "Competing Interests"
 TODO: Upload SCG dataset to SRA
-TODO: Add LICENSE to StrainFacts repository
 TODO: Add re-analysis of SCG data where the sparsity of the consensus genotypes is also
 considered in the scg-inferred comparison (so that low-coverage metagenotypes
 don't get an advantage due to the masking)
+(See "ndist_focal_strain" in data/ucfmt.filt-poly05-cvrg05.fit-sfacts44_v-s30-g5000-seed0.refit-sfacts41-g10000-seed0.all_scg_comparison.tsv)
 TODO: Drop fig:scg-supp
 
 Things that I told reviewers I'd do:
