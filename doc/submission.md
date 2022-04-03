@@ -43,14 +43,8 @@ Things that I told reviewers I'd do:
 TODO: Main-text mention and a short-ish supplement looking at genotype accuracy of MixtureS
 TODO: Add a sentence on how algorithm hyper-parameters were chosen and point
 out that our final choices seem to work across a number of scenario
-TODO: Clarify that all of the species selected for this study were relatively
-arbitrary, but that "applying StrainFacts systematically to a much larger
-collection of species is an exciting prospect for future work."
-TODO: Clarify in the text that the two fecal samples with SCGs came from two
-distinct subjects.
 TODO: Share a patch for Strain Finder and MixtureS code as a supplement
 TODO: Select better colors for countries in Figure 6
-TODO: Add supplement with distance-to-ANI comparison plots
 TODO: Refine figures in Inkscape
 
 
