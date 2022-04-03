@@ -32,12 +32,11 @@ TODO: Add [@Olekhnovich2021]
 TODO: Consider linking Zenodo for both sfacts and manuscript repos.
 (See "ndist_focal_strain" in data/ucfmt.filt-poly05-cvrg05.fit-sfacts44_v-s30-g5000-seed0.refit-sfacts41-g10000-seed0.all_scg_comparison.tsv)
 TODO: Add re-analysis of SCG data where the second sample is also included.
-TODO: Homogeneous, private use hardware for benchmarking runtimes.
+XTODO: Homogeneous, private use hardware for benchmarking runtimes.
 TODO: CPU/GPU written out on first use? OR GPU _not_ written out in abstract?
 TODO: "Conflicts" vs. "Competing Interests"
 TODO: Upload SCG dataset to SRA
 TODO: Add LICENSE to StrainFacts repository
-TODO: Explain that the memory scaling analysis excluded (x.n == 10000) & (x.g==1000)
 TODO: Add re-analysis of SCG data where the sparsity of the consensus genotypes is also
 considered in the scg-inferred comparison (so that low-coverage metagenotypes
 don't get an advantage due to the masking)
@@ -350,7 +349,7 @@ converge to a global optimum, we find that this procedure often leads to
 accurate estimates without the need for replicate fits from independent
 initializations.
 
-## Simulation and benchmarking
+## Simulation and evaluation
 
 Metagenotype data was simulated in order to enable direct performance
 benchmarking against ground-truth genotypes and strain compositions. For each
@@ -526,17 +525,28 @@ $[\lfloor10^{(i-1)/c}\rfloor, \lfloor10^{i/c}\rfloor)$ where $c=30$ so that
 StrainFacts is implemented in Python3 and is available at
 <https://github.com/bsmith89/StrainFacts> and v0.1 was used for all results
 reported here.
-A forked version of Strain Finder—modified for ease of installation and to
-specify a random seed for reproducibility—can be found at
-<https://github.com/bsmith89/StrainFinder>.
+Strain Finder was not originally designed to take a random seed argument,
+necessitating minor modifications to the code.
+Patch files describing each set of changes are included in the Supplementary
+Materials.
 All other code and metadata needed to re-run these analyses is available at
-<https://github.com/bsmith89/StrainFacts-manuscript>.
-For software reproducibility, all analyses were performed using a
-Singularity container [@Kurtzer2017].
+<https://doi.org/10.5281/zenodo.5942586>.
+For reproducibility, all analyses were performed using Snakemake [@Molder2021]
+and with a Singularity container [@Kurtzer2017] that can be obtained
+at <https://hub.docker.com/repository/docker/bsmith89/compbio>.
 
-<!--
-TODO: Dockerfile in *-manuscript repo.
--->
+### Runtime and memory benchmarking
+
+Runtimes were determined using the Snakemake `benchmark:` directive,
+and memory requirements using the GNU `time` utility, version 1.8
+with all benchmarks run on the Wynton compute cluster at the University
+of California, San Francisco.
+Across strain numbers and replicates, maximum memory usage for models with
+10,000 samples and 1000 SNPs was, counterintuitively, less than for smaller
+models, likely because portions of runtime data were "swapped" to disk
+instead of staying in RAM.
+We therefore excluded data for these largest models from our statistical
+# analysis of memory requirements.
 
 # Results
 
