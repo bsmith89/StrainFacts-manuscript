@@ -725,12 +725,13 @@ scaling properties of StrainFacts.
 
 Beyond simulations, we sought to confirm the accuracy of strain inferences in a
 real biological dataset subject to forms of noise and bias not reflected in the
-generative model we used for simulations. To accomplish this, we applied a
-recently developed, single-cell, genomic sequencing workflow to obtain
-ground-truth, strain genotypes from two human fecal samples collected in a
-previously described, clinical FMT experiment [@Smith2022]. We ran StrainFacts
-on metagenotypes derived from these two focal samples as well as the other 157
-samples in the same study.
+generative model we used for simulations.
+To accomplish this, we applied a recently developed, single-cell, genomic
+sequencing workflow to obtain ground-truth, strain genotypes from two fecal
+samples collected in a previously described, clinical FMT experiment
+[@Smith2022] from two independent subjects.
+We ran StrainFacts on metagenotypes derived from these two focal samples as
+well as the other 157 samples in the same study.
 
 Genotypes that StrainFacts inferred to be present in each of these metagenomes matched
 the observed SCGs, with a mean, best-match normalized Hamming distance of
