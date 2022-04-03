@@ -33,7 +33,6 @@ TODO: Consider linking Zenodo for both sfacts and manuscript repos.
 (See "ndist_focal_strain" in data/ucfmt.filt-poly05-cvrg05.fit-sfacts44_v-s30-g5000-seed0.refit-sfacts41-g10000-seed0.all_scg_comparison.tsv)
 TODO: Add re-analysis of SCG data where the second sample is also included.
 XTODO: Homogeneous, private use hardware for benchmarking runtimes.
-TODO: CPU/GPU written out on first use? OR GPU _not_ written out in abstract?
 TODO: "Conflicts" vs. "Competing Interests"
 TODO: Upload SCG dataset to SRA
 TODO: Add LICENSE to StrainFacts repository
@@ -101,8 +100,8 @@ method for strain deconvolution that enables inference across tens of thousands
 of metagenomes. We harness a "fuzzy" genotype approximation that makes the
 underlying graphical model fully differentiable, unlike existing methods. This
 allows parameter estimates to be optimized with gradient-based methods,
-speeding up model fitting by two orders of magnitude. A graphical processing
-unit implementation provides additional scalability. Extensive simulations show
+speeding up model fitting by two orders of magnitude. A GPU
+implementation provides additional scalability. Extensive simulations show
 that StrainFacts can perform strain inference on thousands of metagenomes and
 has comparable accuracy to more computationally intensive tools. We further
 validate our strain inferences using single-cell genomic sequencing from a
@@ -595,7 +594,7 @@ just 8.9 minutes with the 1.5x parameterization. We did not attempt to run
 Strain Finder on this dataset.
 
 We next examined runtime scaling across a range of sample counts between 50 and
-2,500. We applied Strain Finder and StrainFacts (CPU and GPU) to simulated
+2,500. We applied Strain Finder and StrainFacts (both CPU and GPU) to simulated
 metagenotypes with 250 SNPs, and a fixed 1:5 ratio of strains to samples.
 Median runtimes for each tool at both the 1x and 1.5x parameterization
 demonstrate a substantially slower increase for StrainFacts as model size
