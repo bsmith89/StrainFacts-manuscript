@@ -25,7 +25,7 @@ TODO: Calculate genome-wide LD using a sample of ~2e4 positions, and _not_
 only positions in the same (reference genome) contig.
 TODO: Re-construct vector figures: Use vector export from Jupyter; drop
 background colors, borders around legends, etc.
-TODO: Use hats on estimated parameters?
+XTODO: Use hats on estimated parameters?
 TODO: Rasterize pcolormesh
 TODO: Add strain assembly citations to: [@Vicedomini2021; @Quince2021]
 TODO: Add [@Olekhnovich2021]
@@ -58,10 +58,8 @@ distinct subjects.
 TODO: Share a patch for Strain Finder and MixtureS code as a supplement
 TODO: Be more explicit in the introduction about the fuzzy haplotypes allowing
 us to harness PyTorch gradient descent
-TODO: Add definitions to math symbols on first use in methods
 TODO: Select better colors for countries in Figure 6
 TODO: Add supplement with distance-to-ANI comparison plots
-TODO: Move Figure 1 into the supplementary materials. Renumber other figures.
 TODO: Refine figures in Inkscape
 
 
@@ -240,12 +238,15 @@ Metagenotypes from multiple samples are subsequently combined into a
 ### Deconvolution of metagenotype data
 
 StrainFacts is based on a generative, graphical model of biallelic metagenotype
-data (summarized in [@Fig:model-diagram]) which describes the allele frequencies at each
-SNP site in each sample as the product of the relative abundance of strains and
-their genotypes. We notate this functional relationship as
-$p_{ig} = \sum_s{\gamma_{sg} \times \pi_i}$,
-where $\gamma_{sg}$ indicates the allele at
-SNP $g$ in strain $s$, and equals $1$ if it is the alternative allele. In
+data (summarized in Supplementary [@Fig:model-diagram])
+which describes the allele frequencies at each
+SNP site in each sample ($p_{ig}$ for sample $i$ and SNP $g$) as the product of
+the relative abundance of strains ($\vec{\pi}_i$) and their genotypes,
+$\gamma_{sg}$, where 0 indicates the reference and 1 indicates the alternative
+allele for strain $s$.
+This functional relationship is therefore
+$p_{ig} = \sum_s{\gamma_{sg} \times \pi_{is}$,
+In
 matrix form, equivalently, we notate this as
 $\mathbf{P} = \mathbf{\Gamma} \mathbf{\Pi}$ ([@Tbl:symbols]).
 
@@ -265,9 +266,8 @@ probability as the loss function. This "maximum a posteriori" (MAP) approach
 has also been applied to NMF [@Schmidt2009]. However, unlike NMF, where the key
 constraint is that all matrices are non-negative, the metagenotype
 deconvolution model also constrains the elements of $\mathbf{P}$ and
-$\mathbf{\Gamma}$ to lie in the closed interval $[0, 1]$ (i.e. the
-"1-simplex" or $\mathcal{S}^1$ for biallelic SNPs), and the rows of
-$\mathbf{\Pi}$ are in $\mathcal{S}^{S-1}$.
+$\mathbf{\Gamma}$ to lie in the closed interval $[0, 1]$, and the rows of
+$\mathbf{\Pi}$ are are "on the $S-1$-simplex", i.e. they sum to one.
 
 ### Fuzzy genotypes and the shifted-scaled Dirichlet distribution
 
@@ -292,16 +292,10 @@ family of probability distributions, the shifted-scaled Dirichlet distribution
 (SSD) [@Monti2011a], for all three goals. We briefly describe our rationale and
 parameterization of the SSD distribution in the Supplementary Methods.
 
-<!--
-TODO: Consider notating the first element of an SSD distribution
-on the 1 simplex by including a second element in the random variable
-determined by this prior
-(i.e. $(\gamma, 1 - \gamma) ~ \mathrm{SSD}(\mathbf{1}, \mathbf{1}, \frac{1}{\gamma^*})$)
--->
 For each element of $\mathbf{\Gamma}$ we set the prior as
-$\gamma \sim \mathrm{SSD}_0(\mathbf{1}, \mathbf{1}, \frac{1}{\gamma^*})$.
-Note that we trivially transform the $\tilde{\gamma} \in \mathcal{S}^1$
-to the unit interval by dropping the second element.
+$(\gamma, 1 - \gamma) \sim \mathrm{SSD}(\mathbf{1}, \mathbf{1}, \frac{1}{\gamma^*})$.
+(Note that we trivially transform the 1-simplex valued $(\gamma, 1 - \gamma)$
+to the unit interval by dropping the second element.)
 Smaller values of the hyperparameter
 $\gamma^*$ correspond to more sparsity in $\mathbf{\Gamma}$. We put a
 hierarchical prior on $\mathbf{\Pi}$, with the rows subject to the prior
@@ -325,29 +319,19 @@ parameterized with $\mathbf{\tilde{P}}$ and one additional
 parameter—$\alpha^*$—controlling count overdispersion relative to the
 Binomial model.
 
-To summarize, our model is as follows (in random variable notation; see [@Fig:model-diagram] for a plate diagram):
+To summarize, our model is as follows (in random variable notation; see Supplementary [@Fig:model-diagram] for a plate diagram):
 
 $$
 \begin{eqnarray*}
 y_{ig} &\sim& \mathrm{BetaBinom}(\tilde{p}_{ig}, \alpha^* \;|\; m_{ig}) \\
 \tilde{p}_{ig} &=& p_{ig} (1 - \epsilon_i / 2) + (1 - p_{ig}) (\epsilon_i / 2) \\
 p_{ig} &=& \sum_s \pi_{is} \gamma_{sg} \\
-{\gamma}_{sg} &\sim& \mathrm{SSD}_0(\mathbf{1}, \mathbf{1}, \frac{1}{\gamma^*}) \\
+(\gamma_{sg}, 1 - \gamma_{sg}) &\sim& \mathrm{SSD}(\mathbf{1}, \mathbf{1}, \frac{1}{\gamma^*}) \\
 \vec{\pi}_i &\sim& \mathrm{SSD}(\mathbf{1}, \vec{\rho}, \frac{1}{\pi^*}) \\
 \vec{\rho} &\sim& \mathrm{SSD}(\mathbf{1}, \mathbf{1}, \frac{1}{\rho^*}) \\
 \epsilon &\sim& \mathrm{Beta}(\epsilon^*_a, \frac{\epsilon^*_a}{\epsilon^*_b}) \\
 \end{eqnarray*}
 $$
-
-![Graphical representation of the StrainFacts model including
-hyperparameters. Symbols include observed data (blue box), deterministic terms
-(circles), key parameters being estimated (red boxes), and key hyperparameters
-(unenclosed). Plates behind terms indicate the dimensionality and indexing of
-the variables and arrows connect the terms that directly depend on one another.
-](fig/strainfacts_model_diagram_figure.dpi200.png){#fig:model-diagram}
-<!--
-TODO: Reference the random variable notation.
--->
 
 ## Model fitting
 
@@ -1191,6 +1175,14 @@ individuals with a westernized lifestyle. Both a study identifier and the ISO
 ](fig/biogeography_supplementary_figure.dpi200.png){#fig:biogeography-supp}
 
 ## Supplementary Methods
+
+![Graphical representation of the StrainFacts model including
+hyperparameters. Symbols include observed data (blue box), deterministic terms
+(circles), key parameters being estimated (red boxes), and key hyperparameters
+(unenclosed). Plates behind terms indicate the dimensionality and indexing of
+the variables and arrows connect the terms that directly depend on one another.
+](fig/strainfacts_model_diagram_figure.dpi200.png){#fig:model-diagram}
+
 
 ### The shifted, scaled Dirichlet distribution
 
