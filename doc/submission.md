@@ -46,8 +46,6 @@ TODO: Drop fig:scg-supp
 Things that I told reviewers I'd do:
 
 TODO: Main-text mention and a short-ish supplement looking at genotype accuracy of MixtureS
-TODO: Clarify the difference between Strain Finder's and StrainFacts' fuzzy genotypes
-TODO: Clarify that we do not use the full enumeration in Strain Finder
 TODO: Add a sentence on how algorithm hyper-parameters were chosen and point
 out that our final choices seem to work across a number of scenario
 TODO: Clarify that all of the species selected for this study were relatively
@@ -56,8 +54,6 @@ collection of species is an exciting prospect for future work."
 TODO: Clarify in the text that the two fecal samples with SCGs came from two
 distinct subjects.
 TODO: Share a patch for Strain Finder and MixtureS code as a supplement
-TODO: Be more explicit in the introduction about the fuzzy haplotypes allowing
-us to harness PyTorch gradient descent
 TODO: Select better colors for countries in Figure 6
 TODO: Add supplement with distance-to-ANI comparison plots
 TODO: Refine figures in Inkscape
@@ -273,14 +269,19 @@ $\mathbf{\Pi}$ are are "on the $S-1$-simplex", i.e. they sum to one.
 
 StrainFacts does _not_ constrain the elements of $\mathbf{\Gamma}$ to be
 discrete—i.e. in the set $\{0, 1\}$ for biallelic sites—in contrast to prior
-tools: Strain Finder [@Smillie2018], DESMAN [@Quince2017], and Lineage
-[@OBrien2014].  Instead, we allow genotypes to vary continuously in the open
+tools: DESMAN [@Quince2017], Lineage [@OBrien2014],
+and Strain Finder's [@Smillie2018] exhaustive search.
+Instead, we allow genotypes to vary continuously in the open
 interval between fully reference (0) and fully alternative (1). The use of
 fuzzy-genotypes serves a key purpose: by replacing the only discrete parameter
 with a continuous approximation, our posterior function becomes fully
 differentiable, and therefore amenable to efficient, gradient-based
-optimization. We show below that inference with StrainFacts is faster than with
-other tools.
+optimization.
+While, when not using the exhaustive search strategy, Strain Finder also treats
+genotypes as continuous to accelerate inference, these are discretizes after
+each iteration.
+We show below that inference with StrainFacts is faster than with
+Strain Finder.
 
 Since true genotypes are in fact discrete, we place a prior on the elements of
 $\mathbf{\Gamma}$ that pushes estimates towards zero or one and away from
@@ -470,8 +471,13 @@ Methods).
 For computational reproducibility we set fixed seeds for random number
 generators: 0 for all analyses where we only report one estimate, and 0, 1, 2,
 3, and 4 for the five replicate estimates described for simulated datasets.
-Strain Finder was not originally designed to take a random seed argument,
-necessitating minor modifications to the code.
+Strain Finder was run with flags `--dtol 1 --ntol 2 --max_reps 1`.
+We did not use `--exhaustive`, Strain Finder's exhaustive genotype search strategy.
+
+<!--
+TODO: Add these patches.
+-->
+
 
 ### Genotype comparisons
 
@@ -1056,12 +1062,16 @@ approaches will become increasingly feasible. Thus, StrainFacts occupies the
 same analysis niche as Strain Finder and DESMAN, and it expands upon these
 reliable approaches by providing a scalable model fitting procedure.
 
-Besides enabling more computationally efficient inference, fuzzy genotypes may
-also be more robust to deviations from model assumptions. For instance, an
+Fuzzy genotypes enable more computationally efficient inference by eliminating
+the need for discrete optimization.
+In addition, fuzzy genotypes may
+be more robust to deviations from model assumptions.
+For instance, an
 intermediate genotype could be a satisfactory approximation when gene
 duplications or deletions are present in some strains. While we do not explore
-the possibility here, fuzzy genotypes may also provide a heuristic for
-capturing uncertainty in strain genotypes. For example, future work could
+the possibility here, fuzzy genotypes may provide a heuristic for
+capturing uncertainty in strain genotypes.
+Future work could
 consider propagating intermediate genotype values instead of discretizing them.
 
 StrainFacts builds on recent advances in metagenotyping, in particular our
