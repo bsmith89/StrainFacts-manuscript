@@ -21,7 +21,6 @@ tblPrefix: [table, tables]
 Things to do for v0.2:
 
 TODO: Communicate masking policy in SCG analysis.
-TODO: Hamming distance / ANI relationship
 TODO: Calculate genome-wide LD using a sample of ~2e4 positions, and _not_
 only positions in the same (reference genome) contig.
 TODO: Re-construct vector figures: Use vector export from Jupyter; drop
@@ -61,7 +60,6 @@ TODO: Be more explicit in the introduction about the fuzzy haplotypes allowing
 us to harness PyTorch gradient descent
 TODO: Add definitions to math symbols on first use in methods
 TODO: Select better colors for countries in Figure 6
-TODO: Add quick discussion of "normalized hamming distance" vs. ANI
 TODO: Add supplement with distance-to-ANI comparison plots
 TODO: Move Figure 1 into the supplementary materials. Renumber other figures.
 TODO: Refine figures in Inkscape
@@ -686,6 +684,11 @@ the truth?", respectively. While StrainFacts and Strain Finder performed
 similarly on these indexes—which tool had higher accuracy varied by score and
 parameterization—StrainFacts' accuracy was more stable between the two
 parameterizations.
+It should be noted that since strain genotypes are only inferred for SNP sites,
+in real-world analyses the genome-wide genotype reconstruction error
+will likely be much lower than this Hamming distance.
+We examine the relationship between genotype distances and average nucleotide
+identity (ANI) in the Supplementary Results.
 
 ![Accuracy of strain inference on simulated data. Performance
 of StrainFacts and Strain Finder are compared across five distinct accuracy
@@ -831,6 +834,24 @@ number of _E. coli_ strains by just 4 (to 119) with no reduction for the three
 other species. This suggests that the diversity regularization built into the
 StrainFacts model is sufficient to collapse closely related strains as part of
 inference.
+
+As GT-Pro only tallies alleles at a fixed subset of SNPs,
+the relationship between genotype distances and ANI is not fixed.
+In order to anchor our results to this more widely-used measure of genome
+similarity, we compared the genotype distance to genome-wide ANI for all
+pairs of genomes in the GT-Pro reference database for all four species.
+We find that the fraction of positions differing genome wide (calculated as 1 - ANI)
+was tightly proportional to the fraction of genotyped positions differing,
+but with a different constant of proportionality for each species:
+_E. coli_ (0.0776, uncentered R^2^=0.994),
+_A. rectalis_ (0.1069, R^2^=0.990),
+_M. smithii_ (0.0393, R^2^=0.967),
+and CAG-279 (0.0595, R^2^=0.991).
+Additional details of this analysis can be found in the Supplementary Results.
+<!--
+TODO: Add this supplmentary result.
+-->
+
 
 ### StrainFacts recapitulates known diversity in well studied species
 
@@ -1121,6 +1142,18 @@ All other code and metadata needed to reproduce these results are available at
 # Supplementary Materials
 
 ## Supplementary Results
+
+![Emipirical relationship between ANI and genotype distance
+among reference genomes in the GT-Pro database.
+Genotype distance is defined as the normalized Hamming distance at SNP sites
+considered by GT-Pro.
+All pairwise genome comparisons are plotted as a 2D histogram, with greater
+density indicated with darker colors.
+For each species, a linear regression calculated without an intercept term is
+shown (black line), and the constant of proportionality and uncentered R^2^ is also
+indicated.
+](fig/genotype_distance_ani_relationship.pdf){#fig:dist-vs-ani}
+![](fig/genotype_distance_ani_relationship_cbar.pdf) <!-- Colorbar for [@Fig:dist-vs-ani] included here as a separate image. -->
 
 ![Maximum memory allocation across varying numbers of strains (S,
 line shade), SNPs (G, line style), and samples is plotted for StrainFacts
