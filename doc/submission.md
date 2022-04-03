@@ -684,7 +684,8 @@ well: the abundance weighted mean, best-match Hamming distance for each
 inferred genotype among the ground-truth genotypes ([@Fig:accuracy]E). These two
 scores can be interpreted as answers to the distinct questions "how well were
 the true genotypes recovered?" and "how well do the inferred genotypes reflect
-the truth?", respectively. While StrainFacts and Strain Finder performed
+the truth?", respectively.
+While StrainFacts and Strain Finder performed
 similarly on these indexes—which tool had higher accuracy varied by score and
 parameterization—StrainFacts' accuracy was more stable between the two
 parameterizations.
@@ -782,7 +783,8 @@ StrainFacts inferred four strains in the metagenomic data from the same stool
 sample, (Strain 1 - 4) with 57%, 32%, and 7%, and 3% relative abundance,
 respectively. We explored the concordance between clusters and StrainFacts
 inferences by assigning a best-match Hamming distance genotype among the
-inferred strains to each SCG ([@Tbl:scg-concordance]). For SCGs in three of the four clusters
+inferred strains to each SCG ([@Tbl:scg-concordance]).
+For SCGs in three of the four clusters
 there was a low median distance to StrainFacts genotypes as well as a perfect
 1-to-1 correspondence between strains and clusters. While this genotype
 concordance was broken for SCGs in cluster B, strain 4 was also inferred to be
