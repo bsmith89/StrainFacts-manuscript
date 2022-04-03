@@ -652,16 +652,22 @@ abundance error. By this index, StrainFacts and Strain Finder performed
 similarly well when applied to the simulated data ([@Fig:accuracy]A). We repeated this
 analysis with the 1.5x parameterization to assess the robustness of inferences
 to model misspecification, finding that both tools maintained similar
-performance to the 1x parameterization. Thus, we conclude based on UniFrac
+performance to the 1x parameterization.
+By comparison, considering too few strains (the 0.8x parameterization, fitting
+32 strains) degraded performance dramatically for both tools, with StrainFacts
+performing slightly better.
+Thus, we conclude based on UniFrac
 distance that StrainFacts is as accurate as Strain Finder and that both models
 are robust to specifying too many strains.
 
 To further probe accuracy, we quantified the performance of StrainFacts and
 Strain Finder with several other measures. First, we evaluated pairwise
 comparisons of strain composition by calculating the mean absolute error of
-pairwise Bray-Curtis dissimilarities ([@Fig:accuracy]B). While Strain Finder slightly
-outperformed StrainFacts on this index under the 1.5x parameterization, the
-magnitude of the difference was small. This suggests that StrainFacts can be
+pairwise Bray-Curtis dissimilarities ([@Fig:accuracy]B).
+While, with the 1x parameterization,
+Strain Finder slightly outperformed StrainFacts on this index, the
+magnitude of the difference was small.
+This suggests that StrainFacts can be
 used for applications in microbial ecology that rely on measurements of beta
 diversity.
 
@@ -673,7 +679,7 @@ To overcome this limitation, we calculated the mean absolute error of the
 Shannon entropy of the inferred strain composition for each sample ([@Fig:accuracy]C).
 This score quantifies how accurately inferences reflect within-sample strain
 heterogeneity. StrainFacts performed substantially better on this score than
-Strain Finder, both for the 1x and 1.5x parameterization, indicating more
+Strain Finder for all three parameterizations, indicating more
 accurate estimation of strain heterogeneity.
 
 Finally, we assessed the quality of genotypes reconstructed by StrainFacts
@@ -687,7 +693,7 @@ the true genotypes recovered?" and "how well do the inferred genotypes reflect
 the truth?", respectively.
 While StrainFacts and Strain Finder performed
 similarly on these indexes—which tool had higher accuracy varied by score and
-parameterization—StrainFacts' accuracy was more stable between the two
+parameterization—StrainFacts' accuracy was more stable across the 1x and 1.5x
 parameterizations.
 It should be noted that since strain genotypes are only inferred for SNP sites,
 in real-world analyses the genome-wide genotype reconstruction error
@@ -699,9 +705,10 @@ identity (ANI) in the Supplementary Results.
 of StrainFacts and Strain Finder are compared across five distinct accuracy
 indices, with lower scores reflecting better performance on each index.
 Simulated data had 200 samples, 40 underlying strains, and 250 SNPs. For each
-tool, both 40 and 60 strain models were parameterized ("1x" and "1.5x"
+tool, 32, 40 and 60 strain models were parameterized ("0.8x", "1x" and "1.5x"
 respectively), and every model was fit with five independent initializations to
-each simulation. All 25 estimates for each tool-parameterization combination
+each simulation.
+All 25 estimates for each tool-parameterization combination
 are shown. Scores reflect **(A)** mean Unifrac distance between simulated and
 inferred strain compositions, **(B)** mean absolute difference between
 all-by-all pairwise Bray-Curtis dissimilarities calculated on simulated versus
@@ -717,10 +724,11 @@ signed-rank test.
 
 Overall, these results suggest that StrainFacts is capable of state-of-the-art
 performance with respect to several different scientific objectives in a
-realistic set of simulations.  Performance was surprisingly robust to model
-misspecification with 50% more strains than were simulated. Eliminating the
-computational demands of a separate model selection step further improves the
-scaling properties of StrainFacts.
+realistic set of simulations.
+Performance was surprisingly robust to model specification with more strains
+than the simulation.
+Eliminating the computational demands of a separate model selection step
+further improves the scaling properties of StrainFacts.
 
 ## Single-cell sequencing validates inferred strain genotypes
 
