@@ -27,6 +27,22 @@ rule run_sfinder_fit_benchmark_matrix:
         ],
 
 
+rule run_mixture_s_fit_benchmark_matrix:
+    output:
+        touch("data/benchmark_fit_matrix.mixture_s.flag"),
+    input:
+        fit=[
+            (
+                "data/sfacts_simulate-model_simplest_simulation-n200-g250-s40"
+                f"-pi40-mu100-eps10-seed{sim_seed}"
+                ".metagenotype-n200-g250"
+                ".fit-mixtureS"
+                ".evaluation.tsv"
+            )
+            for sim_seed in range(5)
+        ],
+
+
 rule run_sfacts_cpu_fit_benchmark_matrix:
     output:
         touch("data/benchmark_fit_matrix.sfacts_cpu.flag"),

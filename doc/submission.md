@@ -40,7 +40,6 @@ TODO: Drop fig:scg-supp
 
 Things that I told reviewers I'd do:
 
-TODO: Main-text mention and a short-ish supplement looking at genotype accuracy of MixtureS
 TODO: Add a sentence on how algorithm hyper-parameters were chosen and point
 out that our final choices seem to work across a number of scenario
 TODO: Share a patch for Strain Finder and MixtureS code as a supplement
@@ -524,6 +523,9 @@ StrainFacts is implemented in Python3 and is available at
 reported here.
 Strain Finder was not originally designed to take a random seed argument,
 necessitating minor modifications to the code.
+Similarly, we made several modification to the MixtureS [@Li2021] code allowing us to run
+it directly on simulated metagenotypes and compare the results to StrainFacts
+and Strain Finder outputs (see Supplementary [@Fig:accuracy-with-mixtureS]).
 Patch files describing each set of changes are included in the Supplementary
 Materials.
 All other code and metadata needed to re-run these analyses is available at
@@ -716,6 +718,14 @@ Markers at the top of each panel indicate a statistical difference between
 tools at a p<0.05 (\*) or p<0.001 (\*\*) significance threshold by Wilcoxon
 signed-rank test.
 ](fig/benchmarks_figure.dpi200.png){#fig:accuracy}
+
+To expand our performance comparison to a second tool designed for strain inference,
+we also ran MixtureS on a subset of these simulations.
+MixtureS estimates strain genotype and relative abundance on each metagenotype
+individually, and therefore does not leverage variation in strain abundance
+across samples.
+We found that it performed poorly on our benchmarks
+(see Supplementary [@Fig:accuracy-with-mixtureS]).
 
 Overall, these results suggest that StrainFacts is capable of state-of-the-art
 performance with respect to several different scientific objectives in a
@@ -1174,6 +1184,22 @@ shown (black line), and the constant of proportionality and uncentered R^2^ is a
 indicated.
 ](fig/genotype_distance_ani_relationship.pdf){#fig:dist-vs-ani}
 ![](fig/genotype_distance_ani_relationship_cbar.pdf) <!-- Colorbar for [@Fig:dist-vs-ani] included here as a separate image. -->
+
+![
+Extension of accuracy evaluation for StrainFacts and Strain Finder with
+additional results for MixtureS.
+Results are identical to panels A, C, D, and E in [@Fig:accuracy]
+(here panels **A**-**D**, respectively).
+Simulations are shown for five simulations with 250 SNP positions, 200 samples,
+and 40 strains.
+While StrainFacts and Strain Finder each have 32, 40, and 60 strains specified
+(the 0.8x, 1.0x, 1.5x parameterizations),
+MixtureS does not specify the number of strains _a priori_, and points are
+arbitrarily placed with the 1x parameterization.
+Similarly, MixtureS runs are deterministic; hence only one fit for each
+of the five simulations is shown.
+](fig/accuracy_benchmarking_with_mixtureS.png){#fig:accuracy-with-mixtureS}
+![](fig/accuracy_benchmarking_with_mixtureS_legend.png) <!-- Colorbar for [@Fig:accuracy-with-mixtureS] included here as a separate image. -->
 
 ![Maximum memory allocation across varying numbers of strains (S,
 line shade), SNPs (G, line style), and samples is plotted for StrainFacts
