@@ -90,6 +90,7 @@ rule build_submission_docx:
         template="doc/static/example_style.docx",
         csl="doc/citestyle.csl",
         figures=lambda w: config["figures"][w.stem],
+    conda: 'conda/pandoc.yaml'
     shell:
         """
         pandoc --from markdown --to docx \
