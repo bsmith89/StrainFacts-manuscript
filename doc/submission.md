@@ -28,15 +28,9 @@ XTODO: Use hats on estimated parameters?
 TODO: Rasterize pcolormesh
 XTODO: Add strain assembly citations to: [@Vicedomini2021; @Quince2021]
 XTODO: Add [@Olekhnovich2021]
-TODO: Add re-analysis of SCG data where the second sample is also included.
 XTODO: Homogeneous, private use hardware for benchmarking runtimes.
 XTODO: "Conflicts" vs. "Competing Interests"
 TODO: Upload SCG dataset to SRA
-TODO: Add re-analysis of SCG data where the sparsity of the consensus genotypes is also
-considered in the scg-inferred comparison (so that low-coverage metagenotypes
-don't get an advantage due to the masking)
-(See "ndist_focal_strain" in data/ucfmt.filt-poly05-cvrg05.fit-sfacts44_v-s30-g5000-seed0.refit-sfacts41-g10000-seed0.all_scg_comparison.tsv)
-TODO: Drop fig:scg-supp
 
 Things that I told reviewers I'd do:
 
@@ -785,8 +779,7 @@ analysed samples. SCGs from all species found in either of the focal samples are
 represented, and marker colors reflect the metagenotype entropy of that
 species in the relevant focal sample, a proxy for the
 potential strain diversity represented. Axes are on a "symmetric" log scale,
-with linear placement of values below 10^-2^. A version of this panel colored by
-metagenotype horizontal coverage is in Supplementary [@Fig:scg-supp].
+with linear placement of values below 10^-2^.
 **(B)** A non-metric multidimensional scaling ordination of 68 SCGs and
 inferred genotypes for one species, _S. thermophilus_, with notably high strain
 diversity in one of the two focal samples. Circles represent SCGs, are colored by their
@@ -1212,18 +1205,6 @@ models. Median of 9 replicate runs is shown. Maximum memory requirements are
 extrapolated to higher numbers of samples for a model with 1000 SNP sites (red
 line). An abridged version of this plot is included as [@Fig:compute].
 ](fig/memory_profiling_more_strains_figure.dpi200.png){#fig:memory-supp}
-
-![Inferred strains reflect genotypes from a single-cell
-sequencing experiment. Distance between observed SCGs and StrainFacts
-inferences (X-axis) versus consensus genotypes (Y-axis), plotted as in [@Fig:scg].
-Points below and to the right of the red dotted line reflecting an
-improvement of our method over the consensus, based on the normalized,
-best-match Hamming distance. Each dot represents an individual SCG reflecting a
-putative genotype found in the analysed sample. SCGs from all species found in
-one sample are represented, and marker colors reflect the metagenotype
-horizontal coverage for that species. Axes are on a "symmetric" log scale, with
-linear placement of values below 10-2.
-](fig/scg_comparison_supplementary_figure.dpi200.png){#fig:scg-supp}
 
 ![Patterns in strain dominance according to geography and
 lifestyle across thousands of publicly available metagenomes in dozens of
