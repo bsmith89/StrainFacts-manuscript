@@ -1,0 +1,117 @@
+From 0ab80df8b990920e792bf1dd15544419f1e0aa47 Mon Sep 17 00:00:00 2001
+From: Byron Smith <me@byronjsmith.com>
+Date: Thu, 31 Mar 2022 15:03:26 -0700
+Subject: Allow short-circuit of metagenotyping to accept a hand-built file.
+
+---
+ mixture_model.py | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/mixture_model.py b/mixture_model.py
+index d9807e5..f1a4d9b 100644
+--- a/mixture_model.py
++++ b/mixture_model.py
+@@ -105,6 +105,7 @@ parser.add_argument('--genome_name', help='Input genome name', default=None)
+ parser.add_argument('--genome_file_loc', help='Input genome file location', default=None)
+ parser.add_argument('--bam_file', help='Input sorted bam file', default=None)
+ parser.add_argument('--res_dir', help='result directory', default=None)
++parser.add_argument('--restart', action='store_true', help='Skip fetch/filter step; use pre-saved intermeidate file')
+ 
+ args = parser.parse_args()
+ 
+@@ -129,7 +130,8 @@ if not os.path.exists(res_tmp_dir):
+     command = 'mkdir -p ' + res_tmp_dir
+     os.system(command)
+ #generate polymorphic sites
+-fetch_filter_polymorphic_sites(genome_len, genome_name, bam_file_loc, res_tmp_dir)
++if not args.restart:
++    fetch_filter_polymorphic_sites(genome_len, genome_name, bam_file_loc, res_tmp_dir)
+ 
+ #EM algorithm
+ polymorphic_file_name = res_tmp_dir + 'filter_polymorphic_sites'
+-- 
+2.23.0
+
+
+From 8098749900c07e49a8e1b3e24db3fa9164c1e120 Mon Sep 17 00:00:00 2001
+From: Byron Smith <me@byronjsmith.com>
+Date: Thu, 31 Mar 2022 15:05:56 -0700
+Subject: Don't exit with error on 'no haplotypes found'
+
+---
+ mixture_model.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/mixture_model.py b/mixture_model.py
+index f1a4d9b..e7ae2ad 100644
+--- a/mixture_model.py
++++ b/mixture_model.py
+@@ -152,7 +152,8 @@ if num_haps_predict == 1 or num_haps_predict == -1:
+             for item in value:
+                 f.write('%s\n' % item)
+ 
+-    sys.exit('no haplotypes found')
++    print('no haplotypes found')
++    sys.exit()
+ 
+ 
+ res_hap = em_dir + 'hap_' + str(num_haps_predict) + '/haplotypes'
+-- 
+2.23.0
+
+
+From 6454505c9dc2f795d3378e93de91e5465740dca6 Mon Sep 17 00:00:00 2001
+From: Byron Smith <me@byronjsmith.com>
+Date: Thu, 31 Mar 2022 15:06:27 -0700
+Subject: Don't throw out all data when depths are homogenous (e.g.
+ simulation).
+
+---
+ EM.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/EM.py b/EM.py
+index 5ea56d6..1a143a4 100644
+--- a/EM.py
++++ b/EM.py
+@@ -1016,7 +1016,7 @@ def filter(data):
+     total_read.sort()
+ 
+     for item in data:
+-        if sum(item[1:]) <= quantile:
++        if sum(item[1:]) < quantile:
+             continue
+         else:
+             res.append(item[:])
+-- 
+2.23.0
+
+
+From d6104d4575184d6faaab61cb94c302fcca6762d9 Mon Sep 17 00:00:00 2001
+From: Byron Smith <me@byronjsmith.com>
+Date: Thu, 31 Mar 2022 14:51:37 -0700
+Subject: Generate haplotypes using all SNPs, not just filtered SNPs
+
+---
+ EM.py | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/EM.py b/EM.py
+index 1a143a4..7a20fb2 100644
+--- a/EM.py
++++ b/EM.py
+@@ -554,7 +554,10 @@ def filter_one_hap(inFileName, genomeFileLoc):
+     data_normalized = normalized_filter(data, polyCounts_refLabel)
+ 
+     # median_value = np.median([item[2] for item in data_normalized])
+-    snp_output = generate_final_SNPs_single_hap(data_normalized, polyCounts_refLabel)
++    data_as_though_data_normalized = [[x[0], None, None] + x[1:] for x in data]
++    snp_output = generate_final_SNPs_single_hap(
++        data_as_though_data_normalized, polyCounts_refLabel
++    )
+     # if len(data_normalized) < 50 or median_value <= 10:
+     if len(data_normalized) < 50:
+         return True, snp_output
+-- 
+2.23.0
+
