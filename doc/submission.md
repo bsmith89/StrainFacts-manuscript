@@ -229,7 +229,7 @@ the relative abundance of strains ($\vec{\pi}_i$) and their genotypes,
 $\gamma_{sg}$, where 0 indicates the reference and 1 indicates the alternative
 allele for strain $s$.
 This functional relationship is therefore
-$p_{ig} = \sum_s{\gamma_{sg} \times \pi_{is}$,
+$p_{ig} = \sum_s \gamma_{sg} \times \pi_{is}$,
 In
 matrix form, equivalently, we notate this as
 $\mathbf{P} = \mathbf{\Gamma} \mathbf{\Pi}$ ([@Tbl:symbols]).
@@ -489,7 +489,11 @@ sites missing from either the SCG or the metagenotype
 were treated as unobserved.
 Metagenotype entropy, a proxy for strain heterogeneity, was calculated for each
 sample as the depth weighted mean allele frequency entropy:
-$\frac{1}{\sum_g{m_{ig}}} \sum_g -m_{ig} [(\hat{p}_{ig} \log_2(\hat{p}_{ig}) + (1 - \hat{p}_{ig}) \log_2(1 - \hat{p}_{ig})]$
+
+\[
+\frac{1}{\sum_g{m_{ig}}} \sum_g -m_{ig} [(\hat{p}_{ig} \log_2(\hat{p}_{ig}) + (1 - \hat{p}_{ig}) \log_2(1 - \hat{p}_{ig})]
+\]
+
 where $\hat{p}_{ig}$ is the observed alternative allele frequency.
 
 Where indicated, we dereplicated highly similar strains by applying
@@ -530,7 +534,7 @@ Patch files describing each set of changes are included in the Supplementary
 Materials.
 All other code and metadata needed to re-run these analyses is available at
 <https://doi.org/10.5281/zenodo.5942586>.
-For reproducibility, all analyses were performed using Snakemake [@Molder2021]
+For reproducibility, analyses were performed using Snakemake [@Molder2021]
 and with a Singularity container [@Kurtzer2017] that can be obtained
 at <https://hub.docker.com/repository/docker/bsmith89/compbio>.
 
@@ -545,7 +549,7 @@ Across strain numbers and replicates, maximum memory usage for models with
 models, likely because portions of runtime data were "swapped" to disk
 instead of staying in RAM.
 We therefore excluded data for these largest models from our statistical
-# analysis of memory requirements.
+analysis of memory requirements.
 
 # Results
 
@@ -663,8 +667,8 @@ While, with the 1x parameterization,
 Strain Finder slightly outperformed StrainFacts on this index, the
 magnitude of the difference was small.
 This suggests that StrainFacts can be
-used for applications in microbial ecology that rely on measurements of beta
-diversity.
+used for applications in microbial ecology that rely on measurements of
+beta-diversity.
 
 Ideally, inferences should conform to Occam's razor, estimating "as few strains
 as possible, but no fewer". Unfortunately, Bray-Curtis error is not sensitive
@@ -696,7 +700,7 @@ It should be noted that since strain genotypes are only inferred for SNP sites,
 in real-world analyses the genome-wide genotype reconstruction error
 will likely be much lower than this Hamming distance.
 We examine the relationship between genotype distances and average nucleotide
-identity (ANI) in the Supplementary Results.
+identity (ANI) in Supplementary [@Fig:dist-vs-ani].
 
 ![Accuracy of strain inference on simulated data. Performance
 of StrainFacts and Strain Finder are compared across five distinct accuracy
@@ -730,7 +734,7 @@ We found that it performed poorly on our benchmarks
 Overall, these results suggest that StrainFacts is capable of state-of-the-art
 performance with respect to several different scientific objectives in a
 realistic set of simulations.
-Performance was surprisingly robust to model specification with more strains
+Performance was surprisingly robust to model misspecification with more strains
 than the simulation.
 Eliminating the computational demands of a separate model selection step
 further improves the scaling properties of StrainFacts.
@@ -873,7 +877,7 @@ _E. coli_ (0.0776, uncentered R^2^=0.994),
 _A. rectalis_ (0.1069, R^2^=0.990),
 _M. smithii_ (0.0393, R^2^=0.967),
 and CAG-279 (0.0595, R^2^=0.991).
-Additional details of this analysis can be found in the Supplementary Results.
+Additional details of this analysis can be found in Supplementary [@Fig:dist-vs-ani].
 <!--
 TODO: Add this supplmentary result.
 -->
@@ -1008,9 +1012,9 @@ to elucidate processes of transmission, diversification, and selection with
 implications for human health and perhaps even our understanding of human
 origins [@Garud2019; @Linz2007]. To demonstrate the application of StrainFacts
 to the study of microbial evolution, we examined patterns in pairwise LD, here
-calculated as the squared Pearson correlation coefficient (r2). This statistic
+calculated as the squared Pearson correlation coefficient (r^2^). This statistic
 can inform understanding of recombination rates in microbial populations
-[@Vos2009; @Garud2019a]. Genome-wide, LD, summarized as the 90th percentile r2
+[@Vos2009; @Garud2019a]. Genome-wide, LD, summarized as the 90th percentile r^2^
 [LD~90~, @Vos2017], was substantially higher for _E. coli_ (mean of 0.24) than
 _A. rectalis_ (0.04), _M. smithii_ (0.11), or CAG-279 (0.04), perhaps
 suggesting greater population structure in the species and less panmictic
@@ -1042,7 +1046,7 @@ expanding this analysis to additional species will identify patterns in
 recombination rates across broader microbial diversity.
 
 ![Pairwise LD across genomic distance estimated from inferred
-genotypes for four species. LD was calculated as r2 and genomic distance
+genotypes for four species. LD was calculated as r^2^ and genomic distance
 between polymorphic loci is based on distances in a single, representative
 genome. The distribution of SNP pairs in each distance window is shown as a
 histogram with darker colors reflecting a larger fraction of the pairs in that
@@ -1183,10 +1187,10 @@ For each species, a linear regression calculated without an intercept term is
 shown (black line), and the constant of proportionality and uncentered R^2^ is also
 indicated.
 ](fig/genotype_distance_ani_relationship.png){#fig:dist-vs-ani}
+
 ![](fig/genotype_distance_ani_relationship_cbar.png) <!-- Colorbar for [@Fig:dist-vs-ani] included here as a separate image. -->
 
-![
-Extension of accuracy evaluation for StrainFacts and Strain Finder with
+![Extension of accuracy evaluation for StrainFacts and Strain Finder with
 additional results for MixtureS.
 Results are identical to panels A, C, D, and E in [@Fig:accuracy]
 (here panels **A**-**D**, respectively).
@@ -1199,6 +1203,7 @@ arbitrarily placed with the 1x parameterization.
 Similarly, MixtureS runs are deterministic; hence only one fit for each
 of the five simulations is shown.
 ](fig/accuracy_benchmarking_with_mixtureS.png){#fig:accuracy-with-mixtureS}
+
 ![](fig/accuracy_benchmarking_with_mixtureS_legend.png) <!-- Colorbar for [@Fig:accuracy-with-mixtureS] included here as a separate image. -->
 
 ![Maximum memory allocation across varying numbers of strains (S,
