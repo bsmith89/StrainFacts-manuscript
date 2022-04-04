@@ -1182,8 +1182,8 @@ density indicated with darker colors.
 For each species, a linear regression calculated without an intercept term is
 shown (black line), and the constant of proportionality and uncentered R^2^ is also
 indicated.
-](fig/genotype_distance_ani_relationship.pdf){#fig:dist-vs-ani}
-![](fig/genotype_distance_ani_relationship_cbar.pdf) <!-- Colorbar for [@Fig:dist-vs-ani] included here as a separate image. -->
+](fig/genotype_distance_ani_relationship.png){#fig:dist-vs-ani}
+![](fig/genotype_distance_ani_relationship_cbar.png) <!-- Colorbar for [@Fig:dist-vs-ani] included here as a separate image. -->
 
 ![
 Extension of accuracy evaluation for StrainFacts and Strain Finder with
