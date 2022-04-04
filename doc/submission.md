@@ -506,8 +506,11 @@ the permutation 9999 times, we arrived at an empirical null distribution to
 which we compared our true, observed values to calculate a P-value.
 
 Pairwise linkage disequilibrium (LD) was calculated as the squared Pearson
-correlation coefficient across genotypes of dereplicated strains. To calculate
-the 90th percentile LD, SNP pairs were binned at either an exact genomic
+correlation coefficient across genotypes of dereplicated strains.
+Genome-wide 90th percentile LD, was calculated from a random sample of
+20,000 or, if fewer, all available SNP positions.
+To calculate
+the 90th percentile LD profile, SNP pairs were binned at either an exact genomic
 distance or within a window of distances, as indicated. In order to encourage a
 smooth distance-LD relationship, windows at larger pairwise-distance spanned a
 larger range. Specifically the ith window covers the span
@@ -1008,7 +1011,7 @@ to the study of microbial evolution, we examined patterns in pairwise LD, here
 calculated as the squared Pearson correlation coefficient (r^2^). This statistic
 can inform understanding of recombination rates in microbial populations
 [@Vos2009; @Garud2019a]. Genome-wide, LD, summarized as the 90th percentile r^2^
-[LD~90~, @Vos2017], was substantially higher for _E. coli_ (mean of 0.24) than
+[LD~90~, @Vos2017], was substantially higher for _E. coli_ (0.24) than
 _A. rectalis_ (0.04), _M. smithii_ (0.11), or CAG-279 (0.04), perhaps
 suggesting greater population structure in the species and less panmictic
 recombination.
@@ -1031,12 +1034,13 @@ distance-decay relationship are very similar between inferred and reference
 strains, reinforcing the value of genotypes inferred from metagenomes for
 microbial population genetics. Interestingly, for three of the four species
 (_E. coli_, _A. rectalis_, and _M. smithii_), LD estimates from StrainFacts
-strains were significantly higher than from references (p<1e-10 for all three
-by Wilcoxon test), while CAG-279 exhibited a trend toward the reverse. It is
-not clear what might cause these quantitative discrepancies, but they could
-reflect differences in the set of strains in each dataset. Future studies
-expanding this analysis to additional species will identify patterns in
-recombination rates across broader microbial diversity.
+strains were significantly higher than from references
+(p<1e-10 for all three by Wilcoxon test),
+while CAG-279 exhibited a trend towards the reverse (p=0.85).
+It is not clear what might cause these quantitative discrepancies, but they
+could reflect differences in the set of strains in each dataset.
+Future studies expanding this analysis to additional species will identify
+patterns in recombination rates across broader microbial diversity.
 
 ![Pairwise LD across genomic distance estimated from inferred
 genotypes for four species. LD was calculated as r^2^ and genomic distance
