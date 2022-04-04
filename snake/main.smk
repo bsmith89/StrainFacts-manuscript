@@ -108,6 +108,10 @@ config["figures"]["submission"] = [
     "fig/memory_profiling_more_strains_figure.dpi200.png",
     "fig/scg_comparison_supplementary_figure.dpi200.png",
     "fig/biogeography_supplementary_figure.dpi200.png",
+    "fig/accuracy_benchmarking_with_mixtureS.png",
+    "fig/accuracy_benchmarking_with_mixtureS_legend.png",
+    "fig/genotype_distance_ani_relationship.png",
+    "fig/genotype_distance_ani_relationship_cbar.png",
 ]
 
 
