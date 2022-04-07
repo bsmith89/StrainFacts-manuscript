@@ -21,9 +21,6 @@ tblPrefix: [table, tables]
 Things to do for v0.2:
 
 TODO: Upload SCG dataset to SRA
-TODO: Biogeography supplementary figure.
-TODO: Memory benchmarking supplementary figure
-TODO: Accuracy benchmarking supplementary figure
 
 
 Rendering checklist:
@@ -103,7 +100,7 @@ future studies of strain-level variation in complex microbial communities.
 -->
 
 Words: TODO: less than 6768 \
-Figures: 7 \
+Figures: 6 \
 Tables: 3 \
 
 Keywords: metagenomics, strains, microbiome, biogeography, population genetics,
@@ -287,7 +284,8 @@ parameterized with $\mathbf{\tilde{P}}$ and one additional
 parameter—$\alpha^*$—controlling count overdispersion relative to the
 Binomial model.
 
-To summarize, our model is as follows (in random variable notation; see Supplementary [@Fig:model-diagram] for a plate diagram):
+To summarize, our model is as follows (in random variable notation; see
+Supplementary [@Fig:model-diagram] for a plate diagram):
 
 $$
 \begin{eqnarray*}
@@ -452,10 +450,6 @@ generators: 0 for all analyses where we only report one estimate, and 0, 1, 2,
 Strain Finder was run with flags `--dtol 1 --ntol 2 --max_reps 1`.
 We did not use `--exhaustive`, Strain Finder's exhaustive genotype search strategy.
 
-<!--
-TODO: Add these patches.
--->
-
 
 ### Genotype comparisons
 
@@ -515,7 +509,7 @@ Strain Finder was not originally designed to take a random seed argument,
 necessitating minor modifications to the code.
 Similarly, we made several modification to the MixtureS [@Li2021] code allowing us to run
 it directly on simulated metagenotypes and compare the results to StrainFacts
-and Strain Finder outputs (see Supplementary [@Fig:accuracy-with-mixtureS]).
+and Strain Finder outputs.
 Patch files describing each set of changes are included in the Supplementary
 Materials.
 All other code and metadata needed to re-run these analyses is available at
@@ -554,10 +548,6 @@ deconvolution [e.g. Lineage @OBrien2014; and DESMAN @Quince2017], Strain
 Finder's model and approach to inference are the most similar to StrainFacts.
 We therefore selected it for comparison in order to directly assess the value
 of fuzzy genotypes.
-
-<!--
-TODO: Did we actually run our model on simulated data with 120 strains, or was it 80 strains?
--->
 
 We simulated five replicate metagenotypes for 120 underlying strains in 400
 samples, and 250 SNPs, and then applied both StrainFacts and Strain Finder to
@@ -605,8 +595,8 @@ allocation in a model with 100 strains is plotted for StrainFacts models across
 a range of sample counts (N) and SNP counts (G, line shade). Median of 9
 replicate runs is shown. Maximum memory requirements are extrapolated to higher
 numbers of samples for a model with 1000 SNPs (red line). A version of this
-panel that includes a range of strain counts is included as Supplementary
-[@Fig:memory-supp].
+panel that includes a range of strain counts is included as
+Supplementary [@Fig:memory-supp].
 ](fig/compute_profiling_figure.w1000.png){#fig:compute}
 
 Given the good runtime scaling properties of StrainFacts, we next asked if
@@ -742,16 +732,13 @@ the observed SCGs, with a mean, best-match normalized Hamming distance of
 0.039. Furthermore, the median distance was just 0.013, reflecting
 the outsized influence of a small number of SCGs with more extreme deviations.
 For many species, SCGs also match a consensus genotype—the majority allele at
-each SNP site in each metagenotype.
-<!--
-TODO: Include ref to [@Fig:scg]A
--->
+each SNP site in each metagenotype (see [@Fig:scg]A).
 We found a mean distance to the consensus of 0.037 and a median of 0.009.
 Because this distance excludes sites without observed counts
 in the metagenotype, we masked these same sites in our inferred genotypes
 to uniformly contrast the consensus approach to StrainFacts genotypes.
 Overall, inferred genotypes were similar to the consensus, with
-a mean distance of 0.031 (median of 0.009).
+a mean, masked distance of 0.031 (median of 0.009).
 However, the consensus approach fails for species with a
 mixture of multiple, co-existing strains. When we select only species with a
 metagenotype entropy of greater than 0.05, an indication of strain
@@ -863,9 +850,6 @@ _A. rectalis_ (0.1069, R^2^=0.990),
 _M. smithii_ (0.0393, R^2^=0.967),
 and CAG-279 (0.0595, R^2^=0.991).
 Additional details of this analysis can be found in Supplementary [@Fig:dist-vs-ani].
-<!--
-TODO: Add this supplmentary result.
--->
 
 
 ### StrainFacts recapitulates known diversity in well studied species
@@ -978,10 +962,10 @@ These general trends hold across the other three species. In _M. smithii_,
 independent studies in the same country often share very similar strain
 dominance patterns (e.g. see clustering of studies performed in each of China,
 Mongolia, Denmark, and Spain in [@Fig:biogeography]B).
-In _E. coli_ (Supplementary [@Fig:biogeography-supp]A), while many strains
+In _E. coli_ , while many strains
 appear to be distributed globally, independent studies from China still cluster
-together based on patterns in strain dominance.
-Notably, in CAG-279 (Supplementary [@Fig:biogeography-supp]B),
+together based on patterns in strain dominance (see Supplementary [@Fig:biogeography-supp]).
+Notably, in CAG-279,
 studies with individuals in westernized societies do not
 cluster separately from the five other studies, suggesting that host lifestyle
 is not highly correlated with specific strains of this species. The variety of

@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="397.36151mm"
-   height="459.81885mm"
-   viewBox="0 0 397.36151 459.81885"
+   width="276.60791mm"
+   height="313.21722mm"
+   viewBox="0 0 276.60791 313.21723"
    version="1.1"
    id="svg5"
    inkscape:version="1.1 (c4e8f9e, 2021-05-24)"
@@ -24,9 +24,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="0.28703426"
-     inkscape:cx="-200.32452"
-     inkscape:cy="810.00783"
+     inkscape:zoom="0.28811319"
+     inkscape:cx="-747.96992"
+     inkscape:cy="557.07273"
      inkscape:window-width="1440"
      inkscape:window-height="819"
      inkscape:window-x="0"
@@ -112,16 +112,30 @@
          d="M 58.559615,833.62741 H 629.275 V 972 H 58.559615 Z"
          id="path90591" />
     </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath108678">
+      <path
+         d="M 10.8,24.8 H 58.229023 V 507.29578 H 10.8 Z"
+         id="path108676" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath108902">
+      <path
+         d="M 58.429023,537.2857 H 600.475 V 673.2 H 58.429023 Z"
+         id="path108900" />
+    </clipPath>
   </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(243.86962,66.689623)">
+     transform="translate(123.11604,-48.342095)">
     <g
        id="g15"
        inkscape:label="biogeography_102163"
-       transform="matrix(0.35277777,0,0,-0.35277777,-12.624118,236.04165)">
+       transform="matrix(0.24557267,0,0,-0.24557267,37.856622,274.18502)">
       <g
          id="g17">
         <g
@@ -923,7 +937,7 @@
     <g
        id="g663"
        inkscape:label="biogeography_102492"
-       transform="matrix(0.35277777,0,0,-0.35277777,-248.21399,274.15044)">
+       transform="matrix(0.24557267,0,0,-0.24557267,-126.1402,300.71299)">
       <g
          id="g665">
         <g
@@ -1893,7 +1907,7 @@
     <g
        id="g2639"
        inkscape:label="biogeography_102163_figelements"
-       transform="matrix(0.35277777,0,0,-0.35277777,567.53127,328.40515)">
+       transform="matrix(0.24557267,0,0,-0.24557267,441.70946,338.48032)">
       <path
          d="m -1580.303,286.27369 v -3.5"
          style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.8;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
@@ -2331,7 +2345,7 @@
     </g>
     <g
        id="g7114"
-       transform="matrix(0.35277777,0,0,-0.35277777,312.62503,220.79638)">
+       transform="matrix(0.24557267,0,0,-0.24557267,264.2663,263.57261)">
       <path
          d="m -1524.3214,-126.43987 v -3.5"
          style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.8;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
@@ -2926,7 +2940,7 @@
        transform="matrix(0.35277777,0,0,-0.35277777,332.74483,336.68744)" />
     <g
        id="g6278"
-       transform="matrix(0.35277777,0,0,-0.35277777,145.94209,651.33676)">
+       transform="matrix(0.24557267,0,0,-0.24557267,148.23638,563.27673)">
       <text
          transform="matrix(1,0,0,-1,2.725203e-5,2.3572569e-6)"
          style="font-variant:normal;font-weight:normal;font-size:13.747px;font-family:'DejaVu Sans';-inkscape-font-specification:DejaVuSans;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.3747"
@@ -3030,7 +3044,7 @@
     <g
        id="g2190"
        inkscape:label="biogeography_102506_legend_westernized"
-       transform="matrix(0.35277777,0,0,-0.35277777,-114.6495,403.32009)">
+       transform="matrix(0.24557267,0,0,-0.24557267,-33.164421,390.62947)">
       <path
          d="M 333.69062,216.09625 H 381.8 c 1.33333,0 2,0.66667 2,2 V 246.44 c 0,1.33333 -0.66667,2 -2,2 h -48.10938 c -1.33333,0 -2,-0.66667 -2,-2 v -28.34375 c 0,-1.33333 0.66667,-2 2,-2 z"
          style="fill:#ffffff;fill-opacity:0.8;fill-rule:nonzero;stroke:#cccccc;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:0.8"
@@ -3063,7 +3077,7 @@
     <g
        id="g89547"
        inkscape:label="biogeography_102163"
-       transform="matrix(0.35277777,0,0,-0.35277777,-546.83267,110.3618)">
+       transform="matrix(0.24557267,0,0,-0.24557267,-334.0121,186.69783)">
       <g
          id="g89945">
         <g
@@ -3082,7 +3096,7 @@
     </g>
     <g
        id="g90681"
-       transform="matrix(201.3585,0,0,-9.7154998,-227.55547,-9.1949795)">
+       transform="matrix(140.16797,0,0,-6.7630712,-111.75957,103.47298)">
       <image
          width="1"
          height="1"
@@ -3094,7 +3108,7 @@
     </g>
     <g
        id="g91497"
-       transform="translate(3.7041668)">
+       transform="matrix(0.69611151,0,0,0.69611151,49.222929,109.87371)">
       <g
          id="g90699"
          transform="matrix(201.3585,0,0,-274.57399,967.48536,426.43749)">
@@ -3181,5 +3195,27 @@
         </g>
       </g>
     </g>
+    <text
+       xml:space="preserve"
+       style="font-size:7.05556px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';word-spacing:0px;stroke-width:0.264583"
+       x="-121.77341"
+       y="53.702667"
+       id="text17943"><tspan
+         sodipodi:role="line"
+         id="tspan17941"
+         style="font-style:italic;stroke-width:0.264583"
+         x="-121.77341"
+         y="53.702667">A. rectalis</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:7.05556px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';word-spacing:0px;stroke-width:0.264583"
+       x="46.493607"
+       y="53.702667"
+       id="text18717"><tspan
+         sodipodi:role="line"
+         id="tspan18715"
+         style="font-style:italic;stroke-width:0.264583"
+         x="46.493607"
+         y="53.702667">M. smithii</tspan></text>
   </g>
 </svg>
