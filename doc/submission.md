@@ -20,20 +20,20 @@ tblPrefix: [table, tables]
 <!--
 Things to do for v0.2:
 
-TODO: Calculate genome-wide LD using a sample of ~2e4 positions, and _not_
-only positions in the same (reference genome) contig.
 XTODO: Use hats on estimated parameters?
 XTODO: Add strain assembly citations to: [@Vicedomini2021; @Quince2021]
 XTODO: Add [@Olekhnovich2021]
 XTODO: Homogeneous, private use hardware for benchmarking runtimes.
 XTODO: "Conflicts" vs. "Competing Interests"
 TODO: Upload SCG dataset to SRA
+TODO: Biogeography supplementary figure.
+TODO: Memory benchmarking supplementary figure
+TODO: Accuracy benchmarking supplementary figure
 
 Things that I told reviewers I'd do:
 
 TODO: Add a sentence on how algorithm hyper-parameters were chosen and point
 out that our final choices seem to work across a number of scenario
-TODO: Share a patch for Strain Finder and MixtureS code as a supplement
 
 
 Rendering checklist:
