@@ -20,11 +20,6 @@ tblPrefix: [table, tables]
 <!--
 Things to do for v0.2:
 
-XTODO: Use hats on estimated parameters?
-XTODO: Add strain assembly citations to: [@Vicedomini2021; @Quince2021]
-XTODO: Add [@Olekhnovich2021]
-XTODO: Homogeneous, private use hardware for benchmarking runtimes.
-XTODO: "Conflicts" vs. "Competing Interests"
 TODO: Upload SCG dataset to SRA
 TODO: Biogeography supplementary figure.
 TODO: Memory benchmarking supplementary figure

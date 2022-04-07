@@ -97,21 +97,20 @@ else:
     config["mgen_group"] = {}
 
 config["figures"]["submission"] = [
-    "fig/strainfacts_model_diagram_figure.dpi200.png",
-    "fig/strainfacts_model_diagram_figure.dpi200.png",
-    "fig/compute_profiling_figure.dpi200.png",
-    "fig/benchmarks_figure.dpi200.png",
-    "fig/scg_comparison_figure.dpi200.png",
-    "fig/coclustering_figure.dpi200.png",
-    "fig/biogeography_figure.dpi200.png",
-    "fig/ld_decay_figure.dpi200.png",
+    "fig/strainfacts_model_diagram_figure.w1000.png",
+    "fig/compute_profiling_figure.w1000.png",
+    "fig/benchmarks_figure.w1000.png",
+    "fig/scg_comparison_figure.w1000.png",
+    "fig/coclustering_figure.w1000.png",
+    "fig/biogeography_figure.w1000.png",
+    "fig/ld_decay_figure.w1000.png",
     "fig/memory_profiling_more_strains_figure.dpi200.png",
-    "fig/scg_comparison_supplementary_figure.dpi200.png",
-    "fig/biogeography_supplementary_figure.dpi200.png",
-    "fig/accuracy_benchmarking_with_mixtureS.png",
-    "fig/accuracy_benchmarking_with_mixtureS_legend.png",
-    "fig/genotype_distance_ani_relationship.png",
-    "fig/genotype_distance_ani_relationship_cbar.png",
+    "fig/biogeography_102556_figure.dpi200.png",
+    "fig/biogeography_102506_figure.dpi200.png",
+    "fig/accuracy_benchmarking_with_mixtureS_figure.dpi200.png",
+    "fig/accuracy_benchmarking_with_mixtureS_legend_figure.dpi200.png",
+    "fig/genotype_distance_ani_relationship_figure.dpi200.png",
+    "fig/genotype_distance_ani_relationship_cbar_figure.dpi200.png",
 ]
 
 
