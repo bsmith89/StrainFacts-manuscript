@@ -105,12 +105,9 @@ config["figures"]["submission"] = [
     "fig/biogeography_figure.w1000.png",
     "fig/ld_decay_figure.w1000.png",
     "fig/memory_profiling_more_strains_figure.dpi200.png",
-    "fig/biogeography_102556_figure.dpi200.png",
-    "fig/biogeography_102506_figure.dpi200.png",
-    "fig/accuracy_benchmarking_with_mixtureS_figure.dpi200.png",
-    "fig/accuracy_benchmarking_with_mixtureS_legend_figure.dpi200.png",
-    "fig/genotype_distance_ani_relationship_figure.dpi200.png",
-    "fig/genotype_distance_ani_relationship_cbar_figure.dpi200.png",
+    "fig/biogeography_supplementary_figure.w1000.png",
+    "fig/accuracy_benchmarking_with_mixtureS_figure.w1000.png",
+    "fig/genotype_distance_ani_relationship_figure.w1000.png",
 ]
 
 

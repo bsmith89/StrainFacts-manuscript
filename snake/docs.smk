@@ -133,12 +133,11 @@ rule compile_submission_folder:
     input:
         [
             "build/submission.docx",
-            "fig/strainfacts_model_diagram_figure.dpi200.tiff",
             "fig/compute_profiling_figure.dpi200.tiff",
             "fig/benchmarks_figure.dpi200.tiff",
             "fig/scg_comparison_figure.dpi200.tiff",
             "fig/coclustering_figure.dpi200.tiff",
-            "fig/biogeography_figure.dpi100.tiff",
+            "fig/biogeography_figure.dpi200.tiff",
             "fig/ld_decay_figure.dpi200.tiff",
             "fig/memory_profiling_more_strains_figure.dpi200.tiff",
         ],
