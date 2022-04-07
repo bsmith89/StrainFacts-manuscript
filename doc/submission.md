@@ -25,11 +25,6 @@ TODO: Biogeography supplementary figure.
 TODO: Memory benchmarking supplementary figure
 TODO: Accuracy benchmarking supplementary figure
 
-Things that I told reviewers I'd do:
-
-TODO: Add a sentence on how algorithm hyper-parameters were chosen and point
-out that our final choices seem to work across a number of scenario
-
 
 Rendering checklist:
 
@@ -435,6 +430,10 @@ hyperparameters to their final values over the next 8,000 steps. After this
 annealing period, when parameters had not improved for 100 steps, the learning
 rate was halved until it had fallen below 10-6, at which point we considered
 parameters to have converged.
+
+These hyperparameters were selected through manual optimization
+and we found that they gave reasonable performance
+across the diverse datasets in this study.
 
 The number of strains parameterized by our model was chosen as follows. For
 comparisons to SCGs, the number of strains was set at 30% of the number of
