@@ -473,9 +473,9 @@ were treated as unobserved.
 Metagenotype entropy, a proxy for strain heterogeneity, was calculated for each
 sample as the depth weighted mean allele frequency entropy:
 
-\[
+$$
 \frac{1}{\sum_g{m_{ig}}} \sum_g -m_{ig} [(\hat{p}_{ig} \log_2(\hat{p}_{ig}) + (1 - \hat{p}_{ig}) \log_2(1 - \hat{p}_{ig})]
-\]
+$$
 
 where $\hat{p}_{ig}$ is the observed alternative allele frequency.
 
