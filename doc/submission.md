@@ -1122,7 +1122,7 @@ Biohub.
 
 Barbara Engelhardt provided valuable feedback on this project.
 
-## Competing Interests
+## Conflicts
 
 KSP is on the scientific advisory board of Phylagen.
 
