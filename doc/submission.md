@@ -635,6 +635,29 @@ Thus, we conclude based on UniFrac
 distance that StrainFacts is as accurate as Strain Finder and that both models
 are robust to specifying too many strains.
 
+![Accuracy of strain inference on simulated data. Performance
+of StrainFacts and Strain Finder are compared across five distinct accuracy
+indices, with lower scores reflecting better performance on each index.
+Simulated data had 200 samples, 40 underlying strains, and 250 SNPs. For each
+tool, 32, 40 and 60 strain models were parameterized ("0.8x", "1x" and "1.5x"
+respectively), and every model was fit with five independent initializations to
+each simulation.
+All 25 estimates for each tool-parameterization combination
+are shown. Scores reflect **(A)** mean Unifrac distance between simulated and
+inferred strain compositions, **(B)** mean absolute difference between
+all-by-all pairwise Bray-Curtis dissimilarities calculated on simulated versus
+inferred strain compositions, **(C)** mean absolute difference in Shannon
+entropy calculated on simulated versus inferred strain compositions, **(D)**
+abundance weighted mean Hamming distance from each ground-truth strain to its
+best-match inferred genotype, and **(E)** the reverse: abundance weighted mean
+Hamming distance from each inferred strain to its best-match true genotype.
+Markers at the top of each panel indicate a statistical difference between
+tools at a p<0.05 (\*) or p<0.001 (\*\*) significance threshold by Wilcoxon
+signed-rank test.
+A version of this figure that includes accuracy comparisons to MixtureS
+is included as Supplementary [@Fig:accuracy-with-mixtureS].
+](fig/benchmarks_figure.w1000.png){#fig:accuracy}
+
 To further probe accuracy, we quantified the performance of StrainFacts and
 Strain Finder with several other measures. First, we evaluated pairwise
 comparisons of strain composition by calculating the mean absolute error of
@@ -676,28 +699,7 @@ It should be noted that since strain genotypes are only inferred for SNP sites,
 in real-world analyses the genome-wide genotype reconstruction error
 will likely be much lower than this Hamming distance.
 We examine the relationship between genotype distances and average nucleotide
-identity (ANI) in Supplementary [@Fig:dist-vs-ani].
-
-![Accuracy of strain inference on simulated data. Performance
-of StrainFacts and Strain Finder are compared across five distinct accuracy
-indices, with lower scores reflecting better performance on each index.
-Simulated data had 200 samples, 40 underlying strains, and 250 SNPs. For each
-tool, 32, 40 and 60 strain models were parameterized ("0.8x", "1x" and "1.5x"
-respectively), and every model was fit with five independent initializations to
-each simulation.
-All 25 estimates for each tool-parameterization combination
-are shown. Scores reflect **(A)** mean Unifrac distance between simulated and
-inferred strain compositions, **(B)** mean absolute difference between
-all-by-all pairwise Bray-Curtis dissimilarities calculated on simulated versus
-inferred strain compositions, **(C)** mean absolute difference in Shannon
-entropy calculated on simulated versus inferred strain compositions, **(D)**
-abundance weighted mean Hamming distance from each ground-truth strain to its
-best-match inferred genotype, and **(E)** the reverse: abundance weighted mean
-Hamming distance from each inferred strain to its best-match true genotype.
-Markers at the top of each panel indicate a statistical difference between
-tools at a p<0.05 (\*) or p<0.001 (\*\*) significance threshold by Wilcoxon
-signed-rank test.
-](fig/benchmarks_figure.w1000.png){#fig:accuracy}
+identity (ANI) in the Supplementary [@Fig:dist-vs-ani].
 
 To expand our performance comparison to a second tool designed for strain inference,
 we also ran MixtureS on a subset of these simulations.
@@ -1147,62 +1149,6 @@ All other code and metadata needed to reproduce these results are available at
 
 # Supplementary Materials
 
-## Supplementary Results
-
-![Emipirical relationship between ANI and genotype distance
-among reference genomes in the GT-Pro database.
-Genotype distance is defined as the normalized Hamming distance at SNP sites
-considered by GT-Pro.
-All pairwise genome comparisons are plotted as a 2D histogram, with greater
-density indicated with darker colors.
-For each species, a linear regression calculated without an intercept term is
-shown (black line), and the constant of proportionality and uncentered R^2^ is also
-indicated.
-](fig/genotype_distance_ani_relationship_figure.dpi200.png){#fig:dist-vs-ani}
-
-![](fig/genotype_distance_ani_relationship_cbar_figure.dpi200.png) <!-- Colorbar for [@Fig:dist-vs-ani] included here as a separate image. -->
-
-![Extension of accuracy evaluation for StrainFacts and Strain Finder with
-additional results for MixtureS.
-Results are identical to panels A, C, D, and E in [@Fig:accuracy]
-(here panels **A**-**D**, respectively).
-Simulations are shown for five simulations with 250 SNP positions, 200 samples,
-and 40 strains.
-While StrainFacts and Strain Finder each have 32, 40, and 60 strains specified
-(the 0.8x, 1.0x, 1.5x parameterizations),
-MixtureS does not specify the number of strains _a priori_, and points are
-arbitrarily placed with the 1x parameterization.
-Similarly, MixtureS runs are deterministic; hence only one fit for each
-of the five simulations is shown.
-](fig/accuracy_benchmarking_with_mixtureS_figure.dpi200.png){#fig:accuracy-with-mixtureS}
-
-![](fig/accuracy_benchmarking_with_mixtureS_legend_figure.dpi200.png) <!-- Colorbar for [@Fig:accuracy-with-mixtureS] included here as a separate image. -->
-
-![Maximum memory allocation across varying numbers of strains (S,
-line shade), SNPs (G, line style), and samples is plotted for StrainFacts
-models. Median of 9 replicate runs is shown. Maximum memory requirements are
-extrapolated to higher numbers of samples for a model with 1000 SNP sites (red
-line). An abridged version of this plot is included as [@Fig:compute].
-](fig/memory_profiling_more_strains_figure.dpi200.png){#fig:memory-supp}
-
-![Patterns in strain dominance according to geography and
-lifestyle across thousands of publicly available metagenomes in dozens of
-independent studies for two additional members of the human gut microbiome.
-Visual elements are identical to [@Fig:biogeography]: Columns represent collections of
-samples from individual studies and are further segmented by country and
-lifestyle (westernized or not). Rows represent strains inferred by StrainFacts.
-Cell colors reflect the fraction of samples in that study segment with that
-strain as the most abundant member. Study segments are omitted if they include
-fewer than 10 samples. Row ordering and the associated dendrogram reflect
-strain genotype distances, while the dendrogram for columns is based on their
-cosine similarity. Colors above the heatmap reflect the country in which
-samples were collected as well as whether samples were collected from
-individuals with a westernized lifestyle. Both a study identifier and the ISO
-3166-ISO country-code are included in the column labels.
-](fig/biogeography_102506_figure.dpi200.png){#fig:biogeography-supp}
-
-![](fig/biogeography_102556_figure.dpi200.png) <!-- Second panel fig/biogeography_102556_figure.dpi200.png -->
-
 ## Supplementary Methods
 
 ![Graphical representation of the StrainFacts model including
@@ -1426,5 +1372,57 @@ whitelist barcode were corrected. Reads with valid barcodes were trimmed with
 cutadapt to remove 5′ and 3′ adapter sequences and demultiplexed into
 single-cell FASTQ files by barcode sequences using the script demuxbyname.sh
 from the BBMap package (v.38.57).
+
+
+## Supplementary Results
+
+![Maximum memory allocation across varying numbers of strains (S,
+line shade), SNPs (G, line style), and samples is plotted for StrainFacts
+models. Median of 9 replicate runs is shown. Maximum memory requirements are
+extrapolated to higher numbers of samples for a model with 1000 SNP sites (red
+line). An abridged version of this plot is included as [@Fig:compute].
+](fig/memory_profiling_more_strains_figure.dpi200.png){#fig:memory-supp}
+
+![Extension of accuracy evaluation for StrainFacts and Strain Finder with
+additional results for MixtureS.
+Results are identical to panels A, C, D, and E in [@Fig:accuracy]
+(here panels **A**-**D**, respectively).
+Simulations are shown for five simulations with 250 SNP positions, 200 samples,
+and 40 strains.
+While StrainFacts and Strain Finder each have 32, 40, and 60 strains specified
+(the 0.8x, 1.0x, 1.5x parameterizations),
+MixtureS does not specify the number of strains _a priori_, and points are
+arbitrarily placed with the 1x parameterization.
+Similarly, MixtureS runs are deterministic; hence only one fit for each
+of the five simulations is shown.
+](fig/accuracy_benchmarking_with_mixtureS_figure.w1000.png){#fig:accuracy-with-mixtureS}
+
+![Emipirical relationship between ANI and genotype distance
+among reference genomes in the GT-Pro database.
+Genotype distance is defined as the normalized Hamming distance at SNP sites
+considered by GT-Pro.
+All pairwise genome comparisons are plotted as a 2D histogram, with greater
+density indicated with darker colors.
+For each species, a linear regression calculated without an intercept term is
+shown (black line), and the constant of proportionality and uncentered R^2^ is also
+indicated.
+](fig/genotype_distance_ani_relationship_figure.w1000.png){#fig:dist-vs-ani}
+
+![Patterns in strain dominance according to geography and
+lifestyle across thousands of publicly available metagenomes in dozens of
+independent studies for two additional members of the human gut microbiome.
+Visual elements are identical to [@Fig:biogeography]: Columns represent collections of
+samples from individual studies and are further segmented by country and
+lifestyle (westernized or not). Rows represent strains inferred by StrainFacts.
+Cell colors reflect the fraction of samples in that study segment with that
+strain as the most abundant member. Study segments are omitted if they include
+fewer than 10 samples. Row ordering and the associated dendrogram reflect
+strain genotype distances, while the dendrogram for columns is based on their
+cosine similarity. Colors above the heatmap reflect the country in which
+samples were collected as well as whether samples were collected from
+individuals with a westernized lifestyle. Both a study identifier and the ISO
+3166-ISO country-code are included in the column labels.
+](fig/biogeography_supplementary_figure.w1000.png){#fig:biogeography-supp}
+
 
 # References
