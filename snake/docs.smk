@@ -20,6 +20,8 @@ rule render_figure_to_png:
         inkscape {input} --export-width={params.width} --export-filename {output}
         """
 
+ruleorder: render_figure_to_png > render_pdf_to_png_imagemagick
+
 
 rule render_pdf_to_png_imagemagick:
     output:

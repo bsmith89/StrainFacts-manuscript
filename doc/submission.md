@@ -22,10 +22,7 @@ Things to do for v0.2:
 
 TODO: Calculate genome-wide LD using a sample of ~2e4 positions, and _not_
 only positions in the same (reference genome) contig.
-TODO: Re-construct vector figures: Use vector export from Jupyter; drop
-background colors, borders around legends, etc.
 XTODO: Use hats on estimated parameters?
-TODO: Rasterize pcolormesh
 XTODO: Add strain assembly citations to: [@Vicedomini2021; @Quince2021]
 XTODO: Add [@Olekhnovich2021]
 XTODO: Homogeneous, private use hardware for benchmarking runtimes.
@@ -37,8 +34,6 @@ Things that I told reviewers I'd do:
 TODO: Add a sentence on how algorithm hyper-parameters were chosen and point
 out that our final choices seem to work across a number of scenario
 TODO: Share a patch for Strain Finder and MixtureS code as a supplement
-TODO: Select better colors for countries in Figure 6
-TODO: Refine figures in Inkscape
 
 
 Rendering checklist:
@@ -618,7 +613,7 @@ replicate runs is shown. Maximum memory requirements are extrapolated to higher
 numbers of samples for a model with 1000 SNPs (red line). A version of this
 panel that includes a range of strain counts is included as Supplementary
 [@Fig:memory-supp].
-](fig/compute_profiling_figure.dpi200.png){#fig:compute}
+](fig/compute_profiling_figure.w1000.png){#fig:compute}
 
 Given the good runtime scaling properties of StrainFacts, we next asked if
 computer memory constraints would limit its applicability to the largest
@@ -718,7 +713,7 @@ Hamming distance from each inferred strain to its best-match true genotype.
 Markers at the top of each panel indicate a statistical difference between
 tools at a p<0.05 (\*) or p<0.001 (\*\*) significance threshold by Wilcoxon
 signed-rank test.
-](fig/benchmarks_figure.dpi200.png){#fig:accuracy}
+](fig/benchmarks_figure.w1000.png){#fig:accuracy}
 
 To expand our performance comparison to a second tool designed for strain inference,
 we also ran MixtureS on a subset of these simulations.
@@ -791,7 +786,7 @@ greater horizontal coverage. Triangles represent StrainFacts genotypes inferred
 to be at greater than 1% relative abundance, and larger markers reflect a
 higher inferred relative abundance. The red cross represents the consensus
 metagenotype of the focal sample.
-](fig/scg_comparison_figure.dpi200.png){#fig:scg}
+](fig/scg_comparison_figure.w1000.png){#fig:scg}
 
 Of the 75 species represented in our SCG dataset, one stood out for having
 numerous SCGs while reflecting a remarkably high degree of strain
@@ -946,7 +941,7 @@ with only reference strains (dark purple), only inferred strains (yellow), or
 both (teal). Rows are ordered by hierarchical clustering built on distances
 between consensus genotypes and columns are ordered arbitrarily to highlight
 correlations between SNPs.
-](fig/coclustering_figure.dpi200.png){#fig:coclustering}
+](fig/coclustering_figure.w1000.png){#fig:coclustering}
 
 ### Species inhabiting the human gut exhibit distinct biogeography observed across independent metagenomic studies
 
@@ -977,11 +972,13 @@ StrainFacts. Cell colors reflect the fraction of samples in that study segment
 with that strain as the most abundant member. Study segments are omitted if
 they include fewer than 10 samples. Row ordering and the associated dendrogram
 reflect strain genotype distances, while the dendrogram for columns is based on
-their cosine similarity. Colors above the heatmap reflect the country in which
-samples were collected as well as whether samples were collected from
-individuals with a westernized lifestyle. Both a study identifier and the ISO
+their cosine similarity.
+Studies with samples collected in several countries with notable clustering for
+one or more species are highlighted with colors above the heatmap.
+Additionally, studies from westernized populations are indicated.
+Both a study identifier and the ISO
 3166-ISO country-code are included in the column labels.
-](fig/biogeography_figure.dpi200.png){#fig:biogeography}
+](fig/biogeography_figure.w1000.png){#fig:biogeography}
 
 These general trends hold across the other three species. In _M. smithii_,
 independent studies in the same country often share very similar strain
@@ -1047,11 +1044,11 @@ genotypes for four species. LD was calculated as r^2^ and genomic distance
 between polymorphic loci is based on distances in a single, representative
 genome. The distribution of SNP pairs in each distance window is shown as a
 histogram with darker colors reflecting a larger fraction of the pairs in that
-LD bin, and the LD~90~ all for pairs at each distance is shown as points for
+LD bin, and the LD~90~ for pairs at each distance is shown for
 inferred strains (red), along with an identical analysis on strains in the
-reference database (blue). LD~90~ in each histogram window (solid lines) and
-genome-wide (dashed lines) are also indicated.
-](fig/ld_decay_figure.dpi200.png){#fig:ld}
+reference database (blue).
+Genome-wide LD~90~ (dashed lines) is also indicated.
+](fig/ld_decay_figure.w1000.png){#fig:ld}
 
 # Discussion
 
@@ -1183,9 +1180,9 @@ density indicated with darker colors.
 For each species, a linear regression calculated without an intercept term is
 shown (black line), and the constant of proportionality and uncentered R^2^ is also
 indicated.
-](fig/genotype_distance_ani_relationship.png){#fig:dist-vs-ani}
+](fig/genotype_distance_ani_relationship_figure.dpi200.png){#fig:dist-vs-ani}
 
-![](fig/genotype_distance_ani_relationship_cbar.png) <!-- Colorbar for [@Fig:dist-vs-ani] included here as a separate image. -->
+![](fig/genotype_distance_ani_relationship_cbar_figure.dpi200.png) <!-- Colorbar for [@Fig:dist-vs-ani] included here as a separate image. -->
 
 ![Extension of accuracy evaluation for StrainFacts and Strain Finder with
 additional results for MixtureS.
@@ -1199,9 +1196,9 @@ MixtureS does not specify the number of strains _a priori_, and points are
 arbitrarily placed with the 1x parameterization.
 Similarly, MixtureS runs are deterministic; hence only one fit for each
 of the five simulations is shown.
-](fig/accuracy_benchmarking_with_mixtureS.png){#fig:accuracy-with-mixtureS}
+](fig/accuracy_benchmarking_with_mixtureS_figure.dpi200.png){#fig:accuracy-with-mixtureS}
 
-![](fig/accuracy_benchmarking_with_mixtureS_legend.png) <!-- Colorbar for [@Fig:accuracy-with-mixtureS] included here as a separate image. -->
+![](fig/accuracy_benchmarking_with_mixtureS_legend_figure.dpi200.png) <!-- Colorbar for [@Fig:accuracy-with-mixtureS] included here as a separate image. -->
 
 ![Maximum memory allocation across varying numbers of strains (S,
 line shade), SNPs (G, line style), and samples is plotted for StrainFacts
@@ -1224,7 +1221,9 @@ cosine similarity. Colors above the heatmap reflect the country in which
 samples were collected as well as whether samples were collected from
 individuals with a westernized lifestyle. Both a study identifier and the ISO
 3166-ISO country-code are included in the column labels.
-](fig/biogeography_supplementary_figure.dpi200.png){#fig:biogeography-supp}
+](fig/biogeography_102506_figure.dpi200.png){#fig:biogeography-supp}
+
+![](fig/biogeography_102556_figure.dpi200.png) <!-- Second panel fig/biogeography_102556_figure.dpi200.png -->
 
 ## Supplementary Methods
 
@@ -1233,7 +1232,7 @@ hyperparameters. Symbols include observed data (blue box), deterministic terms
 (circles), key parameters being estimated (red boxes), and key hyperparameters
 (unenclosed). Plates behind terms indicate the dimensionality and indexing of
 the variables and arrows connect the terms that directly depend on one another.
-](fig/strainfacts_model_diagram_figure.dpi200.png){#fig:model-diagram}
+](fig/strainfacts_model_diagram_figure.w1000.png){#fig:model-diagram}
 
 
 ### The shifted, scaled Dirichlet distribution
