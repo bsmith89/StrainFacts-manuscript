@@ -131,21 +131,21 @@ rule compile_submission_folder:
     output:
         directory("build/submission"),
     input:
-        [
-            "build/submission.docx",
-            "fig/compute_profiling_figure.dpi200.tiff",
-            "fig/benchmarks_figure.dpi200.tiff",
-            "fig/scg_comparison_figure.dpi200.tiff",
-            "fig/coclustering_figure.dpi200.tiff",
-            "fig/biogeography_figure.dpi200.tiff",
-            "fig/ld_decay_figure.dpi200.tiff",
-            "fig/memory_profiling_more_strains_figure.dpi200.tiff",
-        ],
+        docx='build/submission.docx',
+        fig1='fig/compute_profiling_figure.dpi200.tiff',
+        fig2='fig/benchmarks_figure.dpi200.tiff',
+        fig3='fig/scg_comparison_figure.dpi200.tiff',
+        fig4='fig/coclustering_figure.dpi200.tiff',
+        fig5='fig/biogeography_figure.dpi200.tiff',
+        fig6='fig/ld_decay_figure.dpi200.tiff',
     shell:
         """
         mkdir -p {output}
-        for file in {input}
-        do
-          cp $file {output}
-        done
+        cp {input.fig1} {output}/Figure1.tiff
+        cp {input.fig2} {output}/Figure2.tiff
+        cp {input.fig3} {output}/Figure3.tiff
+        cp {input.fig4} {output}/Figure4.tiff
+        cp {input.fig5} {output}/Figure5.tiff
+        cp {input.fig6} {output}/Figure6.tiff
+        cp {input.docx} {output}/Submission.docx
         """
