@@ -21,6 +21,7 @@ tblPrefix: [table, tables]
 Things to do for v0.2:
 
 TODO: Upload SCG dataset to SRA
+TODO: Refinements to StrainFacts documentation
 
 
 Rendering checklist:
