@@ -510,9 +510,8 @@ necessitating minor modifications to the code.
 Similarly, we made several modifications to the MixtureS [@Li2021] code allowing us to run
 it directly on simulated metagenotypes and compare the results to StrainFacts
 and Strain Finder outputs.
-Patch files describing each set of changes are included in the Supplementary
-Materials.
-All other code and metadata needed to re-run these analyses is available at
+Patch files describing each set of changes, as well as
+all other code and metadata needed to re-run our analyses are available at
 <https://doi.org/10.5281/zenodo.5942586>.
 For reproducibility, analyses were performed using Snakemake [@Molder2021]
 and with a Singularity container [@Kurtzer2017] that can be obtained
