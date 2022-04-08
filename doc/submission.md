@@ -25,31 +25,28 @@ TODO: Upload SCG dataset to SRA
 
 Rendering checklist:
 
+TODO: Replace title/authors with cover-page from static DOCX
 TODO: Rename supplementary figures (e.g. from 8, 9, 10 to S1-3) in both
 captions and inlined citations. (Find/Replace works well. Be sure catch both Figure and Fig)
-TODO: Split out supplementary, by save-as a new DOCX and then remove the other parts.
 TODO: Upgrade "Supplementary Materials" to Title style.
+TODO: Split out supplementary, by save-as a new DOCX and then remove the other parts.
 TODO: Split References into Supp. and non-supp parts (manually, since not numbered)
-TODO: Replace title/authors with cover-page from static DOCX
-TODO: Add page-break afer abstract
+    Find references in the supplementary, check if they're in the main, and
+    then copy them from the main into the supplementary section.
+TODO: Add page-break after abstract
 TODO: Figure placement (one of): Move figures up or down to minimize
 whitespace, OR move all figure legends to after the references and remove the
 images themselves.
-TODO: If for submission, move figures to (TODO after? references).
+TODO: If resubmission: Make a track-changes document by comparing the new
+submission to the old. Then edit this document to remove figure replacements,
+citation renumbering, etc.
+TODO: If for submission, move figures and table to after references.
 TODO: Resize figures that are too large.
 TODO: Move Author Contributions to after the references TODO??
 TODO: Add page breaks as appropriate.
 TODO: Bold Figure N, Table N in captions
 TODO: Table caption (or just footnotes?) to below tables.
 TODO: Add line numbers
-TODO: If figures included, save a reload any DOCX files with figures
-included. Re-insert full quality PNG figures (as the PDF insertions will lose
-quality) using `fig/*.dpi200.png` (there's a snakemake rule for these from
-PDF)
-TODO: Do this also for the SupplementaryNote.docx
-TODO: If resubmission: Make a track-changes document by comparing the new
-submission to the old. Then edit this document to remove figure replacements,
-citation renumbering, etc.
 TODO: All main-text figures to EPS for upload.
 
 -->
