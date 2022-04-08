@@ -241,8 +241,8 @@ fuzzy-genotypes serves a key purpose: by replacing the only discrete parameter
 with a continuous approximation, our posterior function becomes fully
 differentiable, and therefore amenable to efficient, gradient-based
 optimization.
-While, when not using the exhaustive search strategy, Strain Finder also treats
-genotypes as continuous to accelerate inference, these are discretizes after
+When not using the exhaustive search strategy, Strain Finder also treats
+genotypes as continuous to accelerate inference, but these are discretized after
 each iteration.
 We show below that inference with StrainFacts is faster than with
 Strain Finder.
@@ -360,12 +360,14 @@ archaeon,
 as well as an unnamed, uncultured, and largely unstudied species.
 We also describe detailed results for
 _Streptococcus thermophilus_ (GT-Pro species id: 104345, representative UHGG genome:
-MGYG-HGUT-04345), selected for its high diversity in one sample of interest.
+MGYG-HGUT-04345), selected for its high diversity in one sample of our
+single-cell sequencing validation.
 
 ## Single-cell genome sequencing
 
 Of the 159 samples with metagenomes described in the FMT study,
-we selected two focal samples for single-cell genomics.
+we selected two samples for single-cell genomics
+(which we refer to as the "focal samples").
 These samples were obtained from two different study subjects;
 one is a baseline sample and the other was collected after several weeks of
 FMT doses as described in [@Smith2022].
@@ -448,7 +450,8 @@ For computational reproducibility we set fixed seeds for random number
 generators: 0 for all analyses where we only report one estimate, and 0, 1, 2,
 3, and 4 for the five replicate estimates described for simulated datasets.
 Strain Finder was run with flags `--dtol 1 --ntol 2 --max_reps 1`.
-We did not use `--exhaustive`, Strain Finder's exhaustive genotype search strategy.
+We did not use `--exhaustive`, Strain Finder's exhaustive genotype search strategy,
+as it is much more computationally intensive.
 
 
 ### Genotype comparisons
@@ -507,7 +510,7 @@ StrainFacts is implemented in Python3 and is available at
 reported here.
 Strain Finder was not originally designed to take a random seed argument,
 necessitating minor modifications to the code.
-Similarly, we made several modification to the MixtureS [@Li2021] code allowing us to run
+Similarly, we made several modifications to the MixtureS [@Li2021] code allowing us to run
 it directly on simulated metagenotypes and compare the results to StrainFacts
 and Strain Finder outputs.
 Patch files describing each set of changes are included in the Supplementary
@@ -696,18 +699,20 @@ similarly on these indexes—which tool had higher accuracy varied by score and
 parameterization—StrainFacts' accuracy was more stable across the 1x and 1.5x
 parameterizations.
 It should be noted that since strain genotypes are only inferred for SNP sites,
-in real-world analyses the genome-wide genotype reconstruction error
+the genome-wide genotype reconstruction error (which includes invariant sites)
 will likely be much lower than this Hamming distance.
 We examine the relationship between genotype distances and average nucleotide
-identity (ANI) in the Supplementary [@Fig:dist-vs-ani].
+identity (ANI) in Supplementary [@Fig:dist-vs-ani]
+in order to contextualize our simulation results for those more familiar with
+ANI comparisons.
 
 To expand our performance comparison to a second tool designed for strain inference,
-we also ran MixtureS on a subset of these simulations.
+we also ran MixtureS on a subset of the simulations.
 MixtureS estimates strain genotype and relative abundance on each metagenotype
-individually, and therefore does not leverage variation in strain abundance
+individually and therefore does not leverage variation in strain abundance
 across samples.
-We found that it performed poorly on our benchmarks
-(see Supplementary [@Fig:accuracy-with-mixtureS]).
+We found that it performed worse than Strain Finder and Strain Facts on the
+benchmarks (see Supplementary [@Fig:accuracy-with-mixtureS]).
 
 Overall, these results suggest that StrainFacts is capable of state-of-the-art
 performance with respect to several different scientific objectives in a
@@ -841,11 +846,11 @@ inference.
 
 As GT-Pro only tallies alleles at a fixed subset of SNPs,
 the relationship between genotype distances and ANI is not fixed.
-In order to anchor our results to this more widely-used measure of genome
+In order to anchor our results to this widely-used measure of genome
 similarity, we compared the genotype distance to genome-wide ANI for all
 pairs of genomes in the GT-Pro reference database for all four species.
 We find that the fraction of positions differing genome wide (calculated as 1 - ANI)
-was tightly proportional to the fraction of genotyped positions differing,
+was nearly proportional to the fraction of genotyped positions differing,
 but with a different constant of proportionality for each species:
 _E. coli_ (0.0776, uncentered R^2^=0.994),
 _A. rectalis_ (0.1069, R^2^=0.990),
@@ -939,7 +944,7 @@ based on its dominant strain of a given species, we nonetheless find that
 studies with samples collected in the United States of America form a distinct
 cluster, as do those from China, and the two are easily distinguished from one
 another and from most other studies conducted across Europe and North America
-([@Fig:biogeography]A). Our observation of a distinct group of _A. rectalis_ strains
+([@Fig:biogeography]). Our observation of a distinct group of _A. rectalis_ strains
 enriched in samples from China is consistent with previous results
 [@Scholz2016; @Costea2017b; @Truong2017].
 
@@ -963,7 +968,7 @@ Both a study identifier and the ISO
 These general trends hold across the other three species. In _M. smithii_,
 independent studies in the same country often share very similar strain
 dominance patterns (e.g. see clustering of studies performed in each of China,
-Mongolia, Denmark, and Spain in [@Fig:biogeography]B).
+Mongolia, Denmark, and Spain in [@Fig:biogeography]).
 In _E. coli_ , while many strains
 appear to be distributed globally, independent studies from China still cluster
 together based on patterns in strain dominance (see Supplementary [@Fig:biogeography-supp]).
@@ -1051,7 +1056,8 @@ Beyond Strain Finder, other alternatives exist for strain inference in
 metagenomic data. While we do not directly compare to DESMAN, runtimes of
 several hours have been reported for that tool on substantially smaller
 simulated datasets [@Quince2017], and hence we believe that StrainFacts is
-likely the fastest implementation of the metagenotype deconvolution approach.
+likely the most scalable implementation of the metagenotype deconvolution
+approach.
 Still other methods apply regularized regression [e.g. Lasso @Albanese2017]
 to decompose metagenotypes—essentially solving the abundance half of the
 deconvolution problem but not the genotypes half—or look for previously
@@ -1078,6 +1084,8 @@ reliable approaches by providing a scalable model fitting procedure.
 
 Fuzzy genotypes enable more computationally efficient inference by eliminating
 the need for discrete optimization.
+Specifically, we used well-tested and optimized gradient descent algorithms
+implemented in PyTorch for parameter estimation.
 In addition, fuzzy genotypes may
 be more robust to deviations from model assumptions.
 For instance, an
@@ -1094,7 +1102,7 @@ metagenomic reads.
 While we leave a comparison of StrainFacts performance on the outputs of other
 metagenotypers to future work, StrainFacts itself is agnostic to the source of
 input data.  It would be straightforward to extend StrainFacts to operate on
-loci with more than two alleles, using metagenotypes from a tool other than
+loci with more than two alleles or to use metagenotypes from a tool other than
 GT-Pro. It would also be interesting to extend StrainFacts to use SNPs outside
 the core genome that vary in their  presence across strains.
 
