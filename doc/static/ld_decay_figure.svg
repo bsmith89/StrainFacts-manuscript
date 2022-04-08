@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="201.31488mm"
-   height="160.06496mm"
-   viewBox="0 0 201.31488 160.06496"
+   width="217.32872mm"
+   height="169.44577mm"
+   viewBox="0 0 217.32872 169.44577"
    version="1.1"
    id="svg5"
    sodipodi:docname="ld_decay_figure.svg"
@@ -24,11 +24,11 @@
      inkscape:pagecheckerboard="0"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="0.65875498"
-     inkscape:cx="586.71283"
-     inkscape:cy="207.20906"
+     inkscape:zoom="0.60262129"
+     inkscape:cx="707.74134"
+     inkscape:cy="271.31468"
      inkscape:window-width="1440"
-     inkscape:window-height="819"
+     inkscape:window-height="791"
      inkscape:window-x="0"
      inkscape:window-y="25"
      inkscape:window-maximized="0"
@@ -292,10 +292,10 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-49.351572,-30.85072)">
+     transform="translate(-33.337727,-21.469903)">
     <g
        id="g31171"
-       transform="matrix(0.81558512,0,0,0.81558512,46.226624,8.6603559)">
+       transform="matrix(0.88046186,0,0,0.88046186,29.964201,-5.8373728)">
       <path
          d="m 18.284135,212.2919 h 94.487995 v -76.708 H 18.284135 Z"
          style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.352778"
@@ -9135,7 +9135,7 @@
     </g>
     <g
        id="g28958"
-       transform="matrix(0.81558512,0,0,0.81558512,273.27171,-148.65179)">
+       transform="matrix(0.88046186,0,0,0.88046186,275.06987,-175.66311)">
       <g
          id="g4463"
          transform="matrix(0.35277777,0,0,-0.35277777,-161.43019,320.80464)">
@@ -9393,7 +9393,7 @@
     <g
        id="g6903"
        inkscape:label="ld_decay_102492_90th_noscatter"
-       transform="matrix(0.2877203,0,0,-0.2877203,138.48931,112.86514)">
+       transform="matrix(0.31060737,0,0,-0.31060737,129.56604,106.65651)">
       <path
          d="M 54,36 H 321.84 V 253.44 H 54 Z"
          style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
@@ -16447,7 +16447,7 @@
     <g
        id="g12570"
        inkscape:label="ld_decay_102506_90th_noscatter"
-       transform="matrix(0.2877203,0,0,-0.2877203,45.031272,112.86514)">
+       transform="matrix(0.31060737,0,0,-0.31060737,28.673763,106.65651)">
       <path
          d="M 54,36 H 321.84 V 253.44 H 54 Z"
          style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
@@ -25225,7 +25225,7 @@
     <g
        id="g19494"
        inkscape:label="ld_decay_102556_90th_noscatter"
-       transform="matrix(0.2877203,0,0,-0.2877203,138.48931,192.16036)">
+       transform="matrix(0.31060737,0,0,-0.31060737,129.56604,192.25937)">
       <path
          d="M 54,36 H 321.84 V 253.44 H 54 Z"
          style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
@@ -33980,47 +33980,47 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-size:7.05556px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';word-spacing:0px;stroke-width:0.264583"
-       x="61.813568"
-       y="36.211292"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;word-spacing:0px;stroke-width:0.28563"
+       x="46.791027"
+       y="25.222301"
        id="text16687"><tspan
          sodipodi:role="line"
          id="tspan16685"
-         style="font-style:italic;stroke-width:0.264583"
-         x="61.813568"
-         y="36.211292">E. coli</tspan></text>
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.28563"
+         x="46.791027"
+         y="25.222301">E. coli</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:7.05556px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';word-spacing:0px;stroke-width:0.264583"
-       x="155.02396"
-       y="36.211292"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;word-spacing:0px;stroke-width:0.28563"
+       x="147.41595"
+       y="25.222301"
        id="text17943"><tspan
          sodipodi:role="line"
          id="tspan17941"
-         style="font-style:italic;stroke-width:0.264583"
-         x="155.02396"
-         y="36.211292">A. rectalis</tspan></text>
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.28563"
+         x="147.41595"
+         y="25.222301">A. rectalis</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:7.05556px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';word-spacing:0px;stroke-width:0.264583"
-       x="61.813568"
-       y="115.7958"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;word-spacing:0px;stroke-width:0.28563"
+       x="46.791027"
+       y="111.13747"
        id="text18717"><tspan
          sodipodi:role="line"
          id="tspan18715"
-         style="font-style:italic;stroke-width:0.264583"
-         x="61.813568"
-         y="115.7958">M. smithii</tspan></text>
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.28563"
+         x="46.791027"
+         y="111.13747">M. smithii</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:7.05556px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';word-spacing:0px;stroke-width:0.264583"
-       x="154.25226"
-       y="115.7958"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;word-spacing:0px;stroke-width:0.28563"
+       x="146.58287"
+       y="111.13747"
        id="text19227"><tspan
          sodipodi:role="line"
          id="tspan19225"
-         style="stroke-width:0.264583"
-         x="154.25226"
-         y="115.7958">CAG-279</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.28563"
+         x="146.58287"
+         y="111.13747">CAG-279</tspan></text>
   </g>
 </svg>
