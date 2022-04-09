@@ -428,7 +428,6 @@ hyperparameters to their final values over the next 8,000 steps. After this
 annealing period, when parameters had not improved for 100 steps, the learning
 rate was halved until it had fallen below 10-6, at which point we considered
 parameters to have converged.
-
 These hyperparameters were selected through manual optimization
 and we found that they gave reasonable performance
 across the diverse datasets in this study.
