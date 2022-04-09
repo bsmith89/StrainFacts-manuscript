@@ -1,3 +1,14 @@
+rule patch_sfinder:
+    output: touch('build/sfinder_patched.flag')
+    input:
+        patch='include/StrainFinder.patch',
+        repo='include/StrainFinder',
+    shell:
+        """
+        cd {input.repo}
+        git apply ../StrainFinder.patch
+        """
+
 use rule start_jupyter as start_jupyter_sfinder with:
     conda:
         "conda/sfinder.yaml"

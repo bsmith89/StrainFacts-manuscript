@@ -1,3 +1,35 @@
+rule download_mixture_s_code:
+    output:
+        "include/MixtureS.zip"
+    params:
+        url='http://www.cs.ucf.edu/~xiaoman/mixtureS/MixtureS.zip'
+    shell: curl_recipe
+
+rule unzip_mixture_s_code:
+    output: directory('include/MixtureS')
+    input: 'include/MixtureS.zip'
+    shell:
+        """
+        mkdir -p {output}
+        cp include/MixtureS.zip {output}
+        cd {output}
+        unzip MixtureS.zip
+        """
+
+
+rule patch_mixture_s:
+    output: touch('build/mixture_s_patched.flag')
+    input:
+        patch='include/MixtureS.patch',
+        repo='include/MixtureS',
+    shell:
+        """
+        cd {input.repo}
+        git apply ../MixtureS.patch
+        """
+
+
+
 rule start_shell_mixture_s:
     container:
         "docker://bsmith89/mixture_s:d60eada44d4a5222a4729565071d084773abf066"
