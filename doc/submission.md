@@ -1374,7 +1374,7 @@ barcodes were parsed from Read 1, using cutadapt (v2.4) and matched to a
 barcode whitelist. Barcode sequences within a Hamming distance of 1 from a
 whitelist barcode were corrected. Reads with valid barcodes were trimmed with
 cutadapt to remove 5′ and 3′ adapter sequences and demultiplexed into
-single-cell FASTQ files by barcode sequences using the script demuxbyname.sh
+single-cell FASTQ files by barcode sequences using the script `demuxbyname.sh`
 from the BBMap package (v.38.57).
 
 
