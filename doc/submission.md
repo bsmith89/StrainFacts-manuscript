@@ -426,7 +426,7 @@ respectively, for the first 2,000 steps of gradient descent,
 before exponentially relaxing these
 hyperparameters to their final values over the next 8,000 steps. After this
 annealing period, when parameters had not improved for 100 steps, the learning
-rate was halved until it had fallen below 10-6, at which point we considered
+rate was halved until it had fallen below 10^-6^, at which point we considered
 parameters to have converged.
 These hyperparameters were selected through manual optimization
 and we found that they gave reasonable performance
@@ -1143,13 +1143,16 @@ KSP is on the scientific advisory board of Phylagen.
 
 ## Data Availability Statement
 
-Metagenomic and single-cell sequencing data from the FMT study will be uploaded
-to the SRA under BioProject PRJNA737472. Publicly available metagenomes are
+Metagenomic sequencing data from the FMT study
+are available through the SRA under BioProject PRJNA737472,
+The two single-cell genomics experiments are also under that project
+with accessions SRR18748374 and SRR18748375.
+Publicly available metagenomes are
 available under various other accessions described in [@Shi2021]. Strain
 genotypes from the GT-Pro reference database are publicly available at
 <https://fileshare.czbiohub.org/s/waXQzQ9PRZPwTdk>.
 All other code and metadata needed to reproduce these results are available at
-<https://github.com/bsmith89/StrainFacts-manuscript>.
+<https://doi.org/10.5281/zenodo.5942586>.
 
 # Supplementary Materials
 
