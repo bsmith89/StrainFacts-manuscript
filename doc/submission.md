@@ -20,8 +20,9 @@ tblPrefix: [table, tables]
 <!--
 Things to do for v0.2:
 
-TODO: Upload SCG dataset to SRA
 TODO: Refinements to StrainFacts documentation
+TODO: Check how SCG filtering by horizontal coverage was affected by bug in the
+    horizontal coverage calculation (counts sites with >1 reads, rather than >=1).
 
 
 Rendering checklist:
@@ -596,7 +597,7 @@ replicate runs is shown. Maximum memory requirements are extrapolated to higher
 numbers of samples for a model with 1000 SNPs (red line). A version of this
 panel that includes a range of strain counts is included as
 Supplementary [@Fig:memory-supp].
-](fig/compute_profiling_figure.w1000.png){#fig:compute}
+](fig/compute_profiling_figure.w2000.png){#fig:compute}
 
 Given the good runtime scaling properties of StrainFacts, we next asked if
 computer memory constraints would limit its applicability to the largest
@@ -655,7 +656,7 @@ tools at a p<0.05 (\*) or p<0.001 (\*\*) significance threshold by Wilcoxon
 signed-rank test.
 A version of this figure that includes accuracy comparisons to MixtureS
 is included as Supplementary [@Fig:accuracy-with-mixtureS].
-](fig/benchmarks_figure.w1000.png){#fig:accuracy}
+](fig/benchmarks_figure.w2000.png){#fig:accuracy}
 
 To further probe accuracy, we quantified the performance of StrainFacts and
 Strain Finder with several other measures. First, we evaluated pairwise
@@ -770,7 +771,7 @@ greater horizontal coverage. Triangles represent StrainFacts genotypes inferred
 to be at greater than 1% relative abundance, and larger markers reflect a
 higher inferred relative abundance. The red cross represents the consensus
 metagenotype of the focal sample.
-](fig/scg_comparison_figure.w1000.png){#fig:scg}
+](fig/scg_comparison_figure.w2000.png){#fig:scg}
 
 Of the 75 species represented in our SCG dataset, one stood out for having
 numerous SCGs while reflecting a remarkably high degree of strain
@@ -922,7 +923,7 @@ with only reference strains (dark purple), only inferred strains (yellow), or
 both (teal). Rows are ordered by hierarchical clustering built on distances
 between consensus genotypes and columns are ordered arbitrarily to highlight
 correlations between SNPs.
-](fig/coclustering_figure.w1000.png){#fig:coclustering}
+](fig/coclustering_figure.w2000.png){#fig:coclustering}
 
 ### Species inhabiting the human gut exhibit distinct biogeography observed across independent metagenomic studies
 
@@ -959,7 +960,7 @@ one or more species are highlighted with colors above the heatmap.
 Additionally, studies from westernized populations are indicated.
 Both a study identifier and the ISO
 3166-ISO country-code are included in the column labels.
-](fig/biogeography_figure.w1000.png){#fig:biogeography}
+](fig/biogeography_figure.w2000.png){#fig:biogeography}
 
 These general trends hold across the other three species. In _M. smithii_,
 independent studies in the same country often share very similar strain
@@ -1029,7 +1030,7 @@ LD bin, and the LD~90~ for pairs at each distance is shown for
 inferred strains (red), along with an identical analysis on strains in the
 reference database (blue).
 Genome-wide LD~90~ (dashed lines) is also indicated.
-](fig/ld_decay_figure.w1000.png){#fig:ld}
+](fig/ld_decay_figure.w2000.png){#fig:ld}
 
 # Discussion
 
@@ -1163,7 +1164,7 @@ hyperparameters. Symbols include observed data (blue box), deterministic terms
 (circles), key parameters being estimated (red boxes), and key hyperparameters
 (unenclosed). Plates behind terms indicate the dimensionality and indexing of
 the variables and arrows connect the terms that directly depend on one another.
-](fig/strainfacts_model_diagram_figure.w1000.png){#fig:model-diagram}
+](fig/strainfacts_model_diagram_figure.w2000.png){#fig:model-diagram}
 
 
 ### The shifted, scaled Dirichlet distribution
@@ -1388,7 +1389,7 @@ line shade), SNPs (G, line style), and samples is plotted for StrainFacts
 models. Median of 9 replicate runs is shown. Maximum memory requirements are
 extrapolated to higher numbers of samples for a model with 1000 SNP sites (red
 line). An abridged version of this plot is included as [@Fig:compute].
-](fig/memory_profiling_more_strains_figure.dpi200.png){#fig:memory-supp}
+](fig/memory_profiling_more_strains_figure.dpi500.png){#fig:memory-supp}
 
 ![Extension of accuracy evaluation for StrainFacts and Strain Finder with
 additional results for MixtureS.
@@ -1402,9 +1403,9 @@ MixtureS does not specify the number of strains _a priori_, and points are
 arbitrarily placed with the 1x parameterization.
 Similarly, MixtureS runs are deterministic; hence only one fit for each
 of the five simulations is shown.
-](fig/accuracy_benchmarking_with_mixtureS_figure.w1000.png){#fig:accuracy-with-mixtureS}
+](fig/accuracy_benchmarking_with_mixtureS_figure.w2000.png){#fig:accuracy-with-mixtureS}
 
-![Emipirical relationship between ANI and genotype distance
+![Empirical relationship between ANI and genotype distance
 among reference genomes in the GT-Pro database.
 Genotype distance is defined as the normalized Hamming distance at SNP sites
 considered by GT-Pro.
@@ -1413,7 +1414,7 @@ density indicated with darker colors.
 For each species, a linear regression calculated without an intercept term is
 shown (black line), and the constant of proportionality and uncentered R^2^ is also
 indicated.
-](fig/genotype_distance_ani_relationship_figure.w1000.png){#fig:dist-vs-ani}
+](fig/genotype_distance_ani_relationship_figure.w2000.png){#fig:dist-vs-ani}
 
 ![Patterns in strain dominance according to geography and
 lifestyle across thousands of publicly available metagenomes in dozens of
@@ -1429,7 +1430,7 @@ cosine similarity. Colors above the heatmap reflect the country in which
 samples were collected as well as whether samples were collected from
 individuals with a westernized lifestyle. Both a study identifier and the ISO
 3166-ISO country-code are included in the column labels.
-](fig/biogeography_supplementary_figure.w1000.png){#fig:biogeography-supp}
+](fig/biogeography_supplementary_figure.w2000.png){#fig:biogeography-supp}
 
 
 # References

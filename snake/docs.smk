@@ -132,20 +132,44 @@ rule compile_submission_folder:
         directory("build/submission"),
     input:
         docx='build/submission.docx',
-        fig1='fig/compute_profiling_figure.dpi200.tiff',
-        fig2='fig/benchmarks_figure.dpi200.tiff',
-        fig3='fig/scg_comparison_figure.dpi200.tiff',
-        fig4='fig/coclustering_figure.dpi200.tiff',
-        fig5='fig/biogeography_figure.dpi200.tiff',
-        fig6='fig/ld_decay_figure.dpi200.tiff',
+        fig1_tiff='fig/compute_profiling_figure.dpi500.tiff',
+        fig2_tiff='fig/benchmarks_figure.dpi500.tiff',
+        fig3_tiff='fig/scg_comparison_figure.dpi500.tiff',
+        fig4_tiff='fig/coclustering_figure.dpi500.tiff',
+        fig5_tiff='fig/biogeography_figure.dpi500.tiff',
+        fig6_tiff='fig/ld_decay_figure.dpi500.tiff',
+        fig1_pdf='fig/compute_profiling_figure.pdf',
+        fig2_pdf='fig/benchmarks_figure.pdf',
+        fig3_pdf='fig/scg_comparison_figure.pdf',
+        fig4_pdf='fig/coclustering_figure.pdf',
+        fig5_pdf='fig/biogeography_figure.pdf',
+        fig6_pdf='fig/ld_decay_figure.pdf',
+        fig1_eps='fig/compute_profiling_figure.eps',
+        fig2_eps='fig/benchmarks_figure.eps',
+        fig3_eps='fig/scg_comparison_figure.eps',
+        fig4_eps='fig/coclustering_figure.eps',
+        fig5_eps='fig/biogeography_figure.eps',
+        fig6_eps='fig/ld_decay_figure.eps',
     shell:
         """
         mkdir -p {output}
-        cp {input.fig1} {output}/Figure1.tiff
-        cp {input.fig2} {output}/Figure2.tiff
-        cp {input.fig3} {output}/Figure3.tiff
-        cp {input.fig4} {output}/Figure4.tiff
-        cp {input.fig5} {output}/Figure5.tiff
-        cp {input.fig6} {output}/Figure6.tiff
+        cp {input.fig1_tiff} {output}/Figure1.tiff
+        cp {input.fig2_tiff} {output}/Figure2.tiff
+        cp {input.fig3_tiff} {output}/Figure3.tiff
+        cp {input.fig4_tiff} {output}/Figure4.tiff
+        cp {input.fig5_tiff} {output}/Figure5.tiff
+        cp {input.fig6_tiff} {output}/Figure6.tiff
+        cp {input.fig1_pdf} {output}/Figure1.pdf
+        cp {input.fig2_pdf} {output}/Figure2.pdf
+        cp {input.fig3_pdf} {output}/Figure3.pdf
+        cp {input.fig4_pdf} {output}/Figure4.pdf
+        cp {input.fig5_pdf} {output}/Figure5.pdf
+        cp {input.fig6_pdf} {output}/Figure6.pdf
+        cp {input.fig1_eps} {output}/Figure1.eps
+        cp {input.fig2_eps} {output}/Figure2.eps
+        cp {input.fig3_eps} {output}/Figure3.eps
+        cp {input.fig4_eps} {output}/Figure4.eps
+        cp {input.fig5_eps} {output}/Figure5.eps
+        cp {input.fig6_eps} {output}/Figure6.eps
         cp {input.docx} {output}/Submission.docx
         """

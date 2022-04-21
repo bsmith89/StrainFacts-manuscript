@@ -97,17 +97,17 @@ else:
     config["mgen_group"] = {}
 
 config["figures"]["submission"] = [
-    "fig/strainfacts_model_diagram_figure.w1000.png",
-    "fig/compute_profiling_figure.w1000.png",
-    "fig/benchmarks_figure.w1000.png",
-    "fig/scg_comparison_figure.w1000.png",
-    "fig/coclustering_figure.w1000.png",
-    "fig/biogeography_figure.w1000.png",
-    "fig/ld_decay_figure.w1000.png",
-    "fig/memory_profiling_more_strains_figure.dpi200.png",
-    "fig/biogeography_supplementary_figure.w1000.png",
-    "fig/accuracy_benchmarking_with_mixtureS_figure.w1000.png",
-    "fig/genotype_distance_ani_relationship_figure.w1000.png",
+    "fig/strainfacts_model_diagram_figure.w2000.png",
+    "fig/compute_profiling_figure.w2000.png",
+    "fig/benchmarks_figure.w2000.png",
+    "fig/scg_comparison_figure.w2000.png",
+    "fig/coclustering_figure.w2000.png",
+    "fig/biogeography_figure.w2000.png",
+    "fig/ld_decay_figure.w2000.png",
+    "fig/memory_profiling_more_strains_figure.dpi500.png",
+    "fig/biogeography_supplementary_figure.w2000.png",
+    "fig/accuracy_benchmarking_with_mixtureS_figure.w2000.png",
+    "fig/genotype_distance_ani_relationship_figure.w2000.png",
 ]
 
 
