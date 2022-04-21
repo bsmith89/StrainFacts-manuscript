@@ -1,0 +1,6 @@
+[submodule "include/MixtureS"]
+	path = include/MixtureS
+	url = git@github.com:bsmith89/MixtureS.git
+[submodule "StrainFinder"]
+	path = include/StrainFinder
+	url = https://github.com/cssmillie/StrainFinder

@@ -20,52 +20,35 @@ tblPrefix: [table, tables]
 <!--
 Things to do for v0.2:
 
-TODO: Re-construct vector figures: Use vector export from Jupyter; drop
-background colors, borders around legends, etc.
-TODO: Use hats on estimated parameters?
-TODO: Rasterize pcolormesh
-TODO: Add strain assembly citations to: [@Vicedomini2021; @Quince2021]
-TODO: Add [@Olekhnovich2021]
-TODO: Consider linking Zenodo for both sfacts and manuscript repos.
-TODO: Add re-analysis of SCG data where the sparsity of the consensus genotypes is also
-considered in the scg-inferred comparison (so that low-coverage metagenotypes
-don't get an advantage due to the masking)
-(See "ndist_focal_strain" in data/ucfmt.filt-poly05-cvrg05.fit-sfacts44_v-s30-g5000-seed0.refit-sfacts41-g10000-seed0.all_scg_comparison.tsv)
-TODO: Add re-analysis of SCG data where the second sample is also included.
-TODO: Homogeneous, private use hardware for benchmarking runtimes.
-TODO: CPU/GPU written out on first use? OR GPU _not_ written out in abstract?
-TODO: "Conflicts" vs. "Competing Interests"
-TODO: Upload SCG dataset to SRA
-
+TODO: Refinements to StrainFacts documentation
+TODO: Check how SCG filtering by horizontal coverage was affected by bug in the
+    horizontal coverage calculation (counts sites with >1 reads, rather than >=1).
 
 
 Rendering checklist:
 
+TODO: Replace title/authors with cover-page from static DOCX
 TODO: Rename supplementary figures (e.g. from 8, 9, 10 to S1-3) in both
 captions and inlined citations. (Find/Replace works well. Be sure catch both Figure and Fig)
-TODO: Split out supplementary, by save-as a new DOCX and then remove the other parts.
 TODO: Upgrade "Supplementary Materials" to Title style.
+TODO: Split out supplementary, by save-as a new DOCX and then remove the other parts.
 TODO: Split References into Supp. and non-supp parts (manually, since not numbered)
-TODO: Replace title/authors with cover-page from static DOCX
-TODO: Add page-break afer abstract
+    Find references in the supplementary, check if they're in the main, and
+    then copy them from the main into the supplementary section.
+TODO: Add page-break after abstract
 TODO: Figure placement (one of): Move figures up or down to minimize
 whitespace, OR move all figure legends to after the references and remove the
 images themselves.
-TODO: If for submission, move figures to (TODO after? references).
+TODO: If resubmission: Make a track-changes document by comparing the new
+submission to the old. Then edit this document to remove figure replacements,
+citation renumbering, etc.
+TODO: If for submission, move figures and table to after references.
 TODO: Resize figures that are too large.
 TODO: Move Author Contributions to after the references TODO??
 TODO: Add page breaks as appropriate.
 TODO: Bold Figure N, Table N in captions
 TODO: Table caption (or just footnotes?) to below tables.
 TODO: Add line numbers
-TODO: If figures included, save a reload any DOCX files with figures
-included. Re-insert full quality PNG figures (as the PDF insertions will lose
-quality) using `fig/*.dpi200.png` (there's a snakemake rule for these from
-PDF)
-TODO: Do this also for the SupplementaryNote.docx
-TODO: If resubmission: Make a track-changes document by comparing the new
-submission to the old. Then edit this document to remove figure replacements,
-citation renumbering, etc.
 TODO: All main-text figures to EPS for upload.
 
 -->
@@ -82,8 +65,8 @@ method for strain deconvolution that enables inference across tens of thousands
 of metagenomes. We harness a "fuzzy" genotype approximation that makes the
 underlying graphical model fully differentiable, unlike existing methods. This
 allows parameter estimates to be optimized with gradient-based methods,
-speeding up model fitting by two orders of magnitude. A graphical processing
-unit implementation provides additional scalability. Extensive simulations show
+speeding up model fitting by two orders of magnitude. A GPU
+implementation provides additional scalability. Extensive simulations show
 that StrainFacts can perform strain inference on thousands of metagenomes and
 has comparable accuracy to more computationally intensive tools. We further
 validate our strain inferences using single-cell genomic sequencing from a
@@ -116,7 +99,7 @@ future studies of strain-level variation in complex microbial communities.
 -->
 
 Words: TODO: less than 6768 \
-Figures: 7 \
+Figures: 6 \
 Tables: 3 \
 
 Keywords: metagenomics, strains, microbiome, biogeography, population genetics,
@@ -214,12 +197,15 @@ Metagenotypes from multiple samples are subsequently combined into a
 ### Deconvolution of metagenotype data
 
 StrainFacts is based on a generative, graphical model of biallelic metagenotype
-data (summarized in [@Fig:model-diagram]) which describes the allele frequencies at each
-SNP site in each sample as the product of the relative abundance of strains and
-their genotypes. We notate this functional relationship as
-$p_{ig} = \sum_s{\gamma_{sg} \times \pi_i}$,
-where $\gamma_{sg}$ indicates the allele at
-SNP $g$ in strain $s$, and equals $1$ if it is the alternative allele. In
+data (summarized in Supplementary [@Fig:model-diagram])
+which describes the allele frequencies at each
+SNP site in each sample ($p_{ig}$ for sample $i$ and SNP $g$) as the product of
+the relative abundance of strains ($\vec{\pi}_i$) and their genotypes,
+$\gamma_{sg}$, where 0 indicates the reference and 1 indicates the alternative
+allele for strain $s$.
+This functional relationship is therefore
+$p_{ig} = \sum_s \gamma_{sg} \times \pi_{is}$,
+In
 matrix form, equivalently, we notate this as
 $\mathbf{P} = \mathbf{\Gamma} \mathbf{\Pi}$ ([@Tbl:symbols]).
 
@@ -239,22 +225,26 @@ probability as the loss function. This "maximum a posteriori" (MAP) approach
 has also been applied to NMF [@Schmidt2009]. However, unlike NMF, where the key
 constraint is that all matrices are non-negative, the metagenotype
 deconvolution model also constrains the elements of $\mathbf{P}$ and
-$\mathbf{\Gamma}$ to lie in the closed interval $[0, 1]$ (i.e. the
-"1-simplex" or $\mathcal{S}^1$ for biallelic SNPs), and the rows of
-$\mathbf{\Pi}$ are in $\mathcal{S}^{S-1}$.
+$\mathbf{\Gamma}$ to lie in the closed interval $[0, 1]$, and the rows of
+$\mathbf{\Pi}$ are are "on the $S-1$-simplex", i.e. they sum to one.
 
 ### Fuzzy genotypes and the shifted-scaled Dirichlet distribution
 
 StrainFacts does _not_ constrain the elements of $\mathbf{\Gamma}$ to be
 discrete—i.e. in the set $\{0, 1\}$ for biallelic sites—in contrast to prior
-tools: Strain Finder [@Smillie2018], DESMAN [@Quince2017], and Lineage
-[@OBrien2014].  Instead, we allow genotypes to vary continuously in the open
+tools: DESMAN [@Quince2017], Lineage [@OBrien2014],
+and Strain Finder's [@Smillie2018] exhaustive search.
+Instead, we allow genotypes to vary continuously in the open
 interval between fully reference (0) and fully alternative (1). The use of
 fuzzy-genotypes serves a key purpose: by replacing the only discrete parameter
 with a continuous approximation, our posterior function becomes fully
 differentiable, and therefore amenable to efficient, gradient-based
-optimization. We show below that inference with StrainFacts is faster than with
-other tools.
+optimization.
+When not using the exhaustive search strategy, Strain Finder also treats
+genotypes as continuous to accelerate inference, but these are discretized after
+each iteration.
+We show below that inference with StrainFacts is faster than with
+Strain Finder.
 
 Since true genotypes are in fact discrete, we place a prior on the elements of
 $\mathbf{\Gamma}$ that pushes estimates towards zero or one and away from
@@ -267,9 +257,9 @@ family of probability distributions, the shifted-scaled Dirichlet distribution
 parameterization of the SSD distribution in the Supplementary Methods.
 
 For each element of $\mathbf{\Gamma}$ we set the prior as
-$\gamma \sim \mathrm{SSD}_0(\mathbf{1}, \mathbf{1}, \frac{1}{\gamma^*})$.
-Note that we trivially transform the $\tilde{\gamma} \in \mathcal{S}^1$
-to the unit interval by dropping the second element.
+$(\gamma, 1 - \gamma) \sim \mathrm{SSD}(\mathbf{1}, \mathbf{1}, \frac{1}{\gamma^*})$.
+(Note that we trivially transform the 1-simplex valued $(\gamma, 1 - \gamma)$
+to the unit interval by dropping the second element.)
 Smaller values of the hyperparameter
 $\gamma^*$ correspond to more sparsity in $\mathbf{\Gamma}$. We put a
 hierarchical prior on $\mathbf{\Pi}$, with the rows subject to the prior
@@ -278,7 +268,7 @@ given a "metacommunity" hyperprior
 $\vec{\rho} \sim \mathrm{SSD}(\mathbf{1}, \mathbf{1}, \frac{1}{\rho^*})$,
 reflecting the abundance of strains across all
 samples. Decreasing the values of $\gamma^*$, $\rho^*$, and $\pi^*$
-increases the strength of regularization imposed by each of these priors.
+increases the strength of regularization imposed by the respective priors.
 
 ### Model specification
 
@@ -293,28 +283,20 @@ parameterized with $\mathbf{\tilde{P}}$ and one additional
 parameter—$\alpha^*$—controlling count overdispersion relative to the
 Binomial model.
 
-To summarize, our model is as follows (in random variable notation; see [@Fig:model-diagram] for a plate diagram):
+To summarize, our model is as follows (in random variable notation; see
+Supplementary [@Fig:model-diagram] for a plate diagram):
 
 $$
 \begin{eqnarray*}
 y_{ig} &\sim& \mathrm{BetaBinom}(\tilde{p}_{ig}, \alpha^* \;|\; m_{ig}) \\
 \tilde{p}_{ig} &=& p_{ig} (1 - \epsilon_i / 2) + (1 - p_{ig}) (\epsilon_i / 2) \\
 p_{ig} &=& \sum_s \pi_{is} \gamma_{sg} \\
-{\gamma}_{sg} &\sim& \mathrm{SSD}_0(\mathbf{1}, \mathbf{1}, \frac{1}{\gamma^*}) \\
+(\gamma_{sg}, 1 - \gamma_{sg}) &\sim& \mathrm{SSD}(\mathbf{1}, \mathbf{1}, \frac{1}{\gamma^*}) \\
 \vec{\pi}_i &\sim& \mathrm{SSD}(\mathbf{1}, \vec{\rho}, \frac{1}{\pi^*}) \\
 \vec{\rho} &\sim& \mathrm{SSD}(\mathbf{1}, \mathbf{1}, \frac{1}{\rho^*}) \\
 \epsilon &\sim& \mathrm{Beta}(\epsilon^*_a, \frac{\epsilon^*_a}{\epsilon^*_b}) \\
 \end{eqnarray*}
 $$
-
-![Graphical representation of the StrainFacts model including
-hyperparameters. Symbols include observed data (blue box), deterministic terms
-(circles), key parameters being estimated (red boxes), and key hyperparameters
-(unenclosed). Plates behind terms indicate the dimensionality and indexing of
-the variables and arrows connect the terms that directly depend on one another.
-The distribution family and relationships between terms are indicated on the
-right.
-](fig/strainfacts_model_diagram_figure.dpi200.png){#fig:model-diagram}
 
 ## Model fitting
 
@@ -332,7 +314,7 @@ converge to a global optimum, we find that this procedure often leads to
 accurate estimates without the need for replicate fits from independent
 initializations.
 
-## Simulation and benchmarking
+## Simulation and evaluation
 
 Metagenotype data was simulated in order to enable direct performance
 benchmarking against ground-truth genotypes and strain compositions. For each
@@ -357,27 +339,40 @@ metagenomic datasets: stool samples from a fecal microbiota transplantation
 (FMT) study described in [@Smith2022] and 20,550 metagenomes from a
 meta-analysis of publicly available data in [@Shi2021]. As described in that
 publication, metagenotypes for gut prokaryotic species were tallied using
-GT-Pro version 1.0.1 with the default database, which includes up to 1000 of
+GT-Pro version 1.0.1 with the default database, which includes up to 1,000 of
 the highest quality genomes for each species from the Unified Human
 Gastrointestinal Genome (UHGG) V1.0 [@Almeida2021]. This includes both cultured
 isolates and high-quality metagenomic assemblies. This same database was used
-as a reference set to which we compared our inferred genotypes. The five
-species for which we describe detailed results are:
-_Streptococcus thermophilus_ (GT-Pro species id: 104345, representative UHGG genome:
-MGYG-HGUT-04345),
-_Escherichia coli_D_ (id: 102506, MGYG-HGUT-02506),
-_Agathobacter rectalis_ (id: 102492, MGYG-HGUT-02492),
-_Methanobrevibacter_A smithii_ (id: 102163, MGYG-HGUT-02163),
-and CAG-279 sp1 (id: 102556, MGYG-HGUT-02556).
+as a reference set to which we compared our inferred genotypes.
 Estimated genomic distances
 between SNPs were based on the
 UHGG representative genome.
 
+We describe detailed results for
+_Escherichia coli_D_ (id: 102506, MGYG-HGUT-02506),
+_Agathobacter rectalis_ (id: 102492, MGYG-HGUT-02492),
+_Methanobrevibacter_A smithii_ (id: 102163, MGYG-HGUT-02163),
+and CAG-279 sp1 (id: 102556, MGYG-HGUT-02556).
+These were selected to demonstrate application of StrainFacts to prevalent
+gram-positive and gram-negative bacteria in the human gut, the most prevalent
+archaeon,
+as well as an unnamed, uncultured, and largely unstudied species.
+We also describe detailed results for
+_Streptococcus thermophilus_ (GT-Pro species id: 104345, representative UHGG genome:
+MGYG-HGUT-04345), selected for its high diversity in one sample of our
+single-cell sequencing validation.
+
 ## Single-cell genome sequencing
 
+Of the 159 samples with metagenomes described in the FMT study,
+we selected two samples for single-cell genomics
+(which we refer to as the "focal samples").
+These samples were obtained from two different study subjects;
+one is a baseline sample and the other was collected after several weeks of
+FMT doses as described in [@Smith2022].
 A full description of the single-cell genomics pipeline is included in the
-Supplementary Methods, and will be briefly summarized here. For one of the 159
-samples with metagenomes described in the FMT study, microbial cells were
+Supplementary Methods, and will be briefly summarized here.
+For each of the focal samples, microbial cells were
 isolated from whole feces by homogenization in phosphate buffered saline, 50 μm
 filter-based removal of large fecal particles, and density gradient separation.
 After isolating and thoroughly washing the density layer corresponding to the
@@ -428,11 +423,15 @@ $\rho^*=0.5$, $\pi^*=0.3$, $\gamma^*=10^{-10}$, $\alpha^*=10$,
 $\epsilon^*_a=1.5$, $\epsilon^*_b=0.01$. The learning rate was initially
 set to 0.05. Prior annealing was applied to both $\mathbf{\Gamma}$ and
 $\vec{\rho}$ by setting $\gamma^*$ and $\rho^*$ to $1.0$ and $5$,
-respectively, for the first 2,000 steps, before exponentially relaxing these
+respectively, for the first 2,000 steps of gradient descent,
+before exponentially relaxing these
 hyperparameters to their final values over the next 8,000 steps. After this
 annealing period, when parameters had not improved for 100 steps, the learning
-rate was halved until it had fallen below 10-6, at which point we considered
+rate was halved until it had fallen below 10^-6^, at which point we considered
 parameters to have converged.
+These hyperparameters were selected through manual optimization
+and we found that they gave reasonable performance
+across the diverse datasets in this study.
 
 The number of strains parameterized by our model was chosen as follows. For
 comparisons to SCGs, the number of strains was set at 30% of the number of
@@ -448,20 +447,31 @@ Methods).
 For computational reproducibility we set fixed seeds for random number
 generators: 0 for all analyses where we only report one estimate, and 0, 1, 2,
 3, and 4 for the five replicate estimates described for simulated datasets.
-Strain Finder was not originally designed to take a random seed argument,
-necessitating minor modifications to the code.
+Strain Finder was run with flags `--dtol 1 --ntol 2 --max_reps 1`.
+We did not use `--exhaustive`, Strain Finder's exhaustive genotype search strategy,
+as it is much more computationally intensive.
+
 
 ### Genotype comparisons
 
 Inferred fuzzy genotypes were discretized to zero or one for downstream
-analyses. Similarly, when comparing genotypes to the metagenotype consensus or
-SCGs, observed allele frequencies were discretized to the majority allele. SNP
-sites without coverage were treated as unobserved. Distances between genotypes
+analyses.
+SNP sites without coverage were treated as unobserved.
+Distances between genotypes
 were calculated as the masked, normalized Hamming distance, the fraction of
-alleles that do not agree, ignoring unobserved SNP.
+alleles that do not agree, ignoring unobserved SNPs.
+Similarly, SCG genotypes and the metagenotype consensus were discretized to the
+majority allele.
+In comparing the distance between SCGs and these inferred genotypes
+sites missing from either the SCG or the metagenotype
+were treated as unobserved.
 Metagenotype entropy, a proxy for strain heterogeneity, was calculated for each
 sample as the depth weighted mean allele frequency entropy:
-$\frac{1}{\sum_g{m_{ig}}} \sum_g -m_{ig} [(\hat{p}_{ig} \log_2(\hat{p}_{ig}) + (1 - \hat{p}_{ig}) \log_2(1 - \hat{p}_{ig})]$
+
+$$
+\frac{1}{\sum_g{m_{ig}}} \sum_g -m_{ig} [(\hat{p}_{ig} \log_2(\hat{p}_{ig}) + (1 - \hat{p}_{ig}) \log_2(1 - \hat{p}_{ig})]
+$$
+
 where $\hat{p}_{ig}$ is the observed alternative allele frequency.
 
 Where indicated, we dereplicated highly similar strains by applying
@@ -480,8 +490,11 @@ the permutation 9999 times, we arrived at an empirical null distribution to
 which we compared our true, observed values to calculate a P-value.
 
 Pairwise linkage disequilibrium (LD) was calculated as the squared Pearson
-correlation coefficient across genotypes of dereplicated strains. To calculate
-the 90th percentile LD, SNP pairs were binned at either an exact genomic
+correlation coefficient across genotypes of dereplicated strains.
+Genome-wide 90th percentile LD, was calculated from a random sample of
+20,000 or, if fewer, all available SNP positions.
+To calculate
+the 90th percentile LD profile, SNP pairs were binned at either an exact genomic
 distance or within a window of distances, as indicated. In order to encourage a
 smooth distance-LD relationship, windows at larger pairwise-distance spanned a
 larger range. Specifically the ith window covers the span
@@ -493,17 +506,30 @@ $[\lfloor10^{(i-1)/c}\rfloor, \lfloor10^{i/c}\rfloor)$ where $c=30$ so that
 StrainFacts is implemented in Python3 and is available at
 <https://github.com/bsmith89/StrainFacts> and v0.1 was used for all results
 reported here.
-A forked version of Strain Finder—modified for ease of installation and to
-specify a random seed for reproducibility—can be found at
-<https://github.com/bsmith89/StrainFinder>.
-All other code and metadata needed to re-run these analyses is available at
-<https://github.com/bsmith89/StrainFacts-manuscript>.
-For software reproducibility, all analyses were performed using a
-Singularity container [@Kurtzer2017].
+Strain Finder was not originally designed to take a random seed argument,
+necessitating minor modifications to the code.
+Similarly, we made several modifications to the MixtureS [@Li2021] code allowing us to run
+it directly on simulated metagenotypes and compare the results to StrainFacts
+and Strain Finder outputs.
+Patch files describing each set of changes, as well as
+all other code and metadata needed to re-run our analyses are available at
+<https://doi.org/10.5281/zenodo.5942586>.
+For reproducibility, analyses were performed using Snakemake [@Molder2021]
+and with a Singularity container [@Kurtzer2017] that can be obtained
+at <https://hub.docker.com/repository/docker/bsmith89/compbio>.
 
-<!--
-TODO: Dockerfile in *-manuscript repo.
--->
+### Runtime and memory benchmarking
+
+Runtimes were determined using the Snakemake `benchmark:` directive,
+and memory requirements using the GNU `time` utility, version 1.8
+with all benchmarks run on the Wynton compute cluster at the University
+of California, San Francisco.
+Across strain numbers and replicates, maximum memory usage for models with
+10,000 samples and 1000 SNPs was, counterintuitively, less than for smaller
+models, likely because portions of runtime data were "swapped" to disk
+instead of staying in RAM.
+We therefore excluded data for these largest models from our statistical
+analysis of memory requirements.
 
 # Results
 
@@ -548,7 +574,7 @@ just 8.9 minutes with the 1.5x parameterization. We did not attempt to run
 Strain Finder on this dataset.
 
 We next examined runtime scaling across a range of sample counts between 50 and
-2,500. We applied Strain Finder and StrainFacts (CPU and GPU) to simulated
+2,500. We applied Strain Finder and StrainFacts (both CPU and GPU) to simulated
 metagenotypes with 250 SNPs, and a fixed 1:5 ratio of strains to samples.
 Median runtimes for each tool at both the 1x and 1.5x parameterization
 demonstrate a substantially slower increase for StrainFacts as model size
@@ -569,9 +595,9 @@ allocation in a model with 100 strains is plotted for StrainFacts models across
 a range of sample counts (N) and SNP counts (G, line shade). Median of 9
 replicate runs is shown. Maximum memory requirements are extrapolated to higher
 numbers of samples for a model with 1000 SNPs (red line). A version of this
-panel that includes a range of strain counts is included as Supplementary
-[@Fig:memory-supp].
-](fig/compute_profiling_figure.dpi200.png){#fig:compute}
+panel that includes a range of strain counts is included as
+Supplementary [@Fig:memory-supp].
+](fig/compute_profiling_figure.w2000.png){#fig:compute}
 
 Given the good runtime scaling properties of StrainFacts, we next asked if
 computer memory constraints would limit its applicability to the largest
@@ -601,50 +627,22 @@ abundance error. By this index, StrainFacts and Strain Finder performed
 similarly well when applied to the simulated data ([@Fig:accuracy]A). We repeated this
 analysis with the 1.5x parameterization to assess the robustness of inferences
 to model misspecification, finding that both tools maintained similar
-performance to the 1x parameterization. Thus, we conclude based on UniFrac
+performance to the 1x parameterization.
+By comparison, considering too few strains (the 0.8x parameterization, fitting
+32 strains) degraded performance dramatically for both tools, with StrainFacts
+performing slightly better.
+Thus, we conclude based on UniFrac
 distance that StrainFacts is as accurate as Strain Finder and that both models
 are robust to specifying too many strains.
-
-To further probe accuracy, we quantified the performance of StrainFacts and
-Strain Finder with several other measures. First, we evaluated pairwise
-comparisons of strain composition by calculating the mean absolute error of
-pairwise Bray-Curtis dissimilarities ([@Fig:accuracy]B). While Strain Finder slightly
-outperformed StrainFacts on this index under the 1.5x parameterization, the
-magnitude of the difference was small. This suggests that StrainFacts can be
-used for applications in microbial ecology that rely on measurements of beta
-diversity.
-
-Ideally, inferences should conform to Occam's razor, estimating "as few strains
-as possible, but no fewer". Unfortunately, Bray-Curtis error is not sensitive
-to the splitting or merging of co-abundant strains and UniFrac error is not
-sensitive to the splitting or merging of strains with very similar genotypes.
-To overcome this limitation, we calculated the mean absolute error of the
-Shannon entropy of the inferred strain composition for each sample ([@Fig:accuracy]C).
-This score quantifies how accurately inferences reflect within-sample strain
-heterogeneity. StrainFacts performed substantially better on this score than
-Strain Finder, both for the 1x and 1.5x parameterization, indicating more
-accurate estimation of strain heterogeneity.
-
-Finally, we assessed the quality of genotypes reconstructed by StrainFacts
-compared to Strain Finder using the abundance weighted mean Hamming distance.
-For each ground-truth genotype, normalized Hamming distance is computed based
-on the best matching inferred genotype ([@Fig:accuracy]D). We assessed the reverse as
-well: the abundance weighted mean, best-match Hamming distance for each
-inferred genotype among the ground-truth genotypes ([@Fig:accuracy]E). These two
-scores can be interpreted as answers to the distinct questions "how well were
-the true genotypes recovered?" and "how well do the inferred genotypes reflect
-the truth?", respectively. While StrainFacts and Strain Finder performed
-similarly on these indexes—which tool had higher accuracy varied by score and
-parameterization—StrainFacts' accuracy was more stable between the two
-parameterizations.
 
 ![Accuracy of strain inference on simulated data. Performance
 of StrainFacts and Strain Finder are compared across five distinct accuracy
 indices, with lower scores reflecting better performance on each index.
 Simulated data had 200 samples, 40 underlying strains, and 250 SNPs. For each
-tool, both 40 and 60 strain models were parameterized ("1x" and "1.5x"
+tool, 32, 40 and 60 strain models were parameterized ("0.8x", "1x" and "1.5x"
 respectively), and every model was fit with five independent initializations to
-each simulation. All 25 estimates for each tool-parameterization combination
+each simulation.
+All 25 estimates for each tool-parameterization combination
 are shown. Scores reflect **(A)** mean Unifrac distance between simulated and
 inferred strain compositions, **(B)** mean absolute difference between
 all-by-all pairwise Bray-Curtis dissimilarities calculated on simulated versus
@@ -656,40 +654,101 @@ Hamming distance from each inferred strain to its best-match true genotype.
 Markers at the top of each panel indicate a statistical difference between
 tools at a p<0.05 (\*) or p<0.001 (\*\*) significance threshold by Wilcoxon
 signed-rank test.
-](fig/benchmarks_figure.dpi200.png){#fig:accuracy}
+A version of this figure that includes accuracy comparisons to MixtureS
+is included as Supplementary [@Fig:accuracy-with-mixtureS].
+](fig/benchmarks_figure.w2000.png){#fig:accuracy}
+
+To further probe accuracy, we quantified the performance of StrainFacts and
+Strain Finder with several other measures. First, we evaluated pairwise
+comparisons of strain composition by calculating the mean absolute error of
+pairwise Bray-Curtis dissimilarities ([@Fig:accuracy]B).
+While, with the 1x parameterization,
+Strain Finder slightly outperformed StrainFacts on this index, the
+magnitude of the difference was small.
+This suggests that StrainFacts can be
+used for applications in microbial ecology that rely on measurements of
+beta-diversity.
+
+Ideally, inferences should conform to Occam's razor, estimating "as few strains
+as possible, but no fewer". Unfortunately, Bray-Curtis error is not sensitive
+to the splitting or merging of co-abundant strains and UniFrac error is not
+sensitive to the splitting or merging of strains with very similar genotypes.
+To overcome this limitation, we calculated the mean absolute error of the
+Shannon entropy of the inferred strain composition for each sample ([@Fig:accuracy]C).
+This score quantifies how accurately inferences reflect within-sample strain
+heterogeneity. StrainFacts performed substantially better on this score than
+Strain Finder for all three parameterizations, indicating more
+accurate estimation of strain heterogeneity.
+
+Finally, we assessed the quality of genotypes reconstructed by StrainFacts
+compared to Strain Finder using the abundance weighted mean Hamming distance.
+For each ground-truth genotype, normalized Hamming distance is computed based
+on the best matching inferred genotype ([@Fig:accuracy]D), then summarized
+as the mean weighted by the true strain abundance across all samples.
+We assessed the reverse as
+well: the abundance weighted mean, best-match Hamming distance for each
+inferred genotype among the ground-truth genotypes ([@Fig:accuracy]E). These two
+scores can be interpreted as answers to the distinct questions "how well were
+the true genotypes recovered?" and "how well do the inferred genotypes reflect
+the truth?", respectively.
+While StrainFacts and Strain Finder performed
+similarly on these indexes—which tool had higher accuracy varied by score and
+parameterization—StrainFacts' accuracy was more stable across the 1x and 1.5x
+parameterizations.
+It should be noted that since strain genotypes are only inferred for SNP sites,
+the genome-wide genotype reconstruction error (which includes invariant sites)
+will likely be much lower than this Hamming distance.
+We examine the relationship between genotype distances and average nucleotide
+identity (ANI) in Supplementary [@Fig:dist-vs-ani]
+in order to contextualize our simulation results for those more familiar with
+ANI comparisons.
+
+To expand our performance comparison to a second tool designed for strain inference,
+we also ran MixtureS on a subset of the simulations.
+MixtureS estimates strain genotype and relative abundance on each metagenotype
+individually and therefore does not leverage variation in strain abundance
+across samples.
+We found that it performed worse than Strain Finder and Strain Facts on the
+benchmarks (see Supplementary [@Fig:accuracy-with-mixtureS]).
 
 Overall, these results suggest that StrainFacts is capable of state-of-the-art
 performance with respect to several different scientific objectives in a
-realistic set of simulations.  Performance was surprisingly robust to model
-misspecification with 50% more strains than were simulated. Eliminating the
-computational demands of a separate model selection step further improves the
-scaling properties of StrainFacts.
+realistic set of simulations.
+Performance was surprisingly robust to model misspecification with more strains
+than the simulation.
+Eliminating the computational demands of a separate model selection step
+further improves the scaling properties of StrainFacts.
 
 ## Single-cell sequencing validates inferred strain genotypes
 
 Beyond simulations, we sought to confirm the accuracy of strain inferences in a
 real biological dataset subject to forms of noise and bias not reflected in the
-generative model we used for simulations. To accomplish this, we applied a
-recently developed, single-cell, genomic sequencing workflow to obtain
-ground-truth, strain genotypes from a human fecal sample collected in a
-previously described, clinical FMT experiment [@Smith2022]. We ran StrainFacts
-on metagenotypes derived from this and other samples in the same study.
+generative model we used for simulations.
+To accomplish this, we applied a recently developed, single-cell, genomic
+sequencing workflow to obtain ground-truth, strain genotypes from two fecal
+samples collected in a previously described, clinical FMT experiment
+[@Smith2022] from two independent subjects.
+We ran StrainFacts on metagenotypes derived from these two focal samples as
+well as the other 157 samples in the same study.
 
-Genotypes that StrainFacts inferred to be present in the metagenome matched
-those observed SCGs, with a mean, best-match normalized Hamming distance of
-0.049 ([@Fig:scg]A). Furthermore, the median distance was just 0.015, reflecting
+Genotypes that StrainFacts inferred to be present in each of these metagenomes matched
+the observed SCGs, with a mean, best-match normalized Hamming distance of
+0.039. Furthermore, the median distance was just 0.013, reflecting
 the outsized influence of a small number of SCGs with more extreme deviations.
 For many species, SCGs also match a consensus genotype—the majority allele at
-each SNP site in the metagenotype, although this comparison is made more
-challenging by the sparsity of consensus genotypes (Supplementary [@Fig:scg-supp]).
-Overall, we found a mean distance to the consensus of 0.056 and a median of
-0.013, not significantly different from inferred genotypes (p=0.3 by Wilcoxon
-signed-rank test). However, the consensus approach fails for species with a
+each SNP site in each metagenotype (see [@Fig:scg]A).
+We found a mean distance to the consensus of 0.037 and a median of 0.009.
+Because this distance excludes sites without observed counts
+in the metagenotype, we masked these same sites in our inferred genotypes
+to uniformly contrast the consensus approach to StrainFacts genotypes.
+Overall, inferred genotypes were similar to the consensus, with
+a mean, masked distance of 0.031 (median of 0.009).
+However, the consensus approach fails for species with a
 mixture of multiple, co-existing strains. When we select only species with a
-metagenotype entropy of greater than 0.25, an indication of strain
+metagenotype entropy of greater than 0.05, an indication of strain
 heterogeneity, we see that StrainFacts inferences have a distinct advantage,
-with a mean distance of 0.115 versus 0.163 for the consensus approach (median
-of 0.093 versus 0.151, p=0.005). These results validate inferred genotypes in a
+with a mean distance of 0.055 versus 0.069 for the consensus approach (median
+of 0.018 versus 0.022, p<0.001). These results validate inferred genotypes in a
 stool microbiome using single-cell genomics and demonstrate that StrainFacts
 accounts for strain-mixtures better than consensus genotypes do.
 
@@ -699,20 +758,20 @@ inferences (X-axis) versus consensus genotypes (Y-axis). Points below and to
 the right of the red dotted line reflecting an improvement of our method over
 the consensus, based on the normalized, best-match Hamming distance. Each dot
 represents an individual SCG reflecting a putative genotype found in the
-analysed sample. SCGs from all species found in one sample are represented, and
-marker colors reflect the metagenotype entropy of that species, a proxy for the
+analysed samples. SCGs from all species found in either of the focal samples are
+represented, and marker colors reflect the metagenotype entropy of that
+species in the relevant focal sample, a proxy for the
 potential strain diversity represented. Axes are on a "symmetric" log scale,
-with linear placement of values below 10-2. A version of this panel colored by
-metagenotype horizontal coverage is in Supplementary [@Fig:scg-supp].
+with linear placement of values below 10^-2^.
 **(B)** A non-metric multidimensional scaling ordination of 68 SCGs and
 inferred genotypes for one species, _S. thermophilus_, with notably high strain
-diversity in the focal sample. Circles represent SCGs, are colored by their
+diversity in one of the two focal samples. Circles represent SCGs, are colored by their
 assignment to one of four identified clusters, and larger markers indicate
 greater horizontal coverage. Triangles represent StrainFacts genotypes inferred
 to be at greater than 1% relative abundance, and larger markers reflect a
 higher inferred relative abundance. The red cross represents the consensus
-metagenotype of the analysed sample.
-](fig/scg_comparison_figure.dpi200.png){#fig:scg}
+metagenotype of the focal sample.
+](fig/scg_comparison_figure.w2000.png){#fig:scg}
 
 Of the 75 species represented in our SCG dataset, one stood out for having
 numerous SCGs while reflecting a remarkably high degree of strain
@@ -723,7 +782,8 @@ StrainFacts inferred four strains in the metagenomic data from the same stool
 sample, (Strain 1 - 4) with 57%, 32%, and 7%, and 3% relative abundance,
 respectively. We explored the concordance between clusters and StrainFacts
 inferences by assigning a best-match Hamming distance genotype among the
-inferred strains to each SCG ([@Tbl:scg-concordance]). For SCGs in three of the four clusters
+inferred strains to each SCG ([@Tbl:scg-concordance]).
+For SCGs in three of the four clusters
 there was a low median distance to StrainFacts genotypes as well as a perfect
 1-to-1 correspondence between strains and clusters. While this genotype
 concordance was broken for SCGs in cluster B, strain 4 was also inferred to be
@@ -780,6 +840,21 @@ number of _E. coli_ strains by just 4 (to 119) with no reduction for the three
 other species. This suggests that the diversity regularization built into the
 StrainFacts model is sufficient to collapse closely related strains as part of
 inference.
+
+As GT-Pro only tallies alleles at a fixed subset of SNPs,
+the relationship between genotype distances and ANI is not fixed.
+In order to anchor our results to this widely-used measure of genome
+similarity, we compared the genotype distance to genome-wide ANI for all
+pairs of genomes in the GT-Pro reference database for all four species.
+We find that the fraction of positions differing genome wide (calculated as 1 - ANI)
+was nearly proportional to the fraction of genotyped positions differing,
+but with a different constant of proportionality for each species:
+_E. coli_ (0.0776, uncentered R^2^=0.994),
+_A. rectalis_ (0.1069, R^2^=0.990),
+_M. smithii_ (0.0393, R^2^=0.967),
+and CAG-279 (0.0595, R^2^=0.991).
+Additional details of this analysis can be found in Supplementary [@Fig:dist-vs-ani].
+
 
 ### StrainFacts recapitulates known diversity in well studied species
 
@@ -848,7 +923,7 @@ with only reference strains (dark purple), only inferred strains (yellow), or
 both (teal). Rows are ordered by hierarchical clustering built on distances
 between consensus genotypes and columns are ordered arbitrarily to highlight
 correlations between SNPs.
-](fig/coclustering_figure.dpi200.png){#fig:coclustering}
+](fig/coclustering_figure.w2000.png){#fig:coclustering}
 
 ### Species inhabiting the human gut exhibit distinct biogeography observed across independent metagenomic studies
 
@@ -866,7 +941,7 @@ based on its dominant strain of a given species, we nonetheless find that
 studies with samples collected in the United States of America form a distinct
 cluster, as do those from China, and the two are easily distinguished from one
 another and from most other studies conducted across Europe and North America
-([@Fig:biogeography]A). Our observation of a distinct group of _A. rectalis_ strains
+([@Fig:biogeography]). Our observation of a distinct group of _A. rectalis_ strains
 enriched in samples from China is consistent with previous results
 [@Scholz2016; @Costea2017b; @Truong2017].
 
@@ -879,20 +954,22 @@ StrainFacts. Cell colors reflect the fraction of samples in that study segment
 with that strain as the most abundant member. Study segments are omitted if
 they include fewer than 10 samples. Row ordering and the associated dendrogram
 reflect strain genotype distances, while the dendrogram for columns is based on
-their cosine similarity. Colors above the heatmap reflect the country in which
-samples were collected as well as whether samples were collected from
-individuals with a westernized lifestyle. Both a study identifier and the ISO
+their cosine similarity.
+Studies with samples collected in several countries with notable clustering for
+one or more species are highlighted with colors above the heatmap.
+Additionally, studies from westernized populations are indicated.
+Both a study identifier and the ISO
 3166-ISO country-code are included in the column labels.
-](fig/biogeography_figure.dpi200.png){#fig:biogeography}
+](fig/biogeography_figure.w2000.png){#fig:biogeography}
 
 These general trends hold across the other three species. In _M. smithii_,
 independent studies in the same country often share very similar strain
 dominance patterns (e.g. see clustering of studies performed in each of China,
-Mongolia, Denmark, and Spain in [@Fig:biogeography]B).
-In _E. coli_ (Supplementary [@Fig:biogeography-supp]A), while many strains
+Mongolia, Denmark, and Spain in [@Fig:biogeography]).
+In _E. coli_ , while many strains
 appear to be distributed globally, independent studies from China still cluster
-together based on patterns in strain dominance.
-Notably, in CAG-279 (Supplementary [@Fig:biogeography-supp]B),
+together based on patterns in strain dominance (see Supplementary [@Fig:biogeography-supp]).
+Notably, in CAG-279,
 studies with individuals in westernized societies do not
 cluster separately from the five other studies, suggesting that host lifestyle
 is not highly correlated with specific strains of this species. The variety of
@@ -910,10 +987,10 @@ to elucidate processes of transmission, diversification, and selection with
 implications for human health and perhaps even our understanding of human
 origins [@Garud2019; @Linz2007]. To demonstrate the application of StrainFacts
 to the study of microbial evolution, we examined patterns in pairwise LD, here
-calculated as the squared Pearson correlation coefficient (r2). This statistic
+calculated as the squared Pearson correlation coefficient (r^2^). This statistic
 can inform understanding of recombination rates in microbial populations
-[@Vos2009; @Garud2019a]. Genome-wide, LD, summarized as the 90th percentile r2
-[LD~90~, @Vos2017], was substantially higher for _E. coli_ (mean of 0.24) than
+[@Vos2009; @Garud2019a]. Genome-wide, LD, summarized as the 90th percentile r^2^
+[LD~90~, @Vos2017], was substantially higher for _E. coli_ (0.24) than
 _A. rectalis_ (0.04), _M. smithii_ (0.11), or CAG-279 (0.04), perhaps
 suggesting greater population structure in the species and less panmictic
 recombination.
@@ -936,23 +1013,24 @@ distance-decay relationship are very similar between inferred and reference
 strains, reinforcing the value of genotypes inferred from metagenomes for
 microbial population genetics. Interestingly, for three of the four species
 (_E. coli_, _A. rectalis_, and _M. smithii_), LD estimates from StrainFacts
-strains were significantly higher than from references (p<1e-10 for all three
-by Wilcoxon test), while CAG-279 exhibited a trend toward the reverse. It is
-not clear what might cause these quantitative discrepancies, but they could
-reflect differences in the set of strains in each dataset. Future studies
-expanding this analysis to additional species will identify patterns in
-recombination rates across broader microbial diversity.
+strains were significantly higher than from references
+(p<1e-10 for all three by Wilcoxon test),
+while CAG-279 exhibited a trend towards the reverse (p=0.85).
+It is not clear what might cause these quantitative discrepancies, but they
+could reflect differences in the set of strains in each dataset.
+Future studies expanding this analysis to additional species will identify
+patterns in recombination rates across broader microbial diversity.
 
 ![Pairwise LD across genomic distance estimated from inferred
-genotypes for four species. LD was calculated as r2 and genomic distance
+genotypes for four species. LD was calculated as r^2^ and genomic distance
 between polymorphic loci is based on distances in a single, representative
 genome. The distribution of SNP pairs in each distance window is shown as a
 histogram with darker colors reflecting a larger fraction of the pairs in that
-LD bin, and the LD~90~ all for pairs at each distance is shown as points for
+LD bin, and the LD~90~ for pairs at each distance is shown for
 inferred strains (red), along with an identical analysis on strains in the
-reference database (blue). LD~90~ in each histogram window (solid lines) and
-genome-wide (dashed lines) are also indicated.
-](fig/ld_decay_figure.dpi200.png){#fig:ld}
+reference database (blue).
+Genome-wide LD~90~ (dashed lines) is also indicated.
+](fig/ld_decay_figure.w2000.png){#fig:ld}
 
 # Discussion
 
@@ -975,7 +1053,8 @@ Beyond Strain Finder, other alternatives exist for strain inference in
 metagenomic data. While we do not directly compare to DESMAN, runtimes of
 several hours have been reported for that tool on substantially smaller
 simulated datasets [@Quince2017], and hence we believe that StrainFacts is
-likely the fastest implementation of the metagenotype deconvolution approach.
+likely the most scalable implementation of the metagenotype deconvolution
+approach.
 Still other methods apply regularized regression [e.g. Lasso @Albanese2017]
 to decompose metagenotypes—essentially solving the abundance half of the
 deconvolution problem but not the genotypes half—or look for previously
@@ -1000,12 +1079,18 @@ approaches will become increasingly feasible. Thus, StrainFacts occupies the
 same analysis niche as Strain Finder and DESMAN, and it expands upon these
 reliable approaches by providing a scalable model fitting procedure.
 
-Besides enabling more computationally efficient inference, fuzzy genotypes may
-also be more robust to deviations from model assumptions. For instance, an
+Fuzzy genotypes enable more computationally efficient inference by eliminating
+the need for discrete optimization.
+Specifically, we used well-tested and optimized gradient descent algorithms
+implemented in PyTorch for parameter estimation.
+In addition, fuzzy genotypes may
+be more robust to deviations from model assumptions.
+For instance, an
 intermediate genotype could be a satisfactory approximation when gene
 duplications or deletions are present in some strains. While we do not explore
-the possibility here, fuzzy genotypes may also provide a heuristic for
-capturing uncertainty in strain genotypes. For example, future work could
+the possibility here, fuzzy genotypes may provide a heuristic for
+capturing uncertainty in strain genotypes.
+Future work could
 consider propagating intermediate genotype values instead of discretizing them.
 
 StrainFacts builds on recent advances in metagenotyping, in particular our
@@ -1014,7 +1099,7 @@ metagenomic reads.
 While we leave a comparison of StrainFacts performance on the outputs of other
 metagenotypers to future work, StrainFacts itself is agnostic to the source of
 input data.  It would be straightforward to extend StrainFacts to operate on
-loci with more than two alleles, using metagenotypes from a tool other than
+loci with more than two alleles or to use metagenotypes from a tool other than
 GT-Pro. It would also be interesting to extend StrainFacts to use SNPs outside
 the core genome that vary in their  presence across strains.
 
@@ -1042,7 +1127,7 @@ Biohub.
 
 Barbara Engelhardt provided valuable feedback on this project.
 
-## Competing Interests
+## Conflicts
 
 KSP is on the scientific advisory board of Phylagen.
 
@@ -1059,54 +1144,28 @@ KSP is on the scientific advisory board of Phylagen.
 
 ## Data Availability Statement
 
-Metagenomic and single-cell sequencing data from the FMT study will be uploaded
-to the SRA under BioProject PRJNA737472. Publicly available metagenomes are
+Metagenomic sequencing data from the FMT study
+are available through the SRA under BioProject PRJNA737472,
+The two single-cell genomics experiments are also under that project
+with accessions SRR18748374 and SRR18748375.
+Publicly available metagenomes are
 available under various other accessions described in [@Shi2021]. Strain
 genotypes from the GT-Pro reference database are publicly available at
 <https://fileshare.czbiohub.org/s/waXQzQ9PRZPwTdk>.
 All other code and metadata needed to reproduce these results are available at
-<https://github.com/bsmith89/StrainFacts-manuscript>.
+<https://doi.org/10.5281/zenodo.5942586>.
 
 # Supplementary Materials
 
-## Supplementary Results
-
-![Maximum memory allocation across varying numbers of strains (S,
-line shade), SNPs (G, line style), and samples is plotted for StrainFacts
-models. Median of 9 replicate runs is shown. Maximum memory requirements are
-extrapolated to higher numbers of samples for a model with 1000 SNP sites (red
-line). An abridged version of this plot is included as [@Fig:compute].
-](fig/memory_profiling_more_strains_figure.dpi200.png){#fig:memory-supp}
-
-![Inferred strains reflect genotypes from a single-cell
-sequencing experiment. Distance between observed SCGs and StrainFacts
-inferences (X-axis) versus consensus genotypes (Y-axis), plotted as in [@Fig:scg].
-Points below and to the right of the red dotted line reflecting an
-improvement of our method over the consensus, based on the normalized,
-best-match Hamming distance. Each dot represents an individual SCG reflecting a
-putative genotype found in the analysed sample. SCGs from all species found in
-one sample are represented, and marker colors reflect the metagenotype
-horizontal coverage for that species. Axes are on a "symmetric" log scale, with
-linear placement of values below 10-2.
-](fig/scg_comparison_supplementary_figure.dpi200.png){#fig:scg-supp}
-
-![Patterns in strain dominance according to geography and
-lifestyle across thousands of publicly available metagenomes in dozens of
-independent studies for two additional members of the human gut microbiome.
-Visual elements are identical to [@Fig:biogeography]: Columns represent collections of
-samples from individual studies and are further segmented by country and
-lifestyle (westernized or not). Rows represent strains inferred by StrainFacts.
-Cell colors reflect the fraction of samples in that study segment with that
-strain as the most abundant member. Study segments are omitted if they include
-fewer than 10 samples. Row ordering and the associated dendrogram reflect
-strain genotype distances, while the dendrogram for columns is based on their
-cosine similarity. Colors above the heatmap reflect the country in which
-samples were collected as well as whether samples were collected from
-individuals with a westernized lifestyle. Both a study identifier and the ISO
-3166-ISO country-code are included in the column labels.
-](fig/biogeography_supplementary_figure.dpi200.png){#fig:biogeography-supp}
-
 ## Supplementary Methods
+
+![Graphical representation of the StrainFacts model including
+hyperparameters. Symbols include observed data (blue box), deterministic terms
+(circles), key parameters being estimated (red boxes), and key hyperparameters
+(unenclosed). Plates behind terms indicate the dimensionality and indexing of
+the variables and arrows connect the terms that directly depend on one another.
+](fig/strainfacts_model_diagram_figure.w2000.png){#fig:model-diagram}
+
 
 ### The shifted, scaled Dirichlet distribution
 
@@ -1319,7 +1378,59 @@ barcodes were parsed from Read 1, using cutadapt (v2.4) and matched to a
 barcode whitelist. Barcode sequences within a Hamming distance of 1 from a
 whitelist barcode were corrected. Reads with valid barcodes were trimmed with
 cutadapt to remove 5′ and 3′ adapter sequences and demultiplexed into
-single-cell FASTQ files by barcode sequences using the script demuxbyname.sh
+single-cell FASTQ files by barcode sequences using the script `demuxbyname.sh`
 from the BBMap package (v.38.57).
+
+
+## Supplementary Results
+
+![Maximum memory allocation across varying numbers of strains (S,
+line shade), SNPs (G, line style), and samples is plotted for StrainFacts
+models. Median of 9 replicate runs is shown. Maximum memory requirements are
+extrapolated to higher numbers of samples for a model with 1000 SNP sites (red
+line). An abridged version of this plot is included as [@Fig:compute].
+](fig/memory_profiling_more_strains_figure.dpi500.png){#fig:memory-supp}
+
+![Extension of accuracy evaluation for StrainFacts and Strain Finder with
+additional results for MixtureS.
+Results are identical to panels A, C, D, and E in [@Fig:accuracy]
+(here panels **A**-**D**, respectively).
+Simulations are shown for five simulations with 250 SNP positions, 200 samples,
+and 40 strains.
+While StrainFacts and Strain Finder each have 32, 40, and 60 strains specified
+(the 0.8x, 1.0x, 1.5x parameterizations),
+MixtureS does not specify the number of strains _a priori_, and points are
+arbitrarily placed with the 1x parameterization.
+Similarly, MixtureS runs are deterministic; hence only one fit for each
+of the five simulations is shown.
+](fig/accuracy_benchmarking_with_mixtureS_figure.w2000.png){#fig:accuracy-with-mixtureS}
+
+![Empirical relationship between ANI and genotype distance
+among reference genomes in the GT-Pro database.
+Genotype distance is defined as the normalized Hamming distance at SNP sites
+considered by GT-Pro.
+All pairwise genome comparisons are plotted as a 2D histogram, with greater
+density indicated with darker colors.
+For each species, a linear regression calculated without an intercept term is
+shown (black line), and the constant of proportionality and uncentered R^2^ is also
+indicated.
+](fig/genotype_distance_ani_relationship_figure.w2000.png){#fig:dist-vs-ani}
+
+![Patterns in strain dominance according to geography and
+lifestyle across thousands of publicly available metagenomes in dozens of
+independent studies for two additional members of the human gut microbiome.
+Visual elements are identical to [@Fig:biogeography]: Columns represent collections of
+samples from individual studies and are further segmented by country and
+lifestyle (westernized or not). Rows represent strains inferred by StrainFacts.
+Cell colors reflect the fraction of samples in that study segment with that
+strain as the most abundant member. Study segments are omitted if they include
+fewer than 10 samples. Row ordering and the associated dendrogram reflect
+strain genotype distances, while the dendrogram for columns is based on their
+cosine similarity. Colors above the heatmap reflect the country in which
+samples were collected as well as whether samples were collected from
+individuals with a westernized lifestyle. Both a study identifier and the ISO
+3166-ISO country-code are included in the column labels.
+](fig/biogeography_supplementary_figure.w2000.png){#fig:biogeography-supp}
+
 
 # References

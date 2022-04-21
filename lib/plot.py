@@ -237,6 +237,7 @@ def scatterplot(
     y,
     data,
     subset=None,
+    showby="__none__",
     colorby="__none__",
     color_palette=None,
     colorby_order=None,
@@ -244,8 +245,8 @@ def scatterplot(
     marker_palette=None,
     markerby_order=None,
     markersizeby="__none__",
-    markersize_palette=None,
-    markersizeby_order=None,
+    # markersize_palette=None,
+    # markersizeby_order=None,
     edgecolorby="__none__",
     edgecolor_palette=None,
     edgecolorby_order=None,
@@ -279,10 +280,10 @@ def scatterplot(
             k: v for k, v in zip(markerby_order, cycle(DEFAULT_MARKER_LIST))
         }
 
-    if markersizeby_order is None:
-        markersizeby_order = data[markersizeby].sort_values().unique()
-    if markersize_palette is None:
-        markersize_palette = {k: v for k, v in zip(markersizeby_order, cycle([None]))}
+    # if markersizeby_order is None:
+    #     markersizeby_order = data[markersizeby].sort_values().unique()
+    # if markersize_palette is None:
+    #     markersize_palette = {k: v for k, v in zip(markersizeby_order, cycle([None]))}
 
     if edgecolorby_order is None:
         edgecolorby_order = data[edgecolorby].sort_values().unique()
@@ -304,27 +305,33 @@ def scatterplot(
 
     for (
         (
+            feat_show,
             feat_color,
             feat_marker,
-            feat_markersize,
             feat_edgecolor,
             feat_edgestyle,
             feat_zorder,
         ),
         d,
     ) in data.groupby(
-        [colorby, markerby, markersizeby, edgecolorby, edgestyleby, zorderby]
+        [showby, colorby, markerby, edgecolorby, edgestyleby, zorderby]
     ):
         if (
-            (feat_color not in colorby_order)
+            (not feat_show)
+            or (feat_color not in colorby_order)
             or (feat_marker not in markerby_order)
             or (feat_edgecolor not in edgecolorby_order)
             or (feat_edgestyle not in edgestyleby_order)
-            or (feat_markersize not in markersizeby_order)
         ):
             continue
+
         if feat_zorder == "__none__":
             feat_zorder = 0
+        if markersizeby == "__none__":
+            feat_markersize = None
+        else:
+            feat_markersize = d[markersizeby]
+
         ax.scatter(
             x,
             y,
@@ -334,7 +341,7 @@ def scatterplot(
             label="__nolegend__",
             edgecolor=[edgecolor_palette[feat_edgecolor]],
             linestyle=edgestyle_palette[feat_edgestyle],
-            s=markersize_palette[feat_markersize],
+            s=feat_markersize,
             zorder=feat_zorder,
             **scatter_kws_,
         )
@@ -358,16 +365,16 @@ def scatterplot(
                 label=feat_marker,
                 **scatter_kws_,
             )
-        for feat_markersize in markersizeby_order:
-            ax.scatter(
-                [],
-                [],
-                marker="o",
-                s=markersize_palette[feat_markersize],
-                c="grey",
-                label=feat_markersize,
-                **scatter_kws_,
-            )
+        # for feat_markersize in markersizeby_order:
+        #     ax.scatter(
+        #         [],
+        #         [],
+        #         marker="o",
+        #         s=markersize_palette[feat_markersize],
+        #         c="grey",
+        #         label=feat_markersize,
+        #         **scatter_kws_,
+        #     )
         for feat_edgecolor in edgecolorby_order:
             ax.scatter(
                 [],

@@ -19,11 +19,27 @@ rule run_sfinder_fit_benchmark_matrix:
             )
             for sim_s, fit_s_ratio, sim_seed, fit_seed, suffix in product(
                 [10, 20, 40, 80],
-                [1.0, 1.5],
+                [0.5, 0.8, 1.0, 1.5],
                 range(5),
                 range(5),
-                ['evaluation.tsv', 'benchmark'],
+                ["evaluation.tsv", "benchmark"],
             )
+        ],
+
+
+rule run_mixture_s_fit_benchmark_matrix:
+    output:
+        touch("data/benchmark_fit_matrix.mixture_s.flag"),
+    input:
+        fit=[
+            (
+                "data/sfacts_simulate-model_simplest_simulation-n200-g250-s40"
+                f"-pi40-mu100-eps10-seed{sim_seed}"
+                ".metagenotype-n200-g250"
+                ".fit-mixtureS"
+                ".evaluation.tsv"
+            )
+            for sim_seed in range(5)
         ],
 
 
@@ -48,10 +64,10 @@ rule run_sfacts_cpu_fit_benchmark_matrix:
             )
             for sim_s, fit_s_ratio, sim_seed, fit_seed, suffix in product(
                 [10, 20, 40, 80, 200],
-                [1.0, 1.5],
+                [0.5, 0.8, 1.0, 1.5],
                 range(5),
                 range(5),
-                ['evaluation.tsv', 'benchmark'],
+                ["evaluation.tsv", "benchmark"],
             )
         ],
 
@@ -77,10 +93,10 @@ rule run_sfacts_gpu_fit_benchmark_matrix:
             )
             for sim_s, fit_s_ratio, sim_seed, fit_seed, suffix in product(
                 [10, 20, 40, 80, 200],
-                [1.0, 1.5],
+                [0.5, 0.8, 1.0, 1.5],
                 range(5),
                 range(5),
-                ['evaluation.tsv', 'benchmark'],
+                ["evaluation.tsv", "benchmark"],
             )
         ],
 
@@ -107,7 +123,7 @@ rule run_sfacts_gpu_fit_benchmark_matrix:
 #             for fit_type, sim_s, fit_s_ratio, g, sim_seed, fit_seed in product(
 #                 ['sfacts41_gpu', 'sfacts41_big', 'sfacts45_big', 'sfacts44_big', 'sfacts46_big'],
 #                 [40, 80, 200, 500],
-#                 [1.0, 1.5],
+#                 [0.5, 0.8, 1.0, 1.5],
 #                 [250, 1000],
 #                 range(2),
 #                 range(2),

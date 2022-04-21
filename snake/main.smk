@@ -34,6 +34,7 @@ import snakemake.utils
 
 config = nested_defaultdict()
 
+
 configfile: "config.yaml"
 
 
@@ -95,18 +96,18 @@ else:
     )
     config["mgen_group"] = {}
 
-config['figures']['submission'] = [
-    "fig/strainfacts_model_diagram_figure.dpi200.png",
-    "fig/strainfacts_model_diagram_figure.dpi200.png",
-    "fig/compute_profiling_figure.dpi200.png",
-    "fig/benchmarks_figure.dpi200.png",
-    "fig/scg_comparison_figure.dpi200.png",
-    "fig/coclustering_figure.dpi200.png",
-    "fig/biogeography_figure.dpi200.png",
-    "fig/ld_decay_figure.dpi200.png",
-    "fig/memory_profiling_more_strains_figure.dpi200.png",
-    "fig/scg_comparison_supplementary_figure.dpi200.png",
-    "fig/biogeography_supplementary_figure.dpi200.png",
+config["figures"]["submission"] = [
+    "fig/strainfacts_model_diagram_figure.w2000.png",
+    "fig/compute_profiling_figure.w2000.png",
+    "fig/benchmarks_figure.w2000.png",
+    "fig/scg_comparison_figure.w2000.png",
+    "fig/coclustering_figure.w2000.png",
+    "fig/biogeography_figure.w2000.png",
+    "fig/ld_decay_figure.w2000.png",
+    "fig/memory_profiling_more_strains_figure.dpi500.png",
+    "fig/biogeography_supplementary_figure.w2000.png",
+    "fig/accuracy_benchmarking_with_mixtureS_figure.w2000.png",
+    "fig/genotype_distance_ani_relationship_figure.w2000.png",
 ]
 
 
@@ -123,6 +124,8 @@ include: "snake/drplt.smk"
 
 include: "snake/sfacts.smk"
 include: "snake/sfinder.smk"
+include: "snake/benchmark.smk"
+include: "snake/mixture_s.smk"
 
 
 if path.exists("snake/local.smk"):
