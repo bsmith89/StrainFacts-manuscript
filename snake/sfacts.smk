@@ -277,15 +277,16 @@ rule evaluate_fit_against_simulation:
         script="scripts/evaluate_haplotyping_against_simulation.py",
         sim="data/sfacts_simulate-{sim_stem}.world.nc",
         fit="data/sfacts_simulate-{sim_stem}.metagenotype-{portion_stem}.fit-{params}.world.nc",
-        # bench="data/sfacts_simulate-{sim_stem}.metagenotype-{portion_stem}.fit-{params}.benchmark",
+        bench="data/sfacts_simulate-{sim_stem}.metagenotype-{portion_stem}.fit-{params}.benchmark",
     conda:
         "conda/sfacts.yaml"
     resources:
         walltime_hr=12,
     shell:
         """
-        {input.script} {input.sim} {input.fit} {output}
+        {input.script} {input.sim} {input.fit} {input.bench} {output}
         """
+
 
 rule compare_inferences_to_scgs:
     output:
