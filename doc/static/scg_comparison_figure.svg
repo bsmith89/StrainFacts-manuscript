@@ -3,8 +3,8 @@
 
 <svg
    width="224.83612mm"
-   height="91.649979mm"
-   viewBox="0 0 224.83612 91.649979"
+   height="100.81131mm"
+   viewBox="0 0 224.83612 100.81131"
    version="1.1"
    id="svg52300"
    inkscape:version="1.1 (c4e8f9e, 2021-05-24)"
@@ -32,7 +32,7 @@
      inkscape:window-x="0"
      inkscape:window-y="25"
      inkscape:window-maximized="0"
-     inkscape:current-layer="g52382"
+     inkscape:current-layer="g56148"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -269,14 +269,14 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-38.059664,-18.043461)">
+     transform="translate(-38.059664,-18.043443)">
     <g
        id="g52382"
        inkscape:label="scg_comparison_plus_entropy_colorbar"
        transform="matrix(0.33936445,0,0,-0.33036932,-82.692638,219.87643)">
       <g
          id="g53362"
-         transform="matrix(0.87760054,0,0,0.82477641,354.49797,320.99914)">
+         transform="matrix(0.87760054,0,0,0.90722094,354.49797,292.01756)">
         <g
            id="g53364"
            clip-path="url(#clipPath53368)">
@@ -288,7 +288,7 @@
       </g>
       <g
          id="g53372"
-         transform="matrix(0.87760054,0,0,0.82477641,343.96676,320.99914)">
+         transform="matrix(0.87760054,0,0,0.90722094,343.96676,292.01756)">
         <g
            id="g53374"
            transform="matrix(13.5,0,0,271.8,378.84,45)">
@@ -403,7 +403,7 @@
       <g
          id="g55754"
          inkscape:label="scg_ordination_104345_full"
-         transform="matrix(0.87760054,0,0,0.82477641,733.64648,322.62578)">
+         transform="matrix(0.87760054,0,0,0.90722094,733.64648,293.8068)">
         <path
            d="M 45,45 H 324 V 316.8 H 45 Z"
            style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
@@ -1064,18 +1064,22 @@
         <g
            id="g56148">
           <text
-             transform="matrix(1,0,0,-1,58.594815,193.07967)"
+             transform="scale(1,-1)"
              style="font-variant:normal;font-weight:normal;font-size:10px;font-family:'DejaVu Sans';-inkscape-font-specification:DejaVuSans;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
-             id="text56152"><tspan
-               x="0"
-               y="0"
+             id="text56152"
+             x="65.701859"
+             y="-198.37631"><tspan
+               x="65.701859"
+               y="-198.37631"
                id="tspan56150">1</tspan></text>
           <text
-             transform="matrix(1,0,0,-1,222.04728,311.31319)"
+             transform="scale(1,-1)"
              style="font-variant:normal;font-weight:normal;font-size:10px;font-family:'DejaVu Sans';-inkscape-font-specification:DejaVuSans;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
-             id="text56156"><tspan
-               x="0"
-               y="0"
+             id="text56156"
+             x="234.48462"
+             y="-307.78207"><tspan
+               x="234.48462"
+               y="-307.78207"
                id="tspan56154">2</tspan></text>
           <text
              transform="matrix(1,0,0,-1,221.97084,237.1744)"
@@ -1107,7 +1111,7 @@
       <g
          id="g56393"
          inkscape:label="scg_ordination_104345_legend"
-         transform="matrix(0.87760054,0,0,0.82477641,819.5795,342.42041)">
+         transform="matrix(0.87760054,0,0,0.90722094,819.5795,315.5801)">
         <g
            id="g56395">
           <g
@@ -1200,30 +1204,30 @@
         </g>
       </g>
       <text
-         transform="scale(0.98665802,-1.0135224)"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14.7502px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.05359"
+         transform="scale(0.94075868,-1.0629719)"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.4699px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.10499"
          id="text2560"
-         x="386.035"
-         y="-592.02734"><tspan
-           x="386.035"
-           y="-592.02734"
+         x="404.86954"
+         y="-563.46136"><tspan
+           x="404.86954"
+           y="-563.46136"
            id="tspan2558"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14.7502px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:1.05359">A</tspan></text>
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.4699px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:1.10499">A</tspan></text>
       <text
-         transform="scale(0.98665802,-1.0135224)"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14.7502px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.05359"
+         transform="scale(0.94075868,-1.0629719)"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.4699px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.10499"
          id="text2560-2"
-         x="759.79333"
-         y="-592.02734"><tspan
-           x="759.79333"
-           y="-592.02734"
+         x="796.8634"
+         y="-563.46136"><tspan
+           x="796.8634"
+           y="-563.46136"
            id="tspan2558-2"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14.7502px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:1.05359">B</tspan></text>
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.4699px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:1.10499">B</tspan></text>
     </g>
     <g
        id="g53945"
        inkscape:label="scg_comparison_plus_entropy"
-       transform="matrix(0.29782643,0,0,-0.27248082,33.942446,113.53212)">
+       transform="matrix(0.29782643,0,0,-0.29971796,33.942446,123.07715)">
       <path
          d="M 58.5,45 H 348.66 V 316.8 H 58.5 Z"
          style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"

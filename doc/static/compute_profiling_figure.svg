@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="224.02209mm"
-   height="76.768158mm"
-   viewBox="0 0 224.02209 76.768158"
+   width="221.30188mm"
+   height="79.902252mm"
+   viewBox="0 0 221.30188 79.902252"
    version="1.1"
    id="svg21161"
    inkscape:version="1.1 (c4e8f9e, 2021-05-24)"
@@ -24,15 +24,15 @@
      inkscape:pagecheckerboard="0"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="0.59948609"
-     inkscape:cx="658.06364"
-     inkscape:cy="174.31597"
+     inkscape:zoom="1.4552985"
+     inkscape:cx="460.73022"
+     inkscape:cy="165.25819"
      inkscape:window-width="1440"
-     inkscape:window-height="791"
+     inkscape:window-height="819"
      inkscape:window-x="0"
      inkscape:window-y="25"
      inkscape:window-maximized="0"
-     inkscape:current-layer="g21171"
+     inkscape:current-layer="layer1"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -398,11 +398,11 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-52.501507,-14.487249)">
+     transform="translate(-52.501507,-14.487248)">
     <g
        id="g21171"
        inkscape:label="runtime_profiling"
-       transform="matrix(0.28839502,0,0,-0.26913633,48.082079,92.116712)">
+       transform="matrix(0.28839502,0,0,-0.28048222,48.082079,95.389311)">
       <path
          d="M 54,36 H 388.8 V 253.44 H 54 Z"
          style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
